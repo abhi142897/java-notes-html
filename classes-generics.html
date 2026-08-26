@@ -1,0 +1,948 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Types of Classes &amp; Generics — Core Java Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F3; --card:#FFFFFF; --ink:#1A1712; --muted:#6B635A; --hair:#E8E4DE;
+  --accent:#E8710A; --accent-d:#C25E00; --accent-soft:#FFF2E4;
+  --teal:#0E9C8E; --coral:#E5484D; --green:#12924F; --violet:#7C4DDB; --blue:#2563EB;
+  --disp:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.62;font-size:15.5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,245,243,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.top .home{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.top .home:hover{color:var(--accent);text-decoration:none}
+.top .crumb{font-family:var(--disp);font-weight:600;font-size:15px}
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:36px;padding:28px 20px 100px}
+.toc{position:sticky;top:70px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;font-size:13px;padding-right:8px}
+.toc h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc a{display:block;color:var(--muted);padding:4px 10px;border-left:2px solid var(--hair);margin-left:2px;border-radius:0 6px 6px 0}
+.toc a:hover{color:var(--ink);background:var(--card);text-decoration:none}
+.content{min-width:0;max-width:820px}
+.doc-title{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,42px);letter-spacing:-.015em;margin:0 0 6px}
+h2.sec{font-family:var(--disp);font-weight:600;font-size:23px;margin:46px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--ink);scroll-margin-top:80px}
+h3.sub{font-family:var(--disp);font-weight:600;font-size:17.5px;margin:26px 0 8px}
+h4.sub4{font-family:var(--disp);font-weight:600;font-size:15px;margin:18px 0 6px;color:#33291f}
+p{margin:11px 0}
+p.estep{font-family:var(--disp);font-weight:600;font-size:15.5px;margin:18px 0 6px;color:var(--accent-d)}
+p.minilabel{font-family:var(--disp);font-weight:600;font-size:14px;margin:16px 0 4px;color:var(--ink);background:var(--accent-soft);display:inline-block;padding:3px 10px;border-radius:8px}
+ul,ol{margin:11px 0;padding-left:22px}li{margin:5px 0}
+ul.checklist{list-style:none;padding-left:4px}
+ul.checklist li{position:relative;padding-left:26px;margin:6px 0}
+ul.checklist li::before{position:absolute;left:0;top:0;font-weight:700}
+ul.checklist li.ok::before{content:"✓";color:var(--green)}
+ul.checklist li.no::before{content:"✕";color:var(--coral)}
+ul.checklist li.arw::before{content:"→";color:var(--accent)}
+hr{border:none;border-top:1px solid var(--hair);margin:26px 0}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-d);padding:1px 6px;border-radius:5px}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;color:#3a2f22}
+.tablewrap{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--hair);padding:8px 12px}
+th{background:var(--card);font-family:var(--disp);font-weight:600}
+tbody tr:nth-child(even){background:#FBFAF8}
+.fig{margin:18px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px}
+.fig figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.code{position:relative;margin:14px 0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:#161a20}
+.code.inline{background:#20262f}
+.code.ascii{background:#1b2530}
+.code-tag{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8891a8;z-index:2}
+.code pre{margin:0;padding:15px 18px;overflow-x:auto}
+.code code{background:none;color:#e7ebf1;padding:0;font-size:13px;line-height:1.6;display:block}
+.code .language-plaintext{color:#cfe0dc;white-space:pre}
+.hero-viz{margin:18px 0 28px;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px;min-height:170px}
+.viz-cap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.viz-cap .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.readout{font-family:var(--mono);font-size:14px;margin-top:16px;color:var(--ink);min-height:20px}
+.readout .hit{color:var(--green);font-weight:700}
+.readout .warn{color:var(--coral);font-weight:700}
+/* casting ladder */
+.ladder{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rung{padding:9px 12px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-weight:700;font-size:13px;transition:all .45s ease}
+.rung.on{border-color:var(--green);background:#ECFDF3;transform:translateY(-3px)}
+.rung.warnon{border-color:var(--coral);background:#FEF2F2}
+.arrw{color:var(--muted);font-family:var(--mono)}
+/* jvm pipeline */
+.pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stage{padding:12px 14px;border-radius:12px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:center;min-width:92px;transition:all .4s ease}
+.stage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.stage.hot{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.stage small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;margin-top:2px}
+.flowarr{color:var(--accent);font-size:18px}
+/* oop dispatch */
+.dispatch{display:flex;flex-direction:column;gap:14px}
+.drow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{padding:9px 13px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;border:2px solid var(--hair);background:#fff;transition:all .45s}
+.pill.ref{border-color:var(--muted);color:var(--muted)}
+.pill.obj.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.pill.impl{border-color:var(--hair);opacity:.5}
+.pill.impl.win{border-color:var(--green);background:#ECFDF3;color:var(--green);opacity:1;transform:translateY(-3px)}
+.pagefoot{max-width:820px;margin:40px auto 0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.toc{display:none}}
+
+.frames{display:flex;flex-direction:column;gap:8px;max-width:340px}
+.frm{padding:11px 14px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:13px;font-weight:600;display:flex;justify-content:space-between;align-items:center;transition:all .45s}
+.frm.calling{border-color:var(--accent);background:var(--accent-soft)}
+.frm.running{border-color:var(--green);background:#ECFDF3;color:var(--green)}
+.frm .badge{font-size:10.5px;font-weight:400;color:var(--muted)}
+.gcwrap{display:flex;flex-direction:column;gap:8px}
+.gcregions{display:flex;gap:8px}
+.region{flex:1;border:2px solid var(--hair);border-radius:10px;padding:8px;min-height:96px;background:#fff}
+.region .rname{font-family:var(--mono);font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;text-align:center}
+.region .slots{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;align-items:flex-start}
+.obj{width:30px;height:30px;border-radius:7px;background:var(--accent-soft);border:2px solid var(--accent);color:var(--accent-d);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:11px;position:relative;transition:all .5s ease}
+.obj.dead{background:#FEE;border-color:var(--coral);color:var(--coral)}
+.obj .age{position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);font-size:8.5px;color:var(--muted);white-space:nowrap}
+.region.old{background:#FBF7F0}
+.erase{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.epanel{flex:1;min-width:220px;background:#161a20;border-radius:12px;padding:16px 18px;font-family:var(--mono);font-size:13px;color:#e7ebf1;line-height:1.7}
+.epanel .t{color:#4FC1A6;font-weight:700;transition:color .5s}
+.epanel .t.erased{color:var(--coral)}
+.earrow{font-size:26px;color:var(--accent)}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded',function(){try{document.querySelectorAll('code.language-java').forEach(function(b){hljs.highlightElement(b)});}catch(e){}});</script>
+
+</head><body>
+<div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">Types of Classes &amp; Generics</span></div>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-what-is-a-class">🔹 What is a Class?</a><a href="#s-types-of-classes-in-java">Types of Classes in Java</a><a href="#s-1-concrete-class">1️⃣ Concrete Class</a><a href="#s-2-abstract-class-a-class-declared-using-abstract-keyword">2️⃣ Abstract Class : A class declared using abstract keyword.</a><a href="#s-3-superclass-and-subclass">3️⃣ Superclass and Subclass</a><a href="#s-4-object-class">4️⃣ Object Class</a><a href="#s-5-nested-classes">5️⃣ Nested Classes:</a><a href="#s-generic-classes">Generic classes</a><a href="#s-generic-methods">Generic methods</a><a href="#s-wildcards">Wildcards (?)</a><a href="#s-type-erasure">Type Erasure</a><a href="#s-pojo-class">POJO class</a><a href="#s-enum-class">ENUM Class</a><a href="#s-final-class">Final class</a><a href="#s-singleton-class">Singleton class</a><a href="#s-immutable-classes">IMMUTABLE CLASSES</a><a href="#s-wrapper-class">Wrapper Class</a></nav><main class="content"><h1 class="doc-title">Types of Classes &amp; Generics</h1>
+<div class="hero-viz" id="heroViz" data-viz="erasure"></div>
+<hr>
+<h2 class="sec" id="s-what-is-a-class">🔹 What is a Class?</h2>
+<p>A <strong>class</strong> is a blueprint/template used to create objects.</p>
+<hr>
+<h2 class="sec" id="s-types-of-classes-in-java">Types of Classes in Java</h2>
+<h2 class="sec" id="s-1-concrete-class">1️⃣ Concrete Class</h2>
+<ul><li>Can be instantiated using <code>new</code></li><li>Has full method implementation</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Car {
+    void drive() {
+        System.out.println(&quot;Driving...&quot;);
+    }
+}
+
+
+Car c = new Car();  // Allowed</code></pre></div>
+<ul><li>Can extend abstract class.</li><li>Can implement interfaces.</li><li>Access modifier: <code>public</code> or <code>default</code> (package-private).</li></ul>
+<hr>
+<h2 class="sec" id="s-2-abstract-class-a-class-declared-using-abstract-keyword">2️⃣ Abstract Class : A class declared using <code>abstract</code> keyword.</h2>
+<ul><li>Cannot be instantiated.</li><li>May contain abstract methods (without body).</li><li>Can also have concrete methods. (implementation)</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">abstract class Animal {
+    abstract void sound();
+
+    void sleep() {
+        System.out.println(&quot;Sleeping...&quot;);
+    }
+}
+
+
+class Dog extends Animal {
+    void sound() {
+        System.out.println(&quot;Bark&quot;);
+    }
+}</code></pre></div>
+<ul><li>Used for partial abstraction.</li><li>Can have constructors.</li><li>Can have static methods.</li><li>Can have final methods.</li></ul>
+<p><strong>Note: Abstract classes have constructors to initialize the state of their fields and perform setup tasks, even though they cannot be instantiated directly. When a concrete subclass is created, its constructor invokes the abstract base class constructor via constructor chaining, ensuring common initialization logic executes and preventing code duplication.</strong></p>
+<hr>
+<h2 class="sec" id="s-3-superclass-and-subclass">3️⃣ Superclass and Subclass</h2>
+<p>Subclass: A class that is derived from another class.<br>Superclass: A class through which a subclass is derived.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Vehicle {
+    void start() {
+        System.out.println(&quot;Vehicle starting&quot;);
+    }
+}
+
+class Bike extends Vehicle {
+    void ride() {
+        System.out.println(&quot;Bike riding&quot;);
+    }
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-4-object-class">4️⃣ Object Class</h2>
+<ul><li><code>java.lang.Object</code> is the root class of Java.</li><li><strong>Every class implicitly extends Object class.</strong></li><li>Common methods:</li><li>toString()</li><li>equals()</li><li>hashCode()</li><li>clone()</li><li>finalize()</li><li>getClass()</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Test { }
+
+Test t = new Test();
+System.out.println(t.toString());</code></pre></div>
+<p><strong>Note: Since Object is the parent class of every class and in Java we know that reference of child class can be kept in parent class, hence any class&#x27; objects can be kept in reference of object class.</strong></p>
+<hr>
+<h2 class="sec" id="s-5-nested-classes">5️⃣ Nested Classes:</h2>
+<p>Classes defined inside another class.</p>
+<h3 class="sub">Types of Nested Classes</h3>
+<p>A) Inner Class (Non-static Nested Class)</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Outer {
+    class Inner {
+        void display() {
+            System.out.println(&quot;Inner class&quot;);
+        }
+    }
+}</code></pre></div>
+<ul class="checklist">
+<li class="ok">To invoke it, we will need outer class instance.</li>
+</ul>
+<p>B) Local Inner Class</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Outer {
+    void show() {
+        class Local {
+            void display() {
+                System.out.println(&quot;Local inner class&quot;);
+            }
+        }
+        new Local().display();
+    }
+}</code></pre></div>
+<p>C) Anonymous Inner Class</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Runnable r = new Runnable() {
+    public void run() {
+        System.out.println(&quot;Running&quot;);
+    }
+};</code></pre></div>
+<p>Like this, we can implement abstract class as well. Now we know that we cannot create an object of abstract class but here we had done.  Let&#x27;s understand what happened. So 2 things happened behind the scene :</p>
+<ul><li>Sub class is created, name decided by the compiler</li><li>Creates an object of Sub class and assigns its reference to object. Similarly for interface also, it works in the same way.</li></ul>
+<p>D) Static Nested Class</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Outer {
+    static class Nested {
+        void display() {
+            System.out.println(&quot;Static nested class&quot;);
+        }
+    }
+}</code></pre></div>
+<ul class="checklist">
+<li class="ok">To invoke it, Does not need outer instance.</li>
+</ul>
+<hr>
+<h2 class="sec" id="s-generic-classes">Generic classes</h2>
+<hr>
+<p>Generic class helps us to write a class in a generic manner that helps to avoid the typecasting that we&#x27;ll have to use with Object class.</p>
+<p>Let&#x27;s see an example -</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class GenericTest {
+    private Object value;
+
+    public Object getValue() {
+        return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
+}</code></pre></div>
+<p>Since Object is parent of every class, we used it here. Now here value can be of any type: String, integer etc. The only issue is that we&#x27;ll have to typecast it as per our use.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+
+    public static void main(String[] args) {
+        GenericTest genericTest = new GenericTest();
+        genericTest.setValue(10);
+        Object value = genericTest.getValue();
+
+        //We can not use value directly, we have to typecast it, else we will get ❌ Compile-time error.
+        if((int) value==10){
+            //do something
+        }
+    }
+}</code></pre></div>
+<p>So we had to typecast value to int to compare it with 10.</p>
+<hr>
+<h3 class="sub">How to define Generic classes?</h3>
+<p>We can do it using ``<code>&lt;T&gt;</code>``, this T can be any alphabet like A, B, C etc. So let&#x27;s make our previous Class generic</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class GenericTest&lt;T&gt; {
+    private T value;
+
+    public T getValue() {
+        return value;
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+    }
+}</code></pre></div>
+<p>Generic Type (In above example &lt;T&gt;) can be <strong>any non-primitive</strong> object.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+
+    public static void main(String[] args) {
+        GenericTest&lt;Integer&gt; genericTest = new GenericTest&lt;&gt;();
+        genericTest.setValue(10);
+        Integer value = genericTest.getValue();
+
+        if(value==10){
+            //do something
+        }
+    }
+}</code></pre></div>
+<p>Therefore, while creating genericTest object, We replaced T by Integer making it of an Integer type.</p>
+<hr>
+<h3 class="sub">Inheritance In Generic Classes</h3>
+<p>1) Non-Generic Subclass</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Print&lt;T&gt; {
+    private T value;
+
+    public T getValue() {
+        return value;
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+    }
+}
+
+class ColorPrint extends Print&lt;String&gt;{
+    
+}</code></pre></div>
+<ul><li>So, here we have extended and inherited a Generic Class to a non-generic subclass.</li><li>While extending (inheriting) a generic class to a non-generic subclass, we have to define the type of T at the time of extending itself.</li></ul>
+<hr>
+<p>2) Generic Subclass</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Print&lt;T&gt; {
+    private T value;
+
+    public T getValue() {
+        return value;
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+    }
+}
+
+class ColorPrint&lt;T&gt; extends Print&lt;T&gt;{
+
+}</code></pre></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+    public static void main(String[] args) {
+        ColorPrint&lt;String&gt; colorPrint = new ColorPrint&lt;&gt;();
+        colorPrint.setValue(&quot;Red&quot;);
+     }
+}</code></pre></div>
+<ul><li>So, for a non-generic subclass, we can specify the type of T at the time of object creation.</li></ul>
+<hr>
+<h3 class="sub">More than one Generics Type Example :</h3>
+<p>We can create as many number of generic parameters as we want i.e. T1, T2, T3, T4 -- TN. (Classname &lt;T1, T2, T3, T4 -- TN&gt;)</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Pair&lt;K,V&gt; {
+    private K key;
+    private V value;
+
+    public void put(K key, V value){
+        this.key = key;
+        this.value = value;
+    }
+}</code></pre></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+    public static void main(String[] args) {
+        Pair&lt;Integer,String&gt; pair = new Pair&lt;&gt;();
+        pair.put(10,&quot;test&quot;);
+     }
+}</code></pre></div>
+<ul><li>So, here we&#x27;ve used two generic parameters.</li><li>Also, both the Syntaxes are right :</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Pair&lt;Integer,String&gt; pair = new Pair&lt;&gt;();
+Pair&lt;Integer,String&gt; pair = new Pair&lt;Integer,String&gt;();</code></pre></div>
+<hr>
+<h2 class="sec" id="s-generic-methods">Generic methods</h2>
+<ul><li>If we want to make only a method generic, not the whole class then we can write generic method. </li><li>Type parameter should be before return type of the method declaration.</li><li>Type parameter scope is limited to method only.</li><li>example -</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class GenericMethod {
+    public &lt;K,V&gt; void printValue(Pair&lt;K,V&gt; pair1, Pair&lt;K,V&gt; pair2){
+        //do something
+    }
+
+    public &lt;K,V&gt; void printValue(K key, V value){
+        //do something
+    }
+
+    public &lt;T&gt; void setValue(T value){
+        //do something
+    }
+}</code></pre></div>
+<h3 class="sub">Raw type object</h3>
+<p>It&#x27;s a name of the generic class or interface without any type argument.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Print&lt;T&gt; {
+    private T value;
+
+    public T getValue() {
+        return value;
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+    }
+}</code></pre></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+    public static void main(String[] args) {
+        Print&lt;Integer&gt; parameterTypeObject = new Print&lt;&gt;();
+
+        Print rawTypeObject = new Print();
+        rawTypeObject.setValue(10);
+        rawTypeObject.setValue(&quot;hello&quot;);
+     }
+}</code></pre></div>
+<ul><li>So while creating the object, we didn&#x27;t pass any type as parameterized type. Therefore  internally it passes Object as parameterized type.  </li></ul>
+<h3 class="sub">Bounded generics</h3>
+<ul><li>It can be used at generic class and generic method. </li><li>Upper bound - ``<code>&lt;T extends Number&gt;</code>`` means T can be of type Number or its subclass only. We can use interface as a superclass(in this case Number) too.</li><li>Multi bound - ``<code>&lt;T extends ParentClass &amp; Interface1, Interface2&gt;</code>``. The first restrictive class should be concrete class. 2,3...and so on can be interfaces.</li></ul>
+<hr>
+<h2 class="sec" id="s-wildcards">Wildcards (?)</h2>
+<ul><li>Upper bounded wildcard - ``<code>&lt;? extends UpperBoundClassName&gt;</code>``</li><li>Lower bounded wildcard - ``<code>&lt;? super LowerBoundClassName&gt;</code>``</li><li>Unbounded wildcard - ``<code>&lt;?&gt;</code>``</li></ul>
+<p>let&#x27;s say we have a Vehicle class. Bus and Car extends it. then -</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        List&lt;Vehicle&gt; vehicleList =  new ArrayList&lt;&gt;();
+        vehicleList.add(new Bus());
+        vehicleList.add(new Car());
+
+        List&lt;Bus&gt; busList =  new ArrayList&lt;&gt;();
+        busList = vehicleList;  // invalid (❌ Compile-time error)
+        vehicleList = busList;  // invalid (❌ Compile-time error)
+
+        Vehicle vehicle = new Vehicle();
+        Bus bus = new Bus();
+        vehicle = bus;  // valid
+    }
+}</code></pre></div>
+<ul><li>Here both the above assignments are invalid because lists are different from objects ``<code>busList = vehicleList;</code>`` this is invalid because in bus list we can store only the objects of type Bus.</li><li>``<code>vehicleList = buslist;</code>`` is also invalid because in vehicleList we can store both Bus and car objects while bus List can contain only bus objects. Hence, it is invalid.</li></ul>
+<p>So , here wildcards can help us :</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Print&lt;T&gt; {
+    public void setPrintValue(List&lt;? extends Vehicle&gt; vehicleList){
+        
+    }
+}</code></pre></div>
+<p>So we&#x27;ve used Upper bounded wildcard. We can pass Vehicle and its child classes.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        //Pass vehicleList
+        List&lt;Vehicle&gt; vehicleList =  new ArrayList&lt;&gt;();
+        vehicleList.add(new Bus());
+        vehicleList.add(new Car());
+
+        Print printObj1 = new Print();
+        printObj1.setPrintValue(vehicleList);  //this is valid
+
+        //Pass busList
+        List&lt;Bus&gt; busList =  new ArrayList&lt;&gt;();
+        
+        Print printObj2 = new Print();
+        printObj2.setPrintValue(busList); //this is valid
+    }
+}</code></pre></div>
+<p>So now we can pass vehicleList as well as busList Since vehicleList &amp; its child classes are allowed.</p>
+<p>Now let&#x27;s see lower bound wild cards :</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Print {
+    public void setPrintValue(List&lt;? super Vehicle&gt; vehicleList){
+
+    }
+}</code></pre></div>
+<p>Now we can pass vehicle &amp; its superclass type. Since vehicle is not inheriting anything, So object can be used along with vehicle.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">//Pass objectList
+List&lt;Object&gt; objectList =  new ArrayList&lt;&gt;();
+Print printObj2 = new Print();
+printObj2.setPrintValue(objectList); //this is valid</code></pre></div>
+<p>Now a question arises that can&#x27;t we use generic type parameter in place of wildcards to achieve the functionality. Let&#x27;s see the difference between Wildcard &amp; generic type. Let&#x27;s create one wildcard method and one generic type method :</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Print {
+
+    //wildcard method
+    public void computeListWild(List&lt;? extends Number&gt; source, List&lt;? extends Number&gt; destination){
+
+    }
+
+    //generic type method
+    public &lt;T extends Number&gt; void computeListGeneric(T source, T destination){
+
+    }
+
+}</code></pre></div>
+<ol><li>The main difference is that wildcards are a bit less restrictive as compared to generic type. For example, in above code, we can give 2 different type of lists as source and destination for the wildcard but for generic method we have to give same type of list to source and destination.</li><li>In wildcard we have lower bound as well i.e we can use super but in generic method we can&#x27;t do so.</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        List&lt;Integer&gt; wildCardSourceInt = new ArrayList&lt;&gt;();
+        List&lt;Long&gt; wildCardDestLong = new ArrayList&lt;&gt;();
+
+        Print print =  new Print();
+        print.computeListWild(wildCardSourceInt,wildCardDestLong); //valid
+
+        print.computeListGeneric(wildCardSourceInt,wildCardDestLong); //invalid (❌ Compile-time error)
+    }
+}</code></pre></div>
+<hr>
+<h3 class="sub">Unbounded Wildcard (<code>&lt;?&gt;</code>)</h3>
+<p>An <strong>unbounded wildcard</strong> means:</p>
+<blockquote>“This can be any type.”</blockquote>
+<p>Syntax:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">List&lt;?&gt; list;</code></pre></div>
+<p>It means:</p>
+<ul><li>list can be <code>List&lt;String&gt;</code></li><li>list can be <code>List&lt;Integer&gt;</code></li><li>list can be <code>List&lt;Object&gt;</code>  </li></ul>
+<p>etc.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">import java.util.*;
+
+public class Test {
+    public static void printList(List&lt;?&gt; list) {
+        for (Object obj : list) {
+            System.out.println(obj);
+        }
+    }
+
+    public static void main(String[] args) {
+        List&lt;String&gt; names = List.of(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;);
+        List&lt;Integer&gt; numbers = List.of(1, 2, 3);
+
+        printList(names);
+        printList(numbers);
+    }
+}</code></pre></div>
+<p>Important Rule:</p>
+<ul class="checklist">
+<li class="no">You CANNOT ADD elements (except null)</li>
+</ul>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">List&lt;?&gt; list = new ArrayList&lt;String&gt;();
+
+list.add(&quot;Hello&quot;);  ❌ Compile-time error
+list.add(10);       ❌ Compile-time error
+list.add(null);     ✔ Allowed</code></pre></div>
+<p>Why?</p>
+<ul><li>Because compiler does not know the exact type.</li><li>It could be <code>List&lt;String&gt;</code> or <code>List&lt;Integer&gt;</code>.</li><li>If Java allowed adding &quot;Hello&quot; to List&lt;Integer&gt;, type safety breaks.</li></ul>
+<hr>
+<h2 class="sec" id="s-type-erasure">Type Erasure</h2>
+<p>Type Erasure means:</p>
+<blockquote>Java removes generic type information at <strong>compile time</strong>.</blockquote>
+<ul><li>Generics exist only at <strong>compile time</strong>, not at runtime.  </li><li>At runtime, JVM sees raw types.  </li></ul>
+<p class="estep">🔹 How Type Erasure Works</p>
+<p>During compilation:</p>
+<ol><li>Generic type parameters are removed.  </li><li>Type parameters are replaced with:  </li></ol>
+<ul><li><code>Object</code> (if unbounded)  </li><li>Bound type (if bounded)  </li></ul>
+<ol><li>Type casts are added where required.  </li><li>Bridge methods may be generated.  </li></ol>
+<figure class="fig"><img src="images/te1.png" alt="alt text" loading="lazy"></figure>
+<figure class="fig"><img src="images/te2.png" alt="alt text" loading="lazy"></figure>
+<hr>
+<h2 class="sec" id="s-pojo-class">POJO class</h2>
+<p><strong>POJO</strong> stands for:</p>
+<blockquote><strong>Plain Old Java Object</strong></blockquote>
+<p>A POJO is a simple Java class that:</p>
+<ul><li>Does NOT extend any special class</li><li>Does NOT implement any special interface (like <code>Serializable</code> is optional)</li><li>Has private fields</li><li>Has public getters and setters</li><li>Contains minimal logic (mostly data holder)</li></ul>
+<p>It is mainly used to represent <strong>data</strong>.</p>
+<h3 class="sub">Basic Structure of a POJO</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Employee {
+
+    private int id;
+    private String name;
+    private double salary;
+
+    // Default constructor
+    public Employee() {
+    }
+
+    // Parameterized constructor
+    public Employee(int id, String name, double salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+    }
+
+    // Getters &amp; Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getSalary() {
+        return salary;
+    }
+
+    public void setSalary(double salary) {
+        this.salary = salary;
+    }
+
+    @Override
+    public String toString() {
+        return &quot;Employee{id=&quot; + id + &quot;, name=&#x27;&quot; + name + &quot;&#x27;, salary=&quot; + salary + &quot;}&quot;;
+    }
+}</code></pre></div>
+<p>Note: Whenever any request comes into our system (i.e., when a component receives data), it is advisable to map the request object to a POJO that all internal classes understand and use. This way, if anything changes in the future, we only need to modify that single POJO instead of updating multiple classes across the system.</p>
+<hr>
+<h2 class="sec" id="s-enum-class">ENUM Class</h2>
+<h3 class="sub">🔹 What is an Enum?</h3>
+<p><strong>Enum</strong> (Enumeration) is a special type of class in Java used to represent a <strong>fixed set of constants</strong>. Example:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">enum Day {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY
+}
+
+public class Test {
+    public static void main(String[] args) {
+        Day today = Day.MONDAY;
+        System.out.println(today);
+    }
+}</code></pre></div>
+<p> ### Important Features of Enum  1️⃣ Enum is a Special Class Internally:</p>
+<ul><li>Enum extends java.lang.Enum</li><li>Cannot extend any other class</li><li>Can implement interfaces</li></ul>
+<p class="estep">2️⃣ Enum Can Have Fields, Constructors &amp; Methods</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">enum Role {
+
+    ADMIN(&quot;Full Access&quot;),
+    USER(&quot;Limited Access&quot;);
+
+    private String description;
+
+    Role(String description) {   // constructor
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+}
+
+//usage 
+System.out.println(Role.ADMIN.getDescription());</code></pre></div>
+<ul class="checklist">
+<li class="ok">Enum constructor is always private (even if not written).</li>
+</ul>
+<p class="estep">3️⃣ Enum with Switch</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">enum PaymentStatus {
+    SUCCESS, FAILED, PENDING
+}
+
+public class Test {
+    public static void main(String[] args) {
+        PaymentStatus status = PaymentStatus.SUCCESS;
+
+        switch (status) {
+            case SUCCESS -&gt; System.out.println(&quot;Payment done&quot;);
+            case FAILED -&gt; System.out.println(&quot;Payment failed&quot;);
+            case PENDING -&gt; System.out.println(&quot;Payment pending&quot;);
+        }
+    }
+}</code></pre></div>
+<p class="estep">4️⃣ Enum Methods (Built-in)</p>
+<p>Every enum has:</p>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Method</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left"><code>values()</code></td><td style="text-align:left">Returns all enum constants</td></tr><tr><td style="text-align:left"><code>valueOf()</code></td><td style="text-align:left">Returns enum constant by name</td></tr><tr><td style="text-align:left"><code>ordinal()</code></td><td style="text-align:left">Returns index position</td></tr><tr><td style="text-align:left"><code>name()</code></td><td style="text-align:left">Returns constant name</td></tr></tbody></table></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">for (Status s : Status.values()) {
+    System.out.println(s + &quot; &quot; + s.ordinal());
+}</code></pre></div>
+<h3 class="sub">Enum with Abstract Method</h3>
+<p>Each constant can provide its own implementation.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">enum Operation {
+
+    ADD {
+        double apply(double x, double y) {
+            return x + y;
+        }
+    },
+    SUBTRACT {
+        double apply(double x, double y) {
+            return x - y;
+        }
+    };
+
+    abstract double apply(double x, double y);
+}</code></pre></div>
+<ul><li>Each variable defined inside an enum class is applicable to every constant in that enum. In other words, every constant is an object of the enum class and contains those defined variables.</li><li>If we define a parameterized constructor in an enum, it will be invoked once for each constant at the time the enum is initialized.</li><li>If we want to define a method that belongs to the enum as a whole (not tied to individual constants), we should make it static. Otherwise, the method will be associated with each constant (since each constant is an instance of the enum).</li></ul>
+<h3 class="sub">Overriding a Concrete Method in Enum</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">enum Operation {
+
+    ADD {
+        @Override
+        public int apply(int x, int y) {
+            return x + y;
+        }
+    },
+
+    MULTIPLY {
+        @Override
+        public int apply(int x, int y) {
+            return x * y;
+        }
+    };
+
+    public int apply(int x, int y) {
+        return 0;
+    }
+}</code></pre></div>
+<h3 class="sub">Enum implementing interface</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">interface DummyInterface{
+    String toLower();
+}
+
+enum Day implements DummyInterface {
+    MONDAY,
+    TUESDAY,
+    WEDNESDAY;
+
+    @Override
+    public String toLower() {
+        return this.name().toLowerCase();
+    }
+}</code></pre></div>
+<p>So here enum implements an interface and We can call toLower method for every constant.</p>
+<figure class="fig"><img src="images/en1.png" alt="alt text" loading="lazy"></figure>
+<hr>
+<h2 class="sec" id="s-final-class">Final class</h2>
+<p>It is a class which cannot be inherited.</p>
+<hr>
+<h2 class="sec" id="s-singleton-class">Singleton class</h2>
+<p>A <strong>Singleton</strong> is a design pattern that ensures:</p>
+<blockquote>Only <strong>one instance</strong> of a class exists in the JVM And provides a <strong>global access point</strong> to it.</blockquote>
+<h3 class="sub">🔥 Why Use Singleton?</h3>
+<p>Used when exactly one object is needed, such as:</p>
+<ul class="checklist">
+<li class="ok">Logger</li>
+<li class="ok">Configuration manager</li>
+<li class="ok">Database connection manager</li>
+<li class="ok">Cache manager</li>
+</ul>
+<h3 class="sub">Different ways to create Singleton class</h3>
+<ol><li>Eager Initialization : </li></ol>
+<ul><li>Instance is created at class loading time.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Singleton {
+
+    private static final Singleton INSTANCE = new Singleton();
+
+    private Singleton() { }   // private constructor
+
+    public static Singleton getInstance() {
+        return INSTANCE;
+    }
+}</code></pre></div>
+<ul class="checklist">
+<li class="ok">Pros:</li>
+</ul>
+<ul><li>Simple  </li><li>Thread-safe (class loading is thread-safe)  </li></ul>
+<ul class="checklist">
+<li class="no">Cons:</li>
+</ul>
+<ul><li>Instance created even if not used  </li></ul>
+<hr>
+<ol><li>Lazy Initialization (Not Thread Safe ❌)  </li></ol>
+<ul><li>Instance created only when needed.  </li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Singleton {
+
+    private static Singleton instance;
+
+    private Singleton() { }   // private constructor
+
+    public static Singleton getInstance(){
+        if(instance == null){
+            instance = new Singleton();
+        }
+        return instance;
+    }
+}</code></pre></div>
+<ul class="checklist">
+<li class="no">Problem:</li>
+</ul>
+<ul><li>Not thread-safe.  </li><li>Two threads may create two objects.  </li></ul>
+<hr>
+<ol><li>Thread-Safe Singleton (Synchronized Method)</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Singleton {
+
+    private static Singleton instance;
+
+    private Singleton() { }   // private constructor
+
+    public static synchronized Singleton getInstance(){
+        if(instance == null){
+            instance = new Singleton();
+        }
+        return instance;
+    }
+}</code></pre></div>
+<ul class="checklist">
+<li class="no">Problem:</li>
+</ul>
+<p>Synchronization slows performance.</p>
+<hr>
+<ol><li>Double-Checked Locking (Best Practice)</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Singleton {
+
+    private static volatile Singleton instance;
+
+    private Singleton() { }   // private constructor
+
+    public static Singleton getInstance() {
+        if (instance == null) {
+            synchronized (Singleton.class) {
+                if (instance == null) {
+                    instance = new Singleton();
+                }
+            }
+        }
+        return instance;
+    }
+}</code></pre></div>
+<hr>
+<h4 class="sub4">Memory Issue in Double Checked Locking (Simple Explanation)</h4>
+<p>In multi-core systems:</p>
+<ul><li>Each CPU core has its own <strong>L1 Cache</strong></li><li>All cores share <strong>main memory</strong></li><li>Cache and memory are synchronized periodically (not instantly)</li></ul>
+<figure class="fig"><img src="images/volatile.png" alt="alt text" loading="lazy"></figure>
+<ul><li>So different threads may see <strong>different values temporarily</strong>.</li><li>Each core has its dedicated L1 Cache which is used to cache the objects and time to time it syncs with memory.</li><li>Now let&#x27;s say Thread T1&#x27;s computation is happening at core-1 and it enters the method to get object. Since it&#x27;ll get null for the first time an object will be created and temporarily stored in cache. </li><li>At this point T2 whose computation is happening at Core-2 tries to get the object. </li><li>Now though we do have the object created but not yet synced with the memory. Hence a second object will be created because the object is not there in memory. Therefore two objects are created despite double checked locking.</li><li>This is solved using the volatile keyword. Volatile Keyword means that the object will be created in memory instead of cache.</li><li>So, if we&#x27;ve created any object volatile, any read/write operation happening to this always happens in memory</li><li>Since we&#x27;re using memory synchronized , this is also a bit slow.</li></ul>
+<hr>
+<ol><li>Best &amp; Modern Approach (Enum Singleton ⭐)</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public enum Singleton {
+    INSTANCE;
+
+    public void showMessage() {
+        System.out.println(&quot;Singleton using Enum&quot;);
+    }
+}</code></pre></div>
+<ul class="checklist">
+<li class="ok">Advantages:</li>
+</ul>
+<ul><li>Thread-safe</li><li>Serialization safe</li><li>Reflection safe</li><li>Simplest implementation</li></ul>
+<hr>
+<ol><li>Bill Pugh Singleton (Best Lazy + Thread-Safe Implementation)</li></ol>
+<p>Bill Pugh Singleton uses the concept of:</p>
+<blockquote>Inner static class + JVM class loading mechanism</blockquote>
+<p>It is:</p>
+<ul class="checklist">
+<li class="ok">Lazy initialized</li>
+<li class="ok">Thread-safe</li>
+<li class="ok">No synchronization overhead</li>
+<li class="ok">Cleaner than Double Checked Locking</li>
+</ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Singleton {
+
+    private Singleton() { }
+
+    // Inner static class
+    private static class SingletonHolder {
+        private static final Singleton INSTANCE = new Singleton();
+    }
+
+    public static Singleton getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+}</code></pre></div>
+<h4 class="sub4">How It Works</h4>
+<p class="estep">1️⃣ Outer class is loaded → INSTANCE is NOT created.</p>
+<p class="estep">2️⃣ Only when getInstance() is called →  SingletonHolder class gets loaded.</p>
+<p class="estep">3️⃣ JVM loads inner static class lazily.</p>
+<p class="estep">4️⃣ Class loading is thread-safe → so INSTANCE is created only once.</p>
+<h4 class="sub4">Why It Is Thread Safe?</h4>
+<p>Because:</p>
+<ul class="checklist">
+<li class="ok">JVM guarantees class initialization is thread-safe.</li>
+<li class="ok">Inner class is not loaded until referenced.</li>
+<li class="ok">No need for synchronized.</li>
+</ul>
+<hr>
+<h2 class="sec" id="s-immutable-classes">IMMUTABLE CLASSES</h2>
+<ul><li>An immutable class is a class whose objects cannot be changed after they are created.</li><li>Once you create the object, its data (state) stays the same for the entire lifetime of that object.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">final class Person {
+    private final String name;
+
+    public Person(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}</code></pre></div>
+<p>Here:</p>
+<ul><li>After creating new Person(&quot;John&quot;)  </li><li>You cannot change the name to something else.</li></ul>
+<h3 class="sub">🔹 Rules to Make a Class Immutable</h3>
+<p class="estep">1️⃣ Make the class final</p>
+<p class="estep">2️⃣ Make all fields private and final</p>
+<p class="estep">3️⃣ Initialize fields through constructor only (No setter methods allowed.)</p>
+<p class="estep">4️⃣ Provide only getter methods</p>
+<p class="estep">5️⃣ If class contains mutable objects, return copies (defensive copy)</p>
+<p>example:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public Date getDate() {
+    return new Date(date.getTime());
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-wrapper-class">Wrapper Class</h2>
+<ul><li>We&#x27;ve already discussed it in Java Variables part.</li></ul></main></div>
+<p class="pagefoot">Core Java · interview notes · built as I go</p>
+<script>
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e;}
+function cap(t){var c=el('div','viz-cap');c.appendChild(el('span','pulse'));c.appendChild(document.createTextNode(t));return c;}
+function buildViz(){var h=document.getElementById('heroViz');if(!h)return;var k=h.getAttribute('data-viz');
+  if(k==='chain')vizChain(h);else if(k==='gc')vizGc(h);else if(k==='erasure')vizErase(h);}
+
+/* constructor chaining: child calls super() first, parent body runs first */
+function vizChain(host){
+  host.innerHTML=''; host.appendChild(cap('Constructor chaining · parent runs first, then child'));
+  var wrap=el('div','frames');
+  var f1=el('div','frm','<span>new Dog()</span><span class="badge">you call this</span>');
+  var f2=el('div','frm','<span>Dog() → super()</span><span class="badge">calls parent first</span>');
+  var f3=el('div','frm','<span>Animal()</span><span class="badge">parent body</span>');
+  var f4=el('div','frm','<span>Dog() body</span><span class="badge">child body</span>');
+  [f1,f2,f3,f4].forEach(function(f){wrap.appendChild(f);});
+  host.appendChild(wrap); var read=el('div','readout'); host.appendChild(read);
+  var steps=[
+    [f1,'calling','You write new Dog()'],
+    [f2,'calling','Dog constructor calls super() first'],
+    [f3,'running','Animal() runs — parent is built first'],
+    [f4,'running','Dog() body runs — child finishes last']
+  ]; var k=0;
+  function frame(){
+    [f1,f2,f3,f4].forEach(function(f){f.className='frm';});
+    for(var j=0;j<=k;j++){var s=steps[j];s[0].classList.add(s[1]);}
+    read.innerHTML=(k>=2?'<span class="hit">':'')+steps[k][2]+(k>=2?'</span>':'');
+    k++; if(k>=steps.length){setTimeout(function(){k=0;frame();},1800);}else setTimeout(frame,1150);
+  } frame();
+}
+
+/* generational GC: Eden -> survivor (aging) -> Old, sweeping dead */
+function vizGc(host){
+  host.innerHTML=''; host.appendChild(cap('Generational GC · Eden → Survivor → Old, sweeping unreferenced'));
+  var wrap=el('div','gcwrap'); var reg=el('div','gcregions');
+  function region(name,cls){var r=el('div','region'+(cls?' '+cls:''));r.appendChild(el('div','rname',name));var s=el('div','slots');r.appendChild(s);reg.appendChild(r);return s;}
+  var eden=region('Eden'), s0=region('S0'), s1=region('S1'), old=region('Old Gen','old');
+  wrap.appendChild(reg); host.appendChild(wrap); var read=el('div','readout'); host.appendChild(read);
+  function mk(id,age){var o=el('div','obj',id);if(age)o.appendChild(el('span','age','age '+age));return o;}
+  var step=0;
+  function clear(){[eden,s0,s1,old].forEach(function(s){s.innerHTML='';});}
+  function frame(){
+    clear();
+    if(step===0){['o1','o2','o3','o4','o5'].forEach(function(x){eden.appendChild(mk(x));});
+      read.textContent='New objects are born in Eden';}
+    else if(step===1){var d2=mk('o2'),d5=mk('o5');d2.classList.add('dead');d5.classList.add('dead');
+      eden.appendChild(mk('o1'));eden.appendChild(d2);eden.appendChild(mk('o3'));eden.appendChild(mk('o4'));eden.appendChild(d5);
+      read.innerHTML='GC marks <span class="warn">o2, o5</span> (no references)';}
+    else if(step===2){s0.appendChild(mk('o1',1));s0.appendChild(mk('o3',1));s0.appendChild(mk('o4',1));
+      read.innerHTML='Sweep: survivors move to S0, <span class="hit">age +1</span>';}
+    else if(step===3){s1.appendChild(mk('o1',2));s1.appendChild(mk('o3',2));
+      read.innerHTML='Next GC: survivors hop to S1, aging each round';}
+    else{old.appendChild(mk('o1',3));
+      read.innerHTML='Age hits threshold → <span class="hit">promoted to Old Gen</span>';}
+    step++; if(step>4){setTimeout(function(){step=0;frame();},1900);}else setTimeout(frame,1500);
+  } frame();
+}
+
+/* type erasure: Print<T> -> Print (Object) */
+function vizErase(host){
+  host.innerHTML=''; host.appendChild(cap('Type erasure · generics vanish at runtime'));
+  var e=el('div','erase');
+  var left=el('div','epanel','class Print&lt;<span class="t" id="tt">T</span>&gt; {<br>&nbsp;&nbsp;<span class="t" id="tv">T</span> value;<br>}');
+  var arrow=el('div','earrow','→');
+  var right=el('div','epanel','class Print {<br>&nbsp;&nbsp;<span id="rv">?</span> value;<br>}');
+  e.appendChild(left);e.appendChild(arrow);e.appendChild(right); host.appendChild(e);
+  var read=el('div','readout'); host.appendChild(read);
+  var st=0;
+  function frame(){
+    var tt=document.getElementById('tt'),tv=document.getElementById('tv'),rv=document.getElementById('rv');
+    if(st===0){tt.className='t';tv.className='t';rv.textContent='?';rv.style.color='#e7ebf1';
+      read.textContent='At compile time, Print<T> is generic';}
+    else if(st===1){tt.className='t erased';tv.className='t erased';
+      read.innerHTML='Compiler <span class="warn">erases</span> the type parameter T';}
+    else{rv.textContent='Object';rv.style.color='#4FC1A6';
+      read.innerHTML='Unbounded T becomes <span class="hit">Object</span> in bytecode';}
+    st++; if(st>2){setTimeout(function(){st=0;frame();},1900);}else setTimeout(frame,1400);
+  } frame();
+}
+window.addEventListener('DOMContentLoaded',buildViz);
+</script></body></html>
