@@ -1,0 +1,715 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java Interface — Core Java Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F3; --card:#FFFFFF; --ink:#1A1712; --muted:#6B635A; --hair:#E8E4DE;
+  --accent:#E8710A; --accent-d:#C25E00; --accent-soft:#FFF2E4;
+  --teal:#0E9C8E; --coral:#E5484D; --green:#12924F; --violet:#7C4DDB; --blue:#2563EB;
+  --disp:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.62;font-size:15.5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,245,243,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.top .home{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.top .home:hover{color:var(--accent);text-decoration:none}
+.top .crumb{font-family:var(--disp);font-weight:600;font-size:15px}
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:36px;padding:28px 20px 100px}
+.toc{position:sticky;top:70px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;font-size:13px;padding-right:8px}
+.toc h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc a{display:block;color:var(--muted);padding:4px 10px;border-left:2px solid var(--hair);margin-left:2px;border-radius:0 6px 6px 0}
+.toc a:hover{color:var(--ink);background:var(--card);text-decoration:none}
+.content{min-width:0;max-width:820px}
+.doc-title{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,42px);letter-spacing:-.015em;margin:0 0 6px}
+h2.sec{font-family:var(--disp);font-weight:600;font-size:23px;margin:46px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--ink);scroll-margin-top:80px}
+h3.sub{font-family:var(--disp);font-weight:600;font-size:17.5px;margin:26px 0 8px}
+h4.sub4{font-family:var(--disp);font-weight:600;font-size:15px;margin:18px 0 6px;color:#33291f}
+p{margin:11px 0}
+p.estep{font-family:var(--disp);font-weight:600;font-size:15.5px;margin:18px 0 6px;color:var(--accent-d)}
+p.minilabel{font-family:var(--disp);font-weight:600;font-size:14px;margin:16px 0 4px;color:var(--ink);background:var(--accent-soft);display:inline-block;padding:3px 10px;border-radius:8px}
+ul,ol{margin:11px 0;padding-left:22px}li{margin:5px 0}
+ul.checklist{list-style:none;padding-left:4px}
+ul.checklist li{position:relative;padding-left:26px;margin:6px 0}
+ul.checklist li::before{position:absolute;left:0;top:0;font-weight:700}
+ul.checklist li.ok::before{content:"✓";color:var(--green)}
+ul.checklist li.no::before{content:"✕";color:var(--coral)}
+ul.checklist li.arw::before{content:"→";color:var(--accent)}
+hr{border:none;border-top:1px solid var(--hair);margin:26px 0}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-d);padding:1px 6px;border-radius:5px}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;color:#3a2f22}
+.tablewrap{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--hair);padding:8px 12px}
+th{background:var(--card);font-family:var(--disp);font-weight:600}
+tbody tr:nth-child(even){background:#FBFAF8}
+.fig{margin:18px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px}
+.fig figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.code{position:relative;margin:14px 0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:#161a20}
+.code.inline{background:#20262f}
+.code.ascii{background:#1b2530}
+.code-tag{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8891a8;z-index:2}
+.code pre{margin:0;padding:15px 18px;overflow-x:auto}
+.code code{background:none;color:#e7ebf1;padding:0;font-size:13px;line-height:1.6;display:block}
+.code .language-plaintext{color:#cfe0dc;white-space:pre}
+.hero-viz{margin:18px 0 28px;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px;min-height:170px}
+.viz-cap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.viz-cap .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.readout{font-family:var(--mono);font-size:14px;margin-top:16px;color:var(--ink);min-height:20px}
+.readout .hit{color:var(--green);font-weight:700}
+.readout .warn{color:var(--coral);font-weight:700}
+/* casting ladder */
+.ladder{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rung{padding:9px 12px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-weight:700;font-size:13px;transition:all .45s ease}
+.rung.on{border-color:var(--green);background:#ECFDF3;transform:translateY(-3px)}
+.rung.warnon{border-color:var(--coral);background:#FEF2F2}
+.arrw{color:var(--muted);font-family:var(--mono)}
+/* jvm pipeline */
+.pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stage{padding:12px 14px;border-radius:12px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:center;min-width:92px;transition:all .4s ease}
+.stage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.stage.hot{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.stage small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;margin-top:2px}
+.flowarr{color:var(--accent);font-size:18px}
+/* oop dispatch */
+.dispatch{display:flex;flex-direction:column;gap:14px}
+.drow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{padding:9px 13px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;border:2px solid var(--hair);background:#fff;transition:all .45s}
+.pill.ref{border-color:var(--muted);color:var(--muted)}
+.pill.obj.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.pill.impl{border-color:var(--hair);opacity:.5}
+.pill.impl.win{border-color:var(--green);background:#ECFDF3;color:var(--green);opacity:1;transform:translateY(-3px)}
+.pagefoot{max-width:820px;margin:40px auto 0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.toc{display:none}}
+
+.cpanel{background:#161a20;border-radius:12px;padding:14px 16px;font-family:var(--mono);font-size:12.5px;color:#e7ebf1;line-height:1.65;transition:opacity .5s}
+.cpanel .kw{color:#C792EA}.cpanel .ty{color:#4FC1A6}.cpanel .mut{color:#8891a8}
+.twocol{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.twocol .cpanel{flex:1;min-width:230px}
+.earrow{font-size:24px;color:var(--accent)}
+.fade{opacity:.25}
+.rchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.rchip{padding:7px 11px;border-radius:9px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12px;font-weight:600;opacity:0;transform:translateY(6px);transition:all .4s}
+.rchip.on{opacity:1;transform:none;border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.rchip .v{color:var(--green);font-weight:700}
+.classbox{display:inline-block;padding:10px 16px;border-radius:10px;border:2px solid var(--accent);background:var(--accent-soft);font-family:var(--mono);font-weight:700;color:var(--accent-d);margin-bottom:12px}
+.retstrip{display:flex;gap:10px;flex-wrap:wrap}
+.retstage{flex:1;min-width:120px;border:2px solid var(--hair);border-radius:10px;padding:10px;text-align:center;background:#fff;transition:all .45s}
+.retstage .rt{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.retstage .rl{font-family:var(--disp);font-weight:600;font-size:14px;margin-top:3px}
+.retstage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.retstage.gone{opacity:.3}
+.retstage.keep{border-color:var(--green);background:#ECFDF3}
+.frames{display:flex;flex-direction:column;gap:7px;max-width:420px}
+.frm{padding:10px 14px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:13px;font-weight:600;display:flex;justify-content:space-between;align-items:center;transition:all .4s}
+.frm .q{font-size:11px;font-weight:400;color:var(--muted)}
+.frm.hasexc{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.frm.crash{border-color:var(--coral);background:var(--coral);color:#fff}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded',function(){try{document.querySelectorAll('code.language-java').forEach(function(b){hljs.highlightElement(b)});}catch(e){}});</script>
+
+</head><body>
+<div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">Java Interface</span></div>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-what-is-interface">What is interface?</a><a href="#s-how-to-define-an-interface">How to define an Interface?</a><a href="#s-why-we-need-interface">Why we need interface?</a><a href="#s-methods-in-interface">Methods in interface</a><a href="#s-fields-in-interface">Fields in interface</a><a href="#s-interface-implementation">Interface implementation</a><a href="#s-nested-interface">Nested interface</a><a href="#s-difference-between-interface-and-abstract-class">Difference between interface and abstract class</a><a href="#s-java8-interface-features">Java8 interface features</a><a href="#s-default-method">Default method</a><a href="#s-static-method">Static method</a><a href="#s-java9-interface-features">Java9 interface features</a><a href="#s-private-method-and-private-static-method">private method and private static method</a><a href="#s-functional-interface-and-lambda-expressions">Functional interface and lambda expressions</a></nav><main class="content"><h1 class="doc-title">Java Interface</h1>
+<div class="hero-viz" id="heroViz" data-viz="iface"></div>
+<hr>
+<h2 class="sec" id="s-what-is-interface">What is interface?</h2>
+<ul><li>Interface is something which helps 2 systems to interact with each other, without one system has to know the details of other.</li><li>In simple terms, it helps achieve abstraction.</li></ul>
+<hr>
+<h2 class="sec" id="s-how-to-define-an-interface">How to define an Interface?</h2>
+<p>Interface declaration consists of:</p>
+<ul><li>Access modifiers <strong>(Only public and default are allowed)</strong></li><li><code>interface</code> keyword</li><li>Interface name</li><li>Comma separated list of parent interfaces (if there are any)</li><li>Body</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    void fly();
+}</code></pre></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">interface Bird {
+    void fly();
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-why-we-need-interface">Why we need interface?</h2>
+<p>1) Abstraction</p>
+<ul><li>Using interface we can achieve full abstraction. Means we can define what a class must do not how it will do it.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    void fly();
+}
+
+public class Eagle implements Bird{
+
+    @Override
+    public void fly() {
+        // Actual implementation
+    }
+}</code></pre></div>
+<p>2) Polymorphism</p>
+<ul><li>Interface can be used as a data type.</li><li>We can not create the object of an interface, but it can hold the reference of all the classes which implements it. And at runtime, it decides which method need to be invoked.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    void fly();
+}
+
+public class Eagle implements Bird{
+    @Override
+    public void fly() {
+        System.out.println(&quot;Eagle is flying&quot;);
+    }
+}
+
+public class Hen implements Bird {
+    @Override
+    public void fly() {
+        System.out.println(&quot;Hen is flying&quot;);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Bird eagle = new Eagle();
+        eagle.fly(); // &quot;Eagle is flying&quot;
+        
+        Bird hen = new Hen();
+        hen.fly();  // &quot;Hen is flying&quot;
+    }
+}</code></pre></div>
+<p>3) Multiple inheritance </p>
+<ul><li>In java, Multiple inheritance can be achieved only using interface.</li><li>Diamond problem:</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class WaterAnimal {
+    public boolean canBreathe(){
+        return true;
+    }
+}
+
+public class LandAnimal {
+    public boolean canBreathe(){
+        return true;
+    }
+}
+
+// this is invalid with compile time error - &quot;Class cannot extend multiple classes&quot;
+public class Crocodile extends WaterAnimal, LandAnimal {
+}
+
+// because if this was allowed then which canBreathe() method to call in below scenario is ambiguous
+public class Main {
+    public static void main(String[] args) {
+        Crocodile crocodile = new Crocodile();
+        crocodile.canBreathe(); // ambiguous method call
+    }
+} </code></pre></div>
+<p>This problem can be solved using interface -</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface WaterAnimal {
+    boolean canBreathe();
+}
+
+public interface LandAnimal {
+    boolean canBreathe();
+}
+
+public class Crocodile implements WaterAnimal, LandAnimal {
+    @Override
+    public boolean canBreathe() {
+        return true;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Crocodile crocodile = new Crocodile();
+        crocodile.canBreathe();  // true
+    }
+}</code></pre></div>
+<h2 class="sec" id="s-methods-in-interface">Methods in interface</h2>
+<ul><li>All methods are implicit public only.</li><li>Method can not be declared as final. </li></ul>
+<h2 class="sec" id="s-fields-in-interface">Fields in interface</h2>
+<ul><li>All fields are public, static and final implicitly (CONSTANTS)</li><li>You can not make field private or protected.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    int MAX_HEIGHT_IN_FEET = 2000;
+    void fly();
+}</code></pre></div>
+<p><code>==</code></p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    public static final int MAX_HEIGHT_IN_FEET = 2000;
+    void fly();
+}</code></pre></div>
+<h2 class="sec" id="s-interface-implementation">Interface implementation</h2>
+<ul><li>Overriding method can not have more restrictive access modifiers.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    void fly();
+}
+
+public class Eagle implements Bird{
+    // This is invalid 
+    @Override
+    protected void fly() {  // CE: &#x27;fly()&#x27; in &#x27;org.example.Eagle&#x27; clashes with &#x27;fly()&#x27; in &#x27;org.example.Bird&#x27;; attempting to assign weaker access privileges (&#x27;protected&#x27;); was &#x27;public&#x27;
+        System.out.println(&quot;Eagle is flying&quot;);
+    }
+}</code></pre></div>
+<ul><li>Concrete class implementing interface must implement all the declared methods in interface. </li><li>Abstract class implementing interface is not forced to implement all the declared methods in interface.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    void fly();
+    void noOfLegs();
+}
+
+public abstract class Eagle implements Bird{
+    @Override
+    public void fly() {
+        System.out.println(&quot;Eagle is flying&quot;);
+    }
+}
+
+public class WhiteEagle extends Eagle{
+    @Override
+    public void noOfLegs() {
+        // actual implementation
+    }
+}</code></pre></div>
+<ul><li>A class can implement multiple interfaces.</li></ul>
+<hr>
+<h2 class="sec" id="s-nested-interface">Nested interface</h2>
+<ul><li>Nested interface can be declared within another interface.</li><li>Nested interface can be declared within a class.</li></ul>
+<p>🔹Rules:</p>
+<ul><li>A nested interface declared within interface is by default <code>public</code> (other modifiers are not allowed).</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    void fly();
+
+    interface nonFlyingBird{
+        void canRun();
+    }
+}</code></pre></div>
+<ul><li>A nested interface declared within class can have any access modifier.</li><li>When we implement outer interface, inner interface implementation is not mandatory and vice versa.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    void fly();
+
+    interface nonFlyingBird{
+        void canRun();
+    }
+}
+
+// Implementing only outer interface is valid 
+public class Eagle implements Bird{
+    @Override
+    public void fly() {
+        System.out.println(&quot;Eagle is flying&quot;);
+    }
+}
+
+// or Implementing only outer interface is also valid
+
+public class Eagle implements Bird.nonFlyingBird{
+    @Override
+    public void canRun() {
+        // actual implementation
+    }
+}
+
+// Implementing both inner and outer interface
+public class Eagle implements Bird, Bird.nonFlyingBird{
+    @Override
+    public void fly() {
+        // actual implementation
+    }
+
+    @Override
+    public void canRun() {
+        // actual implementation
+    }
+}
+</code></pre></div>
+<hr>
+<h2 class="sec" id="s-difference-between-interface-and-abstract-class">Difference between interface and abstract class</h2>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">S.No</th><th style="text-align:left">Abstract Class</th><th style="text-align:left">Interface</th></tr></thead><tbody><tr><td style="text-align:left">1</td><td style="text-align:left">Keyword used here is <code>abstract</code></td><td style="text-align:left">Keyword used here is <code>interface</code></td></tr><tr><td style="text-align:left">2</td><td style="text-align:left">Child classes need to use keyword <code>extends</code></td><td style="text-align:left">Child classes need to use keyword <code>implements</code></td></tr><tr><td style="text-align:left">3</td><td style="text-align:left">It can have both abstract and non-abstract methods</td><td style="text-align:left">It can have only abstract methods (From Java 8 onwards it can have default, static and private methods where we can provide implementation)</td></tr><tr><td style="text-align:left">4</td><td style="text-align:left">It can extend from another class and multiple interfaces</td><td style="text-align:left">It can only extend from other interfaces</td></tr><tr><td style="text-align:left">5</td><td style="text-align:left">Variables can be static, non-static, final, non-final etc.</td><td style="text-align:left">Variables are by default CONSTANTS</td></tr><tr><td style="text-align:left">6</td><td style="text-align:left">Variables and methods can be private, protected, public, default</td><td style="text-align:left">Variables and methods are by default public (In Java 9, private methods are supported)</td></tr><tr><td style="text-align:left">7</td><td style="text-align:left">Multiple inheritance is not supported</td><td style="text-align:left">Multiple inheritance is supported in Java using interfaces</td></tr><tr><td style="text-align:left">8</td><td style="text-align:left">It can provide the implementation of the interface</td><td style="text-align:left">It cannot provide the implementation of any other interface or abstract class</td></tr><tr><td style="text-align:left">9</td><td style="text-align:left">It can have a constructor</td><td style="text-align:left">It cannot have a constructor</td></tr><tr><td style="text-align:left">10</td><td style="text-align:left">To declare a method abstract, we must use the &quot;abstract&quot; keyword and it can be protected, public, or default</td><td style="text-align:left">No need to use any keyword to make a method abstract. By default, it is public</td></tr></tbody></table></div>
+<hr>
+<h2 class="sec" id="s-java8-interface-features">Java8 interface features</h2>
+<hr>
+<h2 class="sec" id="s-default-method">Default method</h2>
+<ul><li>Before Java 8, interfaces could contain only abstract methods, and every implementing class was required to provide its own implementation.</li><li>The drawback of this approach was that even a small change to a method required modifying all implementing classes.</li><li>Using default method :</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">//interface
+public interface Bird {
+    void fly();
+    
+    default int getMaxSpeed() {
+        return 100; // Default max speed for birds
+    }
+}
+
+//implementation
+public class Eagle implements Bird {
+    @Override
+    public void fly() {
+        System.out.println(&quot;Eagle is flying&quot;);
+    }
+}
+
+//usage
+public class Main {
+    public static void main(String[] args) {
+        Bird eagle = new Eagle();
+        eagle.fly();
+        eagle.getMaxSpeed(); // This will call the default method from the Bird interface
+    }
+}</code></pre></div>
+<h3 class="sub">How to handle diamond problem w.r.t default methods?</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    default boolean canBreathe() {
+        return true; // Default behavior for birds
+    }
+}
+
+
+public interface LivingThing {
+    default boolean canBreathe() {
+        return true; // Default behavior for living things
+    }
+}
+
+// It is mandatory to provide implementation of the default method in such cases.
+public class Eagle implements Bird, LivingThing {
+    public void fly() {
+        System.out.println(&quot;The eagle is flying.&quot;);
+    }
+
+    @Override
+    public boolean canBreathe() {
+        return Bird.super.canBreathe(); // Resolving the conflict by choosing Bird&#x27;s implementation
+    }
+}</code></pre></div>
+<p><strong>Note: It is mandatory to provide implementation of the default method in such cases.</strong></p>
+<h3 class="sub">How to extend interface, that contains Default method?</h3>
+<p>1) Don&#x27;t touch parent method -</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">//parent interface
+public interface LivingThing {
+    default boolean canBreathe() {
+        return true; // Default behavior for living things
+    }
+}
+
+//child interface
+public interface Bird extends LivingThing {
+    void fly();
+}
+
+//implementation class
+public class Eagle implements Bird {
+    public void fly() {
+        System.out.println(&quot;The eagle is flying.&quot;);
+    }
+}
+
+//usage
+public class Main {
+    public static void main(String[] args) {
+        Bird eagle = new Eagle();
+        eagle.canBreathe();  // This will return true, as it&#x27;s the default behavior defined in LivingThing
+    }
+}</code></pre></div>
+<p>2) Hide parent&#x27;s default method and force implementation -</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">//parent interface
+public interface LivingThing {
+    default boolean canBreathe() {
+        return true; // Default behavior for living things
+    }
+}
+
+//child interface
+public interface Bird extends LivingThing {
+    boolean canBreathe(); // This method will override the default implementation from LivingThing
+}
+
+//implementation class
+public class Eagle implements Bird {
+    @Override
+    public boolean canBreathe() {
+        return false;
+    }
+}
+
+//usage
+public class Main {
+    public static void main(String[] args) {
+        Bird eagle = new Eagle();
+        eagle.canBreathe(); // This will call the canBreathe implementation from Eagle class
+    }
+}</code></pre></div>
+<p>3) Override parent&#x27;s default method in child -</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">//parent interface
+public interface LivingThing {
+    default boolean canBreathe() {
+        return true; // Default behavior for living things
+    }
+}
+
+//child interface
+public interface Bird extends LivingThing {
+    default boolean canBreathe() {
+        return false; // Default behavior for birds
+    }
+}
+
+//implementation class
+public class Eagle implements Bird {
+
+}
+
+//usage
+public class Main {
+    public static void main(String[] args) {
+        Bird eagle = new Eagle();
+        eagle.canBreathe(); // This will call the canBreathe method defined in Bird, which returns false
+    }
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-static-method">Static method</h2>
+<ul><li>We can provide implementation of the method in interface.</li><li>But it cannot be overridden by implementing class.</li><li>We can access it through interface name.</li><li>It is by default public.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">//interface with static method
+public interface Bird {
+    static boolean canBreathe() {
+        return false; // Default behavior for birds
+    }
+}
+
+//implementation class
+public class Eagle implements Bird {
+        public void isAlive(){
+            if(Bird.canBreathe()){
+                System.out.println(&quot;Eagle can breathe and is alive.&quot;);
+            }
+        }
+}
+
+
+//usage
+public class Main {
+    public static void main(String[] args) {
+        Eagle eagle = new Eagle();
+        eagle.isAlive();
+    }
+}</code></pre></div>
+<h3 class="sub">Some important notes -</h3>
+<ul><li>If we try to override the static method in implementation class, it will be considered as new method.</li><li>If we try to add <code>@override</code> annotation, it will throw CE.</li><li>default methods can be overridden but static methods can not be.</li></ul>
+<hr>
+<h2 class="sec" id="s-java9-interface-features">Java9 interface features</h2>
+<hr>
+<h2 class="sec" id="s-private-method-and-private-static-method">private method and private static method</h2>
+<ul><li>This is simply the private method or private static method but in interface.</li><li>The main purpose is usability. If multiple default methods share same code then this can help.</li><li><code>private</code> method cannot be <code>abstract</code>. </li><li>As it is private, it can be used only inside the interface where it is defined.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface Bird {
+    default boolean isFlyingAndAlive() {
+        return isLivingThing() &amp;&amp; canFly(); // A bird is alive if it is a living thing and can fly
+    }
+
+    private boolean isLivingThing(){
+        return true; // Assuming all birds are living things
+    }
+
+    private boolean canFly(){
+        return true; // Assuming all birds can fly
+    }
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-functional-interface-and-lambda-expressions">Functional interface and lambda expressions</h2>
+<hr>
+<h3 class="sub">What is a functional interface?</h3>
+<ul><li>An interface with exactly one abstract method.</li><li>Can have any number of default and static methods.</li><li>Annotated with <code>@FunctionalInterface</code> (optional but recommended). If we add the annotation then it will not allow us to add more than one abstract method. If we do so, we get CE: <code>Multiple non-overriding abstract methods found in interface org.practice.oops.LivingThing</code></li></ul>
+<figure class="fig"><img src="images/fi1.png" alt="alt text" loading="lazy"></figure>
+<ul><li>Valid FunctionalInterface -</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">@FunctionalInterface
+public interface LivingThing {
+    void canBreathe();
+
+    default boolean isLivingThing() {
+        return true; // Assuming all living things can breathe
+    }
+}</code></pre></div>
+<hr>
+<h3 class="sub">What is lambda expression? And how to use a functional interface with lambda expression?</h3>
+<ul><li>A short way to write anonymous methods (functional code).</li><li>Used to implement the abstract method of a functional interface.</li><li>There are 3 ways to implement a functional interface =&gt; Using implementing class, Using anonymous class and Using lambda expression.</li><li>Consider the below functional interface –</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">@FunctionalInterface
+public interface AdditionOperator {
+    int add(int a, int b);
+}</code></pre></div>
+<ol><li>Using class =&gt;  </li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Addition implements AdditionOperator {
+    @Override
+    public int add(int a, int b) {
+        return a + b;
+    }
+}</code></pre></div>
+<ol><li>Using anonymous class and lambda expression =&gt;</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        // Using an anonymous class to implement the AdditionOperator interface
+        AdditionOperator additionOperator = new AdditionOperator() {
+            @Override
+            public int add(int a, int b) {
+                return a + b;
+            }
+        };
+        additionOperator.add(10,20);
+        
+        
+        // Lambda expression to implement the AdditionOperator interface
+        AdditionOperator operator = (a, b) -&gt; a + b; // Lambda expression
+        operator.add(10,20);
+    }
+}</code></pre></div>
+<hr>
+<h3 class="sub">Advantages of functional interface.</h3>
+<ul><li>Helps in writing cleaner and concise code.</li><li>Supports functional programming in Java.</li><li>Useful in streams, APIs, and event handling.</li><li>Easy to pass behavior as a parameter (like a method).</li></ul>
+<hr>
+<h3 class="sub">Types of functional interfaces =&gt; Consumer, Supplier, Function, Predicate</h3>
+<ol><li>Consumer: Accepts single input and returns no result.</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        Consumer&lt;Integer&gt; consumer = val -&gt;
+        {
+            if (val &lt; 10) {
+                System.out.println(&quot;Result is less than 10: &quot; + val);
+            } else {
+                System.out.println(&quot;Result is 10 or greater: &quot; + val);
+            }
+        };
+
+        consumer.accept(25); // Output: Result is 10 or greater: 25
+    }
+}</code></pre></div>
+<ol><li>Supplier: Accepts No input but produces a result.</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        Supplier&lt;String&gt; supplier = () -&gt; {
+            return &quot;I am a supplier!&quot;;
+        };
+        supplier.get(); // Output: I am a supplier!
+    }
+}</code></pre></div>
+<ol><li>Function: Accepts one input parameter, process it and produce a result.</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        Function&lt;Integer,String&gt; intToString = (Integer i) -&gt; {
+            return Integer.toString(i);
+        };
+        intToString.apply(10); // Output: &quot;10&quot;
+    }
+}</code></pre></div>
+<ol><li>Predicate: Accepts one input and produces a boolean result.</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        Predicate&lt;Integer&gt; predicate  = (num) -&gt; {
+            if (num&gt;10) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+        predicate.test(20); // true
+        predicate.test(5);  // false
+    }
+}</code></pre></div>
+<hr>
+<h3 class="sub">How to handle use case when functional interface extends from another interface (or functional interface)?</h3>
+<ol><li>Functional interface extending non-functional interface:  </li></ol>
+<ul><li>It must have only one abstract method (either in parent or own) otherwise we will get below CE: <code>Multiple non-overriding abstract methods found in interface org.practice.oops.AdditionOperator</code></li></ul>
+<figure class="fig"><img src="images/fi2.png" alt="alt text" loading="lazy"></figure>
+<ul><li>this will work (same abstract method in parent and child) =&gt;</li></ul>
+<figure class="fig"><img src="images/fi3.png" alt="alt text" loading="lazy"></figure>
+<ol><li>Functional interface extending another functional interface:  </li></ol>
+<ul><li>Both must have the same abstract method but can have different static/default methods</li></ul>
+<figure class="fig"><img src="images/fi4.png" alt="alt text" loading="lazy"></figure>
+<ol><li>Interface extending functional interface:</li></ol>
+<figure class="fig"><img src="images/fi5.png" alt="alt text" loading="lazy"></figure>
+<p>This works because even though Bird is extending LivingThing, LivingThing still has only one abstract method.</p></main></div>
+<p class="pagefoot">Core Java · interview notes · built as I go</p>
+<script>
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e;}
+function cap(t){var c=el('div','viz-cap');c.appendChild(el('span','pulse'));c.appendChild(document.createTextNode(t));return c;}
+function buildViz(){var h=document.getElementById('heroViz');if(!h)return;var k=h.getAttribute('data-viz');
+  if(k==='iface')vizIface(h);else if(k==='reflect')vizReflect(h);else if(k==='anno')vizAnno(h);else if(k==='exc')vizExc(h);}
+
+/* functional interface -> lambda collapse */
+function vizIface(host){
+  host.innerHTML=''; host.appendChild(cap('Functional interface · anonymous class collapses to a lambda'));
+  var tw=el('div','twocol');
+  var left=el('div','cpanel',
+    '<span class="mut">// verbose anonymous class</span><br>'+
+    'Calc c = <span class="kw">new</span> Calc() {<br>'+
+    '&nbsp;&nbsp;<span class="kw">public</span> <span class="ty">int</span> op(<span class="ty">int</span> a,<span class="ty">int</span> b){<br>'+
+    '&nbsp;&nbsp;&nbsp;&nbsp;<span class="kw">return</span> a + b;<br>&nbsp;&nbsp;}<br>};');
+  var arr=el('div','earrow','→');
+  var right=el('div','cpanel','<span class="mut">// same thing, as a lambda</span><br>Calc c = (a, b) -&gt; a + b;');
+  tw.appendChild(left);tw.appendChild(arr);tw.appendChild(right); host.appendChild(tw);
+  var read=el('div','readout'); host.appendChild(read);
+  var st=0;
+  function frame(){
+    if(st===0){left.classList.remove('fade');right.classList.add('fade');read.textContent='A functional interface has exactly ONE abstract method';}
+    else{left.classList.add('fade');right.classList.remove('fade');read.innerHTML='So it can be written as a <span class="hit">lambda</span> — no boilerplate';}
+    st=1-st; setTimeout(frame,2000);
+  } frame();
+}
+
+/* reflection: inspect a class at runtime */
+function vizReflect(host){
+  host.innerHTML=''; host.appendChild(cap('Reflection · inspect a class at runtime'));
+  host.appendChild(el('div','classbox','Employee.class'));
+  var chips=el('div','rchips');
+  var data=[['getName()','Employee'],['getDeclaredFields()','name, age'],
+            ['getDeclaredMethods()','sayHello, privateMethod'],['setAccessible(true)','private unlocked']];
+  var cs=data.map(function(d){var c=el('div','rchip',d[0]+' → <span class="v">'+d[1]+'</span>');chips.appendChild(c);return c;});
+  host.appendChild(chips); var read=el('div','readout'); host.appendChild(read);
+  var msgs=['Ask the Class object for its name','Read its fields — even private ones','List its methods','Force access to private members'];
+  var k=0;
+  function frame(){
+    cs.forEach(function(c,idx){c.classList.toggle('on',idx<=k);});
+    read.innerHTML=(k===3?'<span class="warn">':'')+msgs[k]+(k===3?'</span>':'');
+    k++; if(k>=cs.length){setTimeout(function(){k=0;cs.forEach(function(c){c.classList.remove('on');});frame();},1900);}else setTimeout(frame,1100);
+  } frame();
+}
+
+/* annotation retention lifecycle */
+function vizAnno(host){
+  host.innerHTML=''; host.appendChild(cap('Retention · how long an annotation survives'));
+  var strip=el('div','retstrip');
+  var s1=el('div','retstage','<div class="rt">stage 1</div><div class="rl">Source code</div>');
+  var s2=el('div','retstage','<div class="rt">stage 2</div><div class="rl">.class file</div>');
+  var s3=el('div','retstage','<div class="rt">stage 3</div><div class="rl">Runtime (JVM)</div>');
+  strip.appendChild(s1);strip.appendChild(s2);strip.appendChild(s3); host.appendChild(strip);
+  var read=el('div','readout'); host.appendChild(read);
+  var pol=[
+    ['SOURCE', [s1],[s2,s3], 'SOURCE → discarded by the compiler, never in the .class'],
+    ['CLASS',  [s1,s2],[s3], 'CLASS (default) → kept in .class, gone at runtime'],
+    ['RUNTIME',[s1,s2,s3],[], 'RUNTIME → survives everywhere, readable via reflection']
+  ]; var k=0;
+  function frame(){
+    var p=pol[k];
+    [s1,s2,s3].forEach(function(s){s.className='retstage';});
+    p[1].forEach(function(s){s.classList.add('keep');});
+    p[2].forEach(function(s){s.classList.add('gone');});
+    read.innerHTML='@Retention('+p[0]+') · '+(k===2?'<span class="hit">':'')+p[3]+(k===2?'</span>':'');
+    k++; if(k>=pol.length){setTimeout(function(){k=0;frame();},2000);}else setTimeout(frame,1700);
+  } frame();
+}
+
+/* exception propagation up the call stack */
+function vizExc(host){
+  host.innerHTML=''; host.appendChild(cap('Exceptions bubble up the call stack until caught'));
+  var fr=el('div','frames');
+  var m3=el('div','frm','<span>method3()</span><span class="q">5 / 0 → throws here</span>');
+  var m2=el('div','frm','<span>method2()</span><span class="q">calls method3()</span>');
+  var m1=el('div','frm','<span>method1()</span><span class="q">calls method2()</span>');
+  var mn=el('div','frm','<span>main()</span><span class="q">calls method1()</span>');
+  [m3,m2,m1,mn].forEach(function(f){fr.appendChild(f);}); host.appendChild(fr);
+  var read=el('div','readout'); host.appendChild(read);
+  var order=[m3,m2,m1,mn];
+  var q=['ArithmeticException thrown in method3()','method2() can\'t handle it → passes up','method1() can\'t handle it → passes up','main() can\'t handle it either'];
+  var k=0;
+  function frame(){
+    order.forEach(function(f){f.classList.remove('hasexc','crash');});
+    if(k<4){order[k].classList.add('hasexc');read.innerHTML='<span class="warn">'+q[k]+'</span>';k++;setTimeout(frame,1150);}
+    else{order.forEach(function(f){f.classList.add('crash');});read.innerHTML='Uncaught → JVM <span class="warn">terminates</span> &amp; prints the stack trace';setTimeout(function(){k=0;frame();},2100);}
+  } frame();
+}
+window.addEventListener('DOMContentLoaded',buildViz);
+</script></body></html>

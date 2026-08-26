@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Core Java — Interview Notes</title>
+<title>Complete Java — Interview Notes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
   .sub{color:var(--muted);font-size:16px;max-width:60ch;margin:0}
   .progress{margin-top:22px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;color:var(--muted)}
   .bar{flex:1;height:8px;background:var(--hair);border-radius:99px;overflow:hidden;max-width:300px}
-  .bar span{display:block;height:100%;width:50%;background:var(--accent);border-radius:99px}
+  .bar span{display:block;height:100%;width:66.7%;background:var(--accent);border-radius:99px}
   .seclabel{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:40px 0 14px;display:flex;align-items:center;gap:12px}
   .seclabel::after{content:"";flex:1;height:1px;background:var(--hair)}
   .list{display:flex;flex-direction:column;gap:10px}
@@ -43,10 +43,10 @@
 <body>
 <div class="wrap">
   <header>
-    <p class="kicker">Interview Prep · Java Fundamentals</p>
-    <h1>Core Java</h1>
+    <p class="kicker">Interview Prep · Java</p>
+    <h1>Complete Java</h1>
     <p class="sub">Interview-focused Java notes — refined, simplified, and heavy on the areas interviewers actually probe. Each topic: clear explanations, diagrams, and the gotchas that trip people up under pressure.</p>
-    <div class="progress"><span>6 / 12 topics</span><span class="bar"><span></span></span></div>
+    <div class="progress"><span>10 / 15 topics</span><span class="bar"><span></span></span></div>
   </header>
 
   <p class="seclabel">Topics</p>
@@ -84,33 +84,48 @@
       <span class="body"><p class="topic">Types of Classes &amp; Generics</p><p class="meta">nested classes · generics · wildcards · type erasure · enum · singleton · immutable</p></span>
       <span class="go">Open&nbsp;↗</span></a>
 
-    <div class="row soon">
+    <a class="row" href="interface.html">
       <span class="idx">07</span>
+      <span class="body"><p class="topic">Java Interface</p><p class="meta">default / static / private methods · diamond problem · functional interfaces &amp; lambdas</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="reflection.html">
+      <span class="idx">08</span>
+      <span class="body"><p class="topic">Reflection</p><p class="meta">Class object · inspect fields/methods at runtime · breaking singleton</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="annotations.html">
+      <span class="idx">09</span>
+      <span class="body"><p class="topic">Annotations</p><p class="meta">built-in &amp; meta-annotations · retention · custom annotations · heap pollution</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="exception-handling.html">
+      <span class="idx">10</span>
+      <span class="body"><p class="topic">Exception Handling</p><p class="meta">checked vs unchecked · try/catch/finally · throw/throws · custom exceptions</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <div class="row soon">
+      <span class="idx">11</span>
       <span class="body"><p class="topic">Strings &amp; Immutability</p><p class="meta">Coming soon</p></span>
       <span class="go">Soon</span></div>
 
     <div class="row soon">
-      <span class="idx">08</span>
+      <span class="idx">12</span>
       <span class="body"><p class="topic">Collections Framework</p><p class="meta">Coming soon</p></span>
       <span class="go">Soon</span></div>
 
     <div class="row soon">
-      <span class="idx">09</span>
-      <span class="body"><p class="topic">Exception Handling</p><p class="meta">Coming soon</p></span>
-      <span class="go">Soon</span></div>
-
-    <div class="row soon">
-      <span class="idx">10</span>
+      <span class="idx">13</span>
       <span class="body"><p class="topic">Multithreading &amp; Concurrency</p><p class="meta">Coming soon</p></span>
       <span class="go">Soon</span></div>
 
     <div class="row soon">
-      <span class="idx">11</span>
+      <span class="idx">14</span>
       <span class="body"><p class="topic">Java 8 — Streams &amp; Lambdas</p><p class="meta">Coming soon</p></span>
       <span class="go">Soon</span></div>
 
     <div class="row soon">
-      <span class="idx">12</span>
+      <span class="idx">15</span>
       <span class="body"><p class="topic">Design Patterns</p><p class="meta">Coming soon</p></span>
       <span class="go">Soon</span></div>
 
