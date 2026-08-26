@@ -1,0 +1,551 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OOP Concepts — Core Java Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F3; --card:#FFFFFF; --ink:#1A1712; --muted:#6B635A; --hair:#E8E4DE;
+  --accent:#E8710A; --accent-d:#C25E00; --accent-soft:#FFF2E4;
+  --teal:#0E9C8E; --coral:#E5484D; --green:#12924F; --violet:#7C4DDB; --blue:#2563EB;
+  --disp:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.62;font-size:15.5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,245,243,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.top .home{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.top .home:hover{color:var(--accent);text-decoration:none}
+.top .crumb{font-family:var(--disp);font-weight:600;font-size:15px}
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:36px;padding:28px 20px 100px}
+.toc{position:sticky;top:70px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;font-size:13px;padding-right:8px}
+.toc h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc a{display:block;color:var(--muted);padding:4px 10px;border-left:2px solid var(--hair);margin-left:2px;border-radius:0 6px 6px 0}
+.toc a:hover{color:var(--ink);background:var(--card);text-decoration:none}
+.content{min-width:0;max-width:820px}
+.doc-title{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,42px);letter-spacing:-.015em;margin:0 0 6px}
+h2.sec{font-family:var(--disp);font-weight:600;font-size:23px;margin:46px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--ink);scroll-margin-top:80px}
+h3.sub{font-family:var(--disp);font-weight:600;font-size:17.5px;margin:26px 0 8px}
+h4.sub4{font-family:var(--disp);font-weight:600;font-size:15px;margin:18px 0 6px;color:#33291f}
+p{margin:11px 0}
+p.estep{font-family:var(--disp);font-weight:600;font-size:15.5px;margin:18px 0 6px;color:var(--accent-d)}
+p.minilabel{font-family:var(--disp);font-weight:600;font-size:14px;margin:16px 0 4px;color:var(--ink);background:var(--accent-soft);display:inline-block;padding:3px 10px;border-radius:8px}
+ul,ol{margin:11px 0;padding-left:22px}li{margin:5px 0}
+ul.checklist{list-style:none;padding-left:4px}
+ul.checklist li{position:relative;padding-left:26px;margin:6px 0}
+ul.checklist li::before{position:absolute;left:0;top:0;font-weight:700}
+ul.checklist li.ok::before{content:"✓";color:var(--green)}
+ul.checklist li.no::before{content:"✕";color:var(--coral)}
+ul.checklist li.arw::before{content:"→";color:var(--accent)}
+hr{border:none;border-top:1px solid var(--hair);margin:26px 0}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-d);padding:1px 6px;border-radius:5px}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;color:#3a2f22}
+.tablewrap{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--hair);padding:8px 12px}
+th{background:var(--card);font-family:var(--disp);font-weight:600}
+tbody tr:nth-child(even){background:#FBFAF8}
+.fig{margin:18px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px}
+.fig figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.code{position:relative;margin:14px 0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:#161a20}
+.code.inline{background:#20262f}
+.code.ascii{background:#1b2530}
+.code-tag{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8891a8;z-index:2}
+.code pre{margin:0;padding:15px 18px;overflow-x:auto}
+.code code{background:none;color:#e7ebf1;padding:0;font-size:13px;line-height:1.6;display:block}
+.code .language-plaintext{color:#cfe0dc;white-space:pre}
+.hero-viz{margin:18px 0 28px;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px;min-height:170px}
+.viz-cap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.viz-cap .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.readout{font-family:var(--mono);font-size:14px;margin-top:16px;color:var(--ink);min-height:20px}
+.readout .hit{color:var(--green);font-weight:700}
+.readout .warn{color:var(--coral);font-weight:700}
+/* casting ladder */
+.ladder{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rung{padding:9px 12px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-weight:700;font-size:13px;transition:all .45s ease}
+.rung.on{border-color:var(--green);background:#ECFDF3;transform:translateY(-3px)}
+.rung.warnon{border-color:var(--coral);background:#FEF2F2}
+.arrw{color:var(--muted);font-family:var(--mono)}
+/* jvm pipeline */
+.pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stage{padding:12px 14px;border-radius:12px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:center;min-width:92px;transition:all .4s ease}
+.stage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.stage.hot{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.stage small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;margin-top:2px}
+.flowarr{color:var(--accent);font-size:18px}
+/* oop dispatch */
+.dispatch{display:flex;flex-direction:column;gap:14px}
+.drow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{padding:9px 13px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;border:2px solid var(--hair);background:#fff;transition:all .45s}
+.pill.ref{border-color:var(--muted);color:var(--muted)}
+.pill.obj.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.pill.impl{border-color:var(--hair);opacity:.5}
+.pill.impl.win{border-color:var(--green);background:#ECFDF3;color:var(--green);opacity:1;transform:translateY(-3px)}
+.pagefoot{max-width:820px;margin:40px auto 0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.toc{display:none}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded',function(){try{document.querySelectorAll('code.language-java').forEach(function(b){hljs.highlightElement(b)});}catch(e){}});</script>
+
+</head><body>
+<div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">OOP Concepts</span></div>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-procedural-vs-oops">Procedural vs OOPS</a><a href="#s-objects-and-classes">Objects and classes</a><a href="#s-data-hiding">Data hiding</a><a href="#s-abstraction">Abstraction</a><a href="#s-encapsulation">Encapsulation</a><a href="#s-tightly-encapsulated-class">Tightly encapsulated class</a><a href="#s-is-a-relationshipinheritance">IS-A Relationship(inheritance) :</a><a href="#s-multiple-inheritance">Multiple inheritance</a><a href="#s-has-a-relationship">HAS-A relationship</a><a href="#s-method-signature">Method signature:</a><a href="#s-polymorphism">Polymorphism:</a><a href="#s-2-runtime-polymorphism-overriding">2️⃣ Runtime Polymorphism (Overriding)</a></nav><main class="content"><h1 class="doc-title">OOP Concepts</h1>
+<div class="hero-viz" id="heroViz" data-viz="oop"></div>
+<hr>
+<h2 class="sec" id="s-procedural-vs-oops">Procedural vs OOPS</h2>
+<p>“Procedural programming focuses on functions and execution flow, while OOPS models real-world entities using objects, providing better security, reusability, and maintainability.”<br>OOPS gives importance to data.</p>
+<h2 class="sec" id="s-objects-and-classes">Objects and classes</h2>
+<h3 class="sub">Class (Class has properties and Behaviors)</h3>
+<p>A class is like a blueprint or design.</p>
+<ul class="checklist">
+<li class="arw">Car class = design of a car</li>
+</ul>
+<p>It defines what a car has and what a car can do<br>Example (conceptually):<br>Properties: color, speed, fuelType<br>Behaviors: start(), accelerate(), brake()<br>🧠 Think of it as the car design document.</p>
+<h3 class="sub">Object</h3>
+<p>An object is a real instance created from the class.</p>
+<ul class="checklist">
+<li class="arw">If Car is the blueprint</li>
+<li class="arw">BMW, Tata, VW are objects</li>
+</ul>
+<p>Example:<br>Car car1 = Tata (Red, CNG)<br>Car car2 = VW (White, Petrol)<br>🧠 You can create many cars from the same blueprint.</p>
+<hr>
+<h2 class="sec" id="s-data-hiding">Data hiding</h2>
+<ul><li>Our internal data should not go out directly. That is outside person can&#x27;t access our internal data directly.</li><li>By using private modifier we can implement data hiding.</li><li>The main advantage of data hiding is security.</li><li>Example:</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class BankAccount {
+    private double balance;
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-abstraction">Abstraction</h2>
+<ul><li>Hide internal implementation and just highlight the set of services, is called abstraction.</li><li>By using <strong>abstract classes and interfaces</strong> we can implement abstraction.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public interface PaymentService {
+    void pay(double amount);
+}</code></pre></div>
+<ul><li>User knows what pay() does, not how it’s implemented.</li></ul>
+<hr>
+<h2 class="sec" id="s-encapsulation">Encapsulation</h2>
+<p>Encapsulation = bundling data + methods + controlling access<br>In Java, encapsulation is achieved using:</p>
+<ul><li>Classes</li><li>Access modifiers (private, protected, public)</li><li>Getter / setter methods</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class BankAccount {
+    private double balance;   // data hiding
+
+    public void deposit(double amount) {
+        balance += amount;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-tightly-encapsulated-class">Tightly encapsulated class</h2>
+<p>A class is said to be tightly encapsulated if <strong>every data member of the class is private</strong>, ensuring complete data hiding and controlled access.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class User {
+    private String username;
+    private String email;
+
+    public User(String username, String email) {
+        this.username = username;
+        this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+}</code></pre></div>
+<h3 class="sub">Notes:</h3>
+<ul><li><strong>Encapsulation depends only on instance variables, not methods.</strong></li><li>Inheritance can break tight encapsulation</li><li>If any parent class has a non-private variable, the child class is not tightly encapsulated.</li></ul>
+<hr>
+<h2 class="sec" id="s-is-a-relationshipinheritance">IS-A Relationship(inheritance) :</h2>
+<ul><li>By using &quot;extends&quot; and &quot;implements&quot; keywords we can implement IS-A relationship.</li><li>extends (class → class)</li><li>implements (class → interface)</li></ul>
+<h3 class="sub">Is-A with Class inheritance</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+
+    public static void main(String[] args) {
+        Animal animal = new Animal();
+        animal.eat();  // -&gt; &quot;Animal eats&quot;
+
+        Animal animalDog = new Dog();
+        animalDog.eat();  // -&gt; &quot;Animal eats&quot;
+        animalDog.bark(); // -&gt; ❌ method not available
+        
+        Dog dog = new Dog();
+        dog.eat();  // -&gt; &quot;Animal eats&quot;
+        dog.bark(); // -&gt; &quot;Dog barks&quot;
+
+        Dog dogAnimal = new Animal();  // -&gt; ❌ CE
+    }
+
+}
+
+class Animal {
+    void eat() {
+        System.out.println(&quot;Animal eats&quot;);
+    }
+}
+
+class Dog extends Animal {
+    void bark() {
+        System.out.println(&quot;Dog barks&quot;);
+    }
+}</code></pre></div>
+<h3 class="sub">Is-A with Interface</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">interface Vehicle {
+    void move();
+}
+
+class Car implements Vehicle {
+    public void move() {
+        System.out.println(&quot;Car moves&quot;);
+    }
+}</code></pre></div>
+<h3 class="sub">🧠 How to identify Is-A relationship (interview trick)</h3>
+<p>Ask: “Can I say X is a Y without sounding wrong?”</p>
+<ul><li>Dog is an Animal ✅</li><li>Car is a Vehicle ✅</li><li>Employee is a Person ✅</li><li>Engine is a Car ❌ (that’s Has-A) </li></ul>
+<hr>
+<h2 class="sec" id="s-multiple-inheritance">Multiple inheritance</h2>
+<ul><li>Multiple inheritance means a class inherits from more than one parent class.</li><li>In simple words:</li></ul>
+<div class="code inline"><pre><code class="language-plaintext">One child → multiple parents</code></pre></div>
+<div class="code ascii"><pre><code class="language-plaintext">        A
+       / \
+      B   C
+       \ /
+        D</code></pre></div>
+<ul><li>❌ Java does NOT support multiple inheritance with classes</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class A { }
+class B { }
+
+// ❌ Compile-time error
+class C extends A, B { }</code></pre></div>
+<h3 class="sub">The Diamond Problem</h3>
+<ol><li>Diamond Problem with Classes</li></ol>
+<div class="code ascii"><pre><code class="language-plaintext">        A
+       / \
+      B   C
+       \ /
+        D</code></pre></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class A {
+    void show() {
+        System.out.println(&quot;A&quot;);
+    }
+}
+
+class B extends A { }
+class C extends A { }
+
+// If Java allowed this
+class D extends B, C { }</code></pre></div>
+<p>D gets show() from both paths (B → A and C → A)<br>Ambiguity ❌: which path to follow?</p>
+<ol><li>Diamond Problem with Interfaces (Java 8+)</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">interface A {
+    default void show() {
+        System.out.println(&quot;A&quot;);
+    }
+}
+
+interface B {
+    default void show() {
+        System.out.println(&quot;B&quot;);
+    }
+}
+
+class C implements A, B {
+    public void show() {
+        A.super.show(); // explicit resolution
+    }
+}</code></pre></div>
+<p>Java forces you to:</p>
+<ul><li>Override</li><li>Resolve ambiguity explicitly</li></ul>
+<h3 class="sub">Multiple inheritance via interfaces</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">interface Flyable {
+    void fly();
+}
+
+interface Swimmable {
+    void swim();
+}
+
+class Duck implements Flyable, Swimmable {
+    public void fly() {
+        System.out.println(&quot;Duck flies&quot;);
+    }
+
+    public void swim() {
+        System.out.println(&quot;Duck swims&quot;);
+    }
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-has-a-relationship">HAS-A relationship</h2>
+<ul><li>Has-A relationship means: One class contains or uses another class.</li><li>Instead of inheritance, the relationship is built using object references.</li><li>In Java, Has-A is implemented using:</li><li>Composition</li><li>Aggregation</li></ul>
+<h3 class="sub">Composition (Strong Has-A)</h3>
+<ul><li>In composition, the contained object’s lifecycle is tied to the owner.</li><li>If the parent is destroyed → child is destroyed.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Engine {
+    void start() {
+        System.out.println(&quot;Engine started&quot;);
+    }
+}
+
+class Car {
+    private Engine engine = new Engine(); // composition
+
+    void drive() {
+        engine.start();
+        System.out.println(&quot;Car is moving&quot;);
+    }
+}</code></pre></div>
+<h3 class="sub">Aggregation (Weak Has-A)</h3>
+<ul><li>In aggregation, the contained object exists independently and can be shared.</li><li>Parent gone → child still exists.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Address {
+    String city;
+}
+
+class Employee {
+    private Address address; // aggregation
+
+    Employee(Address address) {
+        this.address = address;
+    }
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-method-signature">Method signature:</h2>
+<ul><li><strong>method signature = (method name + parameter list)</strong></li><li>✅ Method signature does NOT include:</li><li>Return type ❌</li><li>Access modifiers ❌</li><li>Method body ❌</li><li>throws clause ❌</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public int add(int a, int b) {
+    return a + b;
+}</code></pre></div>
+<ul><li>Method signature - ``<code>add(int, int)</code>``</li><li>❌ Return type alone cannot change signature</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">int sum(int a, int b) { }
+double sum(int a, int b) { } // ❌ compile-time error</code></pre></div>
+<p><strong>Note: Method Declaration = Signature + return type + modifiers + throws</strong></p>
+<hr>
+<h2 class="sec" id="s-polymorphism">Polymorphism:</h2>
+<p>One interface / method behaves differently based on object type</p>
+<figure class="fig"><img src="images/polymorphism_in_java.png" alt="alt text" loading="lazy"></figure>
+<h3 class="sub">1️⃣ Compile-time Polymorphism (Overloading)</h3>
+<ul><li>Same method name, different parameters</li><li>Resolved at compile time based on method signature.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Test {
+    public void methodOne() {
+        System.out.println(&quot;no-arg method&quot;);
+    }
+    public void methodOne(int i) {
+        System.out.println(&quot;int-arg method&quot;); //overloaded methods
+    }
+    public void methodOne(double d) {
+        System.out.println(&quot;double-arg method&quot;);
+    }
+    public static void main(String[] args) {
+        Test t=new Test();
+        t.methodOne();      //no-arg method
+        t.methodOne(10);    //int-arg method
+        t.methodOne(10.5);  //double-arg method
+    }
+}</code></pre></div>
+<p>In overloading compiler is responsible to perform method resolution(decision) based on the reference type(but not based on run time object). Hence overloading is also considered as compile time polymorphism/static polymorphism/early biding.</p>
+<h4 class="sub4">Case 1 : Automatic promotion in overloading.</h4>
+<ul><li>In overloading if compiler is unable to find the method with exact match we won&#x27;t get any compile time error immediately.</li><li>1st compiler promotes the argument to the next level and checks whether the matched method is available or not if it is available then that method will be considered if it is not available then compiler promotes the argument once again to the next level. </li><li>This process will be continued until all possible promotions still if the matched method is not available then we will get compile time error. </li><li>This process is called automatic promotion in overloading.</li></ul>
+<figure class="fig"><img src="images/casting.png" alt="alt text" loading="lazy"></figure>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+    public void methodOne(int i) {
+        System.out.println(&quot;int-arg method&quot;);
+    }
+
+    public void methodOne(float f) { //overloaded methods
+        System.out.println(&quot;float-arg method&quot;);
+    }
+
+    public static void main(String[] args) {
+        Test t = new Test();
+        t.methodOne(&#x27;a&#x27;);//int-arg method
+        t.methodOne(10L);//float-arg method
+        t.methodOne(10.5);//C.E:cannot find symbol
+    }
+}</code></pre></div>
+<h4 class="sub4">Case 2:</h4>
+<ul><li>While resolving overloaded methods exact match will always get high priority.</li><li>While resolving overloaded methods child class will get the more priority than parent.</li><li>In general var-arg method will get less priority that is if no other method matched then only var-arg method will get chance for execution, it is almost same as default case inside switch.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+    public void methodOne(String s) {
+        System.out.println(&quot;String version&quot;);
+    }
+
+    public void methodOne(Object o){ //Both methods are said to be overloaded methods.
+        System.out.println(&quot;Object version&quot;);
+    }
+
+    public static void main(String[] args) {
+        Test t = new Test();
+        t.methodOne(&quot;arun&quot;);        //String version
+        t.methodOne(new Object());      //Object version
+        t.methodOne(null);          //String version
+    }
+}</code></pre></div>
+<h4 class="sub4">Case 3:</h4>
+<p>In overloading method resolution is always based on reference type and runtime object won&#x27;t play any role in overloading.</p>
+<figure class="fig"><img src="images/ref-obj-type.png" alt="alt text" loading="lazy"></figure>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Animal {
+}
+
+class Monkey extends Animal {
+}
+
+class Test {
+    public void methodOne(Animal a) {
+        System.out.println(&quot;Animal version&quot;);
+    }
+
+    public void methodOne(Monkey m) {
+        System.out.println(&quot;Monkey version&quot;);
+    }
+
+    public static void main(String[] args) {
+        Test t = new Test();
+        Animal a = new Animal();
+        t.methodOne(a);     //Animal version
+        Monkey m = new Monkey();
+        t.methodOne(m);     //Monkey version
+        Animal a1 = new Monkey();
+        t.methodOne(a1);    //Animal version
+    }
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-2-runtime-polymorphism-overriding">2️⃣ Runtime Polymorphism (Overriding)</h2>
+<ol><li>Whatever the Parent has by default available to the Child through inheritance, if the Child is not satisfied with Parent class method implementation, then Child is allow to redefine that Parent class method in Child class in its own way. This process is called overriding.</li><li>The Parent class method which is overridden is called overridden method.</li><li>The Child class method which is overriding is called overriding method.</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Parent {
+    public void property() {
+        System.out.println(&quot;cash+land+gold&quot;);
+    }
+
+    //overridden method
+    public void marry() {
+        System.out.println(&quot;subbalakshmi&quot;); 
+    }
+}
+
+class Child extends Parent {
+    //overriding method
+    @Override
+    public void marry() {
+        System.out.println(&quot;Anushka&quot;);
+    }
+}
+
+class Test {
+    public static void main(String[] args) {
+        Parent p = new Parent();
+        p.marry();          //subbalakshmi(parent method)
+        Child c = new Child();
+        c.marry();          //Anushka(child method)
+        Parent p1 = new Child();
+        p1.marry();         //Anushka(child method)
+    }
+}</code></pre></div>
+<ul><li>In overriding method resolution is always takes care by JVM based on runtime object. Hence overriding is also considered as runtime polymorphism or dynamic polymorphism or late binding.</li><li>In overriding runtime object will play the role and reference type is dummy.</li></ul>
+<h3 class="sub">Rules for overriding :</h3>
+<ul><li>In overriding method names and arguments must be same. That is method signature must be same.</li><li>Until 1.4 version the return types must be same but from 1.5 version onwards covariant return types are allowed.</li><li>According to this Child class method return type need not be same as Parent class method return type, its Child types also allowed. <strong>Co-variant return type</strong> concept is applicable only for object types but not for primitives.</li><li>Private methods are not visible in the Child classes hence overriding concept is not applicable for private methods. Based on our requirement we can declare the same Parent class private method in child class also. It is valid but not overriding.</li><li>Parent class final methods we can&#x27;t override in the Child class.</li><li>Parent class non final methods we can override as final in child class. We can override native methods in the child classes.</li><li>We should override Parent class abstract methods in Child classes to provide implementation.</li><li>We can override a non-abstract method as abstract this approach is helpful to stop availability of Parent method implementation to the next level child classes.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Parent {
+    public void methodOne() { }
+    }
+abstract class Child extends Parent {
+    public abstract void methodOne();
+    }</code></pre></div>
+<figure class="fig"><img src="images/overrideing-rules.png" alt="alt text" loading="lazy"></figure>
+<ul><li>While overriding we can&#x27;t reduce the scope of access modifier.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Parent {
+    public void methodOne() { }
+}
+class Child extends Parent {
+    protected void methodOne( ) { }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Compile time error :
+methodOne() in Child cannot override methodOne() in Parent;
+attempting to assign weaker access privileges; was public</code></pre></div>
+<figure class="fig"><img src="images/overrideing-rules-2.png" alt="alt text" loading="lazy"></figure>
+<div class="code inline"><pre><code class="language-plaintext">private &lt; default &lt; protected &lt; public</code></pre></div>
+<ul><li>While overriding if the child class method throws any checked exception, compulsory the parent class method should throw the same checked exception or its parent otherwise we will get compile time error. But there are no restrictions for un-checked exceptions.</li><li>We can&#x27;t override a static method as non static. Similarly we can&#x27;t override a non static method as static.</li><li>Overriding concept is not applicable for variables. Variable resolution is always takes care by compiler based on reference type.</li></ul>
+<hr>
+<h3 class="sub">METHOD HIDING :</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Parent{
+    public static void methodOne() {}
+}
+class Child extends Parent {
+    public static void methodOne() {}
+}</code></pre></div>
+<p>It is valid, and it looks like overriding — but it is <strong>method hiding</strong>, not overriding.</p>
+<p><strong>Why it is hiding, not overriding:</strong> static methods belong to the class, not the object. Java decides which static method to run at <strong>compile time using the reference type</strong>, not at runtime using the actual object. So there is no dynamic dispatch — the child&#x27;s method simply *hides* the parent&#x27;s.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Parent p = new Child();
+p.methodOne();  // runs Parent&#x27;s version (chosen by reference type)</code></pre></div></main></div>
+<p class="pagefoot">Core Java · interview notes · built as I go</p>
+<script>
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e;}
+function cap(t){var c=el('div','viz-cap');c.appendChild(el('span','pulse'));c.appendChild(document.createTextNode(t));return c;}
+function buildViz(){var h=document.getElementById('heroViz');if(!h)return;var k=h.getAttribute('data-viz');
+  if(k==='vars')vizVars(h);else if(k==='jvm')vizJvm(h);else if(k==='oop')vizOop(h);}
+/* casting ladder */
+function vizVars(host){
+  host.innerHTML=''; host.appendChild(cap('Type casting · widening is automatic, narrowing needs a cast'));
+  var order=['byte','short','int','long','float','double']; var lad=el('div','ladder'); var rungs=[];
+  order.forEach(function(t,idx){var r=el('div','rung',t);rungs.push(r);lad.appendChild(r);
+    if(idx<order.length-1)lad.appendChild(el('span','arrw','→'));});
+  host.appendChild(lad); var read=el('div','readout'); host.appendChild(read);
+  var k=0,phase='widen';
+  function frame(){
+    rungs.forEach(function(r){r.className='rung';});
+    if(phase==='widen'){
+      for(var j=0;j<=k;j++)rungs[j].classList.add('on');
+      read.innerHTML='widening: '+order[0]+' → '+order[k]+' &nbsp;<span class="hit">automatic, no data loss</span>';
+      k++; if(k>=order.length){phase='narrow';k=order.length-1;setTimeout(frame,1300);}else setTimeout(frame,750);
+    }else{
+      rungs[5].classList.add('warnon'); rungs[2].classList.add('warnon');
+      read.innerHTML='narrowing: double → int needs <span class="warn">(int) cast</span> · decimals lost';
+      phase='widen';k=0; setTimeout(frame,1900);
+    }
+  } frame();
+}
+/* jvm compile+run pipeline */
+function vizJvm(host){
+  host.innerHTML=''; host.appendChild(cap('Compile once · run anywhere · JIT heats up hot code'));
+  var pipe=el('div','pipe');
+  var s=[['MyClass.java','source'],['javac','compiler'],['.class','bytecode'],['JVM','interpreter'],['native code','JIT compiled']];
+  var stages=[];
+  s.forEach(function(d,idx){var st=el('div','stage','<div>'+d[0]+'</div><small>'+d[1]+'</small>');stages.push(st);pipe.appendChild(st);
+    if(idx<s.length-1)pipe.appendChild(el('span','flowarr','▸'));});
+  host.appendChild(pipe); var read=el('div','readout'); host.appendChild(read);
+  var msgs=['You write Java source','javac compiles it','Bytecode: portable, runs on any JVM','JVM interprets bytecode first','JIT compiles hot methods → native, much faster'];
+  var k=0;
+  function frame(){
+    stages.forEach(function(x){x.classList.remove('on','hot');});
+    for(var j=0;j<=k;j++)stages[j].classList.add('on');
+    if(k===4){stages[4].classList.remove('on');stages[4].classList.add('hot');read.innerHTML='<span class="hit">'+msgs[k]+'</span>';}
+    else read.textContent=msgs[k];
+    k++; if(k>=stages.length){setTimeout(function(){k=0;frame();},1700);}else setTimeout(frame,1050);
+  } frame();
+}
+/* oop runtime dispatch */
+function vizOop(host){
+  host.innerHTML=''; host.appendChild(cap('Runtime polymorphism · the object decides which method runs'));
+  var wrap=el('div','dispatch');
+  var r1=el('div','drow'); r1.innerHTML='<span class="pill ref">Parent p</span><span class="arrw">=</span>';
+  var objP=el('span','pill obj','new Parent()'); var objC=el('span','pill obj','new Child()');
+  r1.appendChild(objP); r1.appendChild(el('span','arrw','/')); r1.appendChild(objC);
+  var r2=el('div','drow'); r2.innerHTML='<span class="arrw">p.marry() resolves to →</span>';
+  var implP=el('span','pill impl','Parent.marry()'); var implC=el('span','pill impl','Child.marry()');
+  r2.appendChild(implP); r2.appendChild(implC);
+  wrap.appendChild(r1); wrap.appendChild(r2); host.appendChild(wrap);
+  var read=el('div','readout'); host.appendChild(read);
+  var st=0;
+  function frame(){
+    [objP,objC].forEach(function(x){x.classList.remove('on');});[implP,implC].forEach(function(x){x.classList.remove('win');});
+    if(st===0){objP.classList.add('on');implP.classList.add('win');read.innerHTML='object is <b>Parent</b> → runs <span class="hit">Parent.marry()</span>';}
+    else{objC.classList.add('on');implC.classList.add('win');read.innerHTML='object is <b>Child</b> → runs <span class="hit">Child.marry()</span> (reference type is dummy)';}
+    st=1-st; setTimeout(frame,1900);
+  } frame();
+}
+window.addEventListener('DOMContentLoaded',buildViz);
+</script></body></html>

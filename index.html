@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Core Java — Interview Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F5F3; --card:#FFFFFF; --ink:#1A1712; --muted:#6B635A; --hair:#E8E4DE;
+    --accent:#E8710A; --accent-d:#C25E00; --accent-soft:#FFF2E4;
+    --disp:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.5;padding:56px 20px 90px}
+  .wrap{max-width:800px;margin:0 auto}
+  .kicker{font-family:var(--mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(30px,6vw,54px);line-height:1.02;margin:0 0 12px;letter-spacing:-.015em}
+  .sub{color:var(--muted);font-size:16px;max-width:60ch;margin:0}
+  .progress{margin-top:22px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;color:var(--muted)}
+  .bar{flex:1;height:8px;background:var(--hair);border-radius:99px;overflow:hidden;max-width:300px}
+  .bar span{display:block;height:100%;width:23%;background:var(--accent);border-radius:99px}
+  .seclabel{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:40px 0 14px;display:flex;align-items:center;gap:12px}
+  .seclabel::after{content:"";flex:1;height:1px;background:var(--hair)}
+  .list{display:flex;flex-direction:column;gap:10px}
+  .row{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:16px 18px;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s,box-shadow .15s}
+  a.row:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 20px -12px rgba(232,113,10,.55);text-decoration:none}
+  .idx{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--accent);width:26px;flex:none;text-align:right}
+  .body{flex:1;min-width:0}
+  .topic{font-family:var(--disp);font-weight:600;font-size:18px;margin:0 0 2px}
+  .meta{color:var(--muted);font-size:13px;margin:0}
+  .go{font-family:var(--mono);font-size:12px;color:var(--accent);border:1px solid var(--hair);border-radius:8px;padding:5px 10px;flex:none;transition:background .15s,color .15s,border-color .15s}
+  a.row:hover .go{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .row.soon{opacity:.55}.row.soon .idx{color:var(--muted)}.row.soon .go{color:var(--muted);border-style:dashed}
+  .foot{margin-top:46px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  @media(max-width:520px){body{padding:40px 14px 60px}.go{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="kicker">Interview Prep · Java Fundamentals</p>
+    <h1>Core Java</h1>
+    <p class="sub">Interview-focused Java notes — refined, simplified, and heavy on the areas interviewers actually probe. Each topic: clear explanations, diagrams, and the gotchas that trip people up under pressure.</p>
+    <div class="progress"><span>3 / 13 topics</span><span class="bar"><span></span></span></div>
+  </header>
+
+  <p class="seclabel">Topics</p>
+
+  <div class="list">
+    <!-- To publish a topic: change <div class="row soon"> to <a class="row" href="file.html">, drop the soon class, change badge to Open. -->
+
+    <a class="row" href="oops.html">
+      <span class="idx">01</span>
+      <span class="body"><p class="topic">OOP Concepts</p><p class="meta">4 pillars · IS-A vs HAS-A · polymorphism · overriding rules — the most-asked area</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="jvm-jre-jdk.html">
+      <span class="idx">02</span>
+      <span class="body"><p class="topic">JVM, JRE &amp; JDK</p><p class="meta">bytecode · JIT compiler · classloaders · parent delegation model</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="variables.html">
+      <span class="idx">03</span>
+      <span class="body"><p class="topic">Variables &amp; Data Types</p><p class="meta">primitives · casting · pass-by-value · wrapper classes · Integer caching</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <div class="row soon">
+      <span class="idx">04</span>
+      <span class="body"><p class="topic">Strings &amp; Immutability</p><p class="meta">Coming soon</p></span>
+      <span class="go">Soon</span></div>
+
+    <div class="row soon">
+      <span class="idx">05</span>
+      <span class="body"><p class="topic">Collections Framework</p><p class="meta">Coming soon</p></span>
+      <span class="go">Soon</span></div>
+
+    <div class="row soon">
+      <span class="idx">06</span>
+      <span class="body"><p class="topic">Exception Handling</p><p class="meta">Coming soon</p></span>
+      <span class="go">Soon</span></div>
+
+    <div class="row soon">
+      <span class="idx">07</span>
+      <span class="body"><p class="topic">Multithreading &amp; Concurrency</p><p class="meta">Coming soon</p></span>
+      <span class="go">Soon</span></div>
+
+    <div class="row soon">
+      <span class="idx">08</span>
+      <span class="body"><p class="topic">Java 8 — Streams &amp; Lambdas</p><p class="meta">Coming soon</p></span>
+      <span class="go">Soon</span></div>
+
+    <div class="row soon">
+      <span class="idx">09</span>
+      <span class="body"><p class="topic">Generics</p><p class="meta">Coming soon</p></span>
+      <span class="go">Soon</span></div>
+
+    <div class="row soon">
+      <span class="idx">10</span>
+      <span class="body"><p class="topic">Memory &amp; Garbage Collection</p><p class="meta">Coming soon</p></span>
+      <span class="go">Soon</span></div>
+
+    <div class="row soon">
+      <span class="idx">11</span>
+      <span class="body"><p class="topic">equals() &amp; hashCode()</p><p class="meta">Coming soon</p></span>
+      <span class="go">Soon</span></div>
+
+    <div class="row soon">
+      <span class="idx">12</span>
+      <span class="body"><p class="topic">Keywords Deep-Dive</p><p class="meta">Coming soon</p></span>
+      <span class="go">Soon</span></div>
+
+    <div class="row soon">
+      <span class="idx">13</span>
+      <span class="body"><p class="topic">Design Patterns</p><p class="meta">Coming soon</p></span>
+      <span class="go">Soon</span></div>
+
+  </div>
+
+  <p class="foot">Built as I go · more topics landing soon</p>
+</div>
+</body>
+</html>

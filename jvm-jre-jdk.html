@@ -1,0 +1,243 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JVM, JRE &amp; JDK — Core Java Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F3; --card:#FFFFFF; --ink:#1A1712; --muted:#6B635A; --hair:#E8E4DE;
+  --accent:#E8710A; --accent-d:#C25E00; --accent-soft:#FFF2E4;
+  --teal:#0E9C8E; --coral:#E5484D; --green:#12924F; --violet:#7C4DDB; --blue:#2563EB;
+  --disp:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.62;font-size:15.5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,245,243,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.top .home{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.top .home:hover{color:var(--accent);text-decoration:none}
+.top .crumb{font-family:var(--disp);font-weight:600;font-size:15px}
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:36px;padding:28px 20px 100px}
+.toc{position:sticky;top:70px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;font-size:13px;padding-right:8px}
+.toc h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc a{display:block;color:var(--muted);padding:4px 10px;border-left:2px solid var(--hair);margin-left:2px;border-radius:0 6px 6px 0}
+.toc a:hover{color:var(--ink);background:var(--card);text-decoration:none}
+.content{min-width:0;max-width:820px}
+.doc-title{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,42px);letter-spacing:-.015em;margin:0 0 6px}
+h2.sec{font-family:var(--disp);font-weight:600;font-size:23px;margin:46px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--ink);scroll-margin-top:80px}
+h3.sub{font-family:var(--disp);font-weight:600;font-size:17.5px;margin:26px 0 8px}
+h4.sub4{font-family:var(--disp);font-weight:600;font-size:15px;margin:18px 0 6px;color:#33291f}
+p{margin:11px 0}
+p.estep{font-family:var(--disp);font-weight:600;font-size:15.5px;margin:18px 0 6px;color:var(--accent-d)}
+p.minilabel{font-family:var(--disp);font-weight:600;font-size:14px;margin:16px 0 4px;color:var(--ink);background:var(--accent-soft);display:inline-block;padding:3px 10px;border-radius:8px}
+ul,ol{margin:11px 0;padding-left:22px}li{margin:5px 0}
+ul.checklist{list-style:none;padding-left:4px}
+ul.checklist li{position:relative;padding-left:26px;margin:6px 0}
+ul.checklist li::before{position:absolute;left:0;top:0;font-weight:700}
+ul.checklist li.ok::before{content:"✓";color:var(--green)}
+ul.checklist li.no::before{content:"✕";color:var(--coral)}
+ul.checklist li.arw::before{content:"→";color:var(--accent)}
+hr{border:none;border-top:1px solid var(--hair);margin:26px 0}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-d);padding:1px 6px;border-radius:5px}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;color:#3a2f22}
+.tablewrap{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--hair);padding:8px 12px}
+th{background:var(--card);font-family:var(--disp);font-weight:600}
+tbody tr:nth-child(even){background:#FBFAF8}
+.fig{margin:18px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px}
+.fig figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.code{position:relative;margin:14px 0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:#161a20}
+.code.inline{background:#20262f}
+.code.ascii{background:#1b2530}
+.code-tag{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8891a8;z-index:2}
+.code pre{margin:0;padding:15px 18px;overflow-x:auto}
+.code code{background:none;color:#e7ebf1;padding:0;font-size:13px;line-height:1.6;display:block}
+.code .language-plaintext{color:#cfe0dc;white-space:pre}
+.hero-viz{margin:18px 0 28px;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px;min-height:170px}
+.viz-cap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.viz-cap .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.readout{font-family:var(--mono);font-size:14px;margin-top:16px;color:var(--ink);min-height:20px}
+.readout .hit{color:var(--green);font-weight:700}
+.readout .warn{color:var(--coral);font-weight:700}
+/* casting ladder */
+.ladder{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rung{padding:9px 12px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-weight:700;font-size:13px;transition:all .45s ease}
+.rung.on{border-color:var(--green);background:#ECFDF3;transform:translateY(-3px)}
+.rung.warnon{border-color:var(--coral);background:#FEF2F2}
+.arrw{color:var(--muted);font-family:var(--mono)}
+/* jvm pipeline */
+.pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stage{padding:12px 14px;border-radius:12px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:center;min-width:92px;transition:all .4s ease}
+.stage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.stage.hot{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.stage small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;margin-top:2px}
+.flowarr{color:var(--accent);font-size:18px}
+/* oop dispatch */
+.dispatch{display:flex;flex-direction:column;gap:14px}
+.drow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{padding:9px 13px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;border:2px solid var(--hair);background:#fff;transition:all .45s}
+.pill.ref{border-color:var(--muted);color:var(--muted)}
+.pill.obj.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.pill.impl{border-color:var(--hair);opacity:.5}
+.pill.impl.win{border-color:var(--green);background:#ECFDF3;color:var(--green);opacity:1;transform:translateY(-3px)}
+.pagefoot{max-width:820px;margin:40px auto 0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.toc{display:none}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded',function(){try{document.querySelectorAll('code.language-java').forEach(function(b){hljs.highlightElement(b)});}catch(e){}});</script>
+
+</head><body>
+<div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">JVM, JRE &amp; JDK</span></div>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-what-is-java">What is Java?</a><a href="#s-what-is-classloader-in-java">What is ClassLoader in Java?</a></nav><main class="content"><h1 class="doc-title">JVM, JRE &amp; JDK</h1>
+<div class="hero-viz" id="heroViz" data-viz="jvm"></div>
+<hr>
+<h2 class="sec" id="s-what-is-java">What is Java?</h2>
+<ul><li>Platform independent language</li><li>Supports OOPS</li><li>Portable (WORA - Write Once Run Anywhere)</li></ul>
+<h3 class="sub">3 main components :</h3>
+<figure class="fig"><img src="images/jvm-jre-jdk-1.webp" alt="alt text" loading="lazy"></figure>
+<h4 class="sub4">JVM (Java Virtual Machine)</h4>
+<p>It&#x27;s just an abstract machine that doesn&#x27;t exist physically.</p>
+<figure class="fig"><img src="images/bytecode-machinecode.png" alt="alt text" loading="lazy"></figure>
+<h4 class="sub4">Note:</h4>
+<ul><li><strong>JVM is platform dependent</strong></li><li>We need to install JVM based on the platform i.e. MacOS, Linux or windows. Input for JVM is bytecode &amp; output is machine code. Now since bytecode can run by any JVM, it makes a Java program <strong>platform independent</strong>.</li><li>JVM has JIT (Just In Time) compiler which takes bytecode &amp; convert it into machine code.</li></ul>
+<hr>
+<h4 class="sub4">JRE : Java Runtime Environment</h4>
+<ul><li>JRE Contains JVM &amp; class libraries i.e. the libraries which we&#x27;ve used in the code.</li><li>So if we have JRE, <strong>we can run any Java Program but we cannot code the program</strong>.</li></ul>
+<hr>
+<h4 class="sub4">JDK : Java Development Kit</h4>
+<ul><li>It has programs language information</li><li>It has compiler (javac)</li><li>It has debugger</li></ul>
+<p>So <code>JDK = JRE + (Program Language + compiler + debugger + other dev components)</code></p>
+<p><strong>Note: So JVM, JRE and JDK all three are platform dependent but the Compiled bytecode is platform independent.</strong></p>
+<hr>
+<h4 class="sub4">JIT : Just-In-Time compiler</h4>
+<p>JIT (Just-In-Time) Compiler is a part of the JVM that converts bytecode into native machine code at runtime to improve performance.</p>
+<p><strong>⚙️ How JIT Works (Step-by-step)</strong></p>
+<p class="estep">1️⃣ You compile Java code <code>javac MyClass.java</code></p>
+<ul class="checklist">
+<li class="arw">Generates bytecode</li>
+</ul>
+<p class="estep">2️⃣ JVM starts running the program</p>
+<ul class="checklist">
+<li class="arw">Uses Interpreter initially</li>
+</ul>
+<p class="estep">3️⃣ JVM monitors which methods run frequently</p>
+<ul class="checklist">
+<li class="arw">These are called Hot Spots</li>
+</ul>
+<p class="estep">4️⃣ JIT compiles hot methods into native machine code</p>
+<p class="estep">5️⃣ Next time method runs</p>
+<ul class="checklist">
+<li class="arw">Directly executes native code</li>
+<li class="arw">⚡ Much faster</li>
+</ul>
+<p class="estep">🧪 Example</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">for(int i = 0; i &lt; 1_000_000; i++) {
+    sum += calculate();
+}</code></pre></div>
+<p>If calculate() is called many times:</p>
+<ul><li>JVM marks it as “hot”</li><li>JIT compiles it to machine code</li><li>Future calls are super fast</li></ul>
+<hr>
+<h2 class="sec" id="s-what-is-classloader-in-java">What is ClassLoader in Java?</h2>
+<ul><li>ClassLoader is a JVM component responsible for loading .class files into memory at runtime.</li><li>It loads classes only when needed (lazy loading) — not all at once.</li><li>Java follows a parent delegation model</li></ul>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Bootstrap ClassLoader
+        ↑
+Extension ClassLoader
+        ↑
+Application ClassLoader</code></pre></div>
+<ol><li>Bootstrap ClassLoader</li></ol>
+<ul><li>Loads core Java classes</li><li>Examples:</li><li>java.lang.*</li><li>java.util.*</li><li>Written in native code (C/C++)</li><li>Highest priority</li></ul>
+<ol><li>Extension ClassLoader</li></ol>
+<ul><li>Loads classes from:</li></ul>
+<p><code>$JAVA_HOME/lib/ext</code></p>
+<ul><li>Used for extension libraries</li></ul>
+<ol><li>Application ClassLoader (System ClassLoader)</li></ol>
+<ul><li>Loads your application classes</li><li>Reads from: <code>classpath</code></li></ul>
+<p> ### Parent Delegation Model</p>
+<ul><li>Whenever a class is requested: It does NOT load directly</li><li>Instead:</li><li>Check if class is already loaded</li><li>Delegate request to parent</li><li>Parent tries to load</li><li>If parent can&#x27;t → child loads it</li><li>Flow Example</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Class.forName(&quot;java.lang.String&quot;);</code></pre></div>
+<p>Steps:</p>
+<ol><li>Application ClassLoader gets request</li><li>Delegates to Extension</li><li>Delegates to Bootstrap</li><li>Bootstrap finds and loads String</li></ol>
+<h3 class="sub">Class Loading Phases (Deep Dive)</h3>
+<p>After ClassLoader loads a class, JVM performs:</p>
+<ol><li>Loading</li></ol>
+<ul><li>Reads .class file</li><li>Converts into binary</li><li>Stores in memory</li></ul>
+<ol><li>Linking  </li></ol>
+<ul><li>Verification  </li><li>Bytecode correctness check</li><li>Prevents malicious code  </li><li>Preparation  </li><li>Allocates memory for static variables</li><li>Default values assigned  </li><li>Resolution  </li><li>Replaces symbolic references with actual memory references</li></ul>
+<ol><li>Initialization</li></ol>
+<ul><li>Executes:</li><li>Static blocks</li><li>Static variable assignments</li></ul>
+<p><strong>When is class initialized?</strong></p>
+<ul><li>Static variable access</li><li>Static block execution</li><li>Reflection (<code>Class.forName()</code>)</li></ul></main></div>
+<p class="pagefoot">Core Java · interview notes · built as I go</p>
+<script>
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e;}
+function cap(t){var c=el('div','viz-cap');c.appendChild(el('span','pulse'));c.appendChild(document.createTextNode(t));return c;}
+function buildViz(){var h=document.getElementById('heroViz');if(!h)return;var k=h.getAttribute('data-viz');
+  if(k==='vars')vizVars(h);else if(k==='jvm')vizJvm(h);else if(k==='oop')vizOop(h);}
+/* casting ladder */
+function vizVars(host){
+  host.innerHTML=''; host.appendChild(cap('Type casting · widening is automatic, narrowing needs a cast'));
+  var order=['byte','short','int','long','float','double']; var lad=el('div','ladder'); var rungs=[];
+  order.forEach(function(t,idx){var r=el('div','rung',t);rungs.push(r);lad.appendChild(r);
+    if(idx<order.length-1)lad.appendChild(el('span','arrw','→'));});
+  host.appendChild(lad); var read=el('div','readout'); host.appendChild(read);
+  var k=0,phase='widen';
+  function frame(){
+    rungs.forEach(function(r){r.className='rung';});
+    if(phase==='widen'){
+      for(var j=0;j<=k;j++)rungs[j].classList.add('on');
+      read.innerHTML='widening: '+order[0]+' → '+order[k]+' &nbsp;<span class="hit">automatic, no data loss</span>';
+      k++; if(k>=order.length){phase='narrow';k=order.length-1;setTimeout(frame,1300);}else setTimeout(frame,750);
+    }else{
+      rungs[5].classList.add('warnon'); rungs[2].classList.add('warnon');
+      read.innerHTML='narrowing: double → int needs <span class="warn">(int) cast</span> · decimals lost';
+      phase='widen';k=0; setTimeout(frame,1900);
+    }
+  } frame();
+}
+/* jvm compile+run pipeline */
+function vizJvm(host){
+  host.innerHTML=''; host.appendChild(cap('Compile once · run anywhere · JIT heats up hot code'));
+  var pipe=el('div','pipe');
+  var s=[['MyClass.java','source'],['javac','compiler'],['.class','bytecode'],['JVM','interpreter'],['native code','JIT compiled']];
+  var stages=[];
+  s.forEach(function(d,idx){var st=el('div','stage','<div>'+d[0]+'</div><small>'+d[1]+'</small>');stages.push(st);pipe.appendChild(st);
+    if(idx<s.length-1)pipe.appendChild(el('span','flowarr','▸'));});
+  host.appendChild(pipe); var read=el('div','readout'); host.appendChild(read);
+  var msgs=['You write Java source','javac compiles it','Bytecode: portable, runs on any JVM','JVM interprets bytecode first','JIT compiles hot methods → native, much faster'];
+  var k=0;
+  function frame(){
+    stages.forEach(function(x){x.classList.remove('on','hot');});
+    for(var j=0;j<=k;j++)stages[j].classList.add('on');
+    if(k===4){stages[4].classList.remove('on');stages[4].classList.add('hot');read.innerHTML='<span class="hit">'+msgs[k]+'</span>';}
+    else read.textContent=msgs[k];
+    k++; if(k>=stages.length){setTimeout(function(){k=0;frame();},1700);}else setTimeout(frame,1050);
+  } frame();
+}
+/* oop runtime dispatch */
+function vizOop(host){
+  host.innerHTML=''; host.appendChild(cap('Runtime polymorphism · the object decides which method runs'));
+  var wrap=el('div','dispatch');
+  var r1=el('div','drow'); r1.innerHTML='<span class="pill ref">Parent p</span><span class="arrw">=</span>';
+  var objP=el('span','pill obj','new Parent()'); var objC=el('span','pill obj','new Child()');
+  r1.appendChild(objP); r1.appendChild(el('span','arrw','/')); r1.appendChild(objC);
+  var r2=el('div','drow'); r2.innerHTML='<span class="arrw">p.marry() resolves to →</span>';
+  var implP=el('span','pill impl','Parent.marry()'); var implC=el('span','pill impl','Child.marry()');
+  r2.appendChild(implP); r2.appendChild(implC);
+  wrap.appendChild(r1); wrap.appendChild(r2); host.appendChild(wrap);
+  var read=el('div','readout'); host.appendChild(read);
+  var st=0;
+  function frame(){
+    [objP,objC].forEach(function(x){x.classList.remove('on');});[implP,implC].forEach(function(x){x.classList.remove('win');});
+    if(st===0){objP.classList.add('on');implP.classList.add('win');read.innerHTML='object is <b>Parent</b> → runs <span class="hit">Parent.marry()</span>';}
+    else{objC.classList.add('on');implC.classList.add('win');read.innerHTML='object is <b>Child</b> → runs <span class="hit">Child.marry()</span> (reference type is dummy)';}
+    st=1-st; setTimeout(frame,1900);
+  } frame();
+}
+window.addEventListener('DOMContentLoaded',buildViz);
+</script></body></html>

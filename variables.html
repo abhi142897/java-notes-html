@@ -1,0 +1,483 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Variables &amp; Data Types — Core Java Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F3; --card:#FFFFFF; --ink:#1A1712; --muted:#6B635A; --hair:#E8E4DE;
+  --accent:#E8710A; --accent-d:#C25E00; --accent-soft:#FFF2E4;
+  --teal:#0E9C8E; --coral:#E5484D; --green:#12924F; --violet:#7C4DDB; --blue:#2563EB;
+  --disp:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.62;font-size:15.5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,245,243,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.top .home{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.top .home:hover{color:var(--accent);text-decoration:none}
+.top .crumb{font-family:var(--disp);font-weight:600;font-size:15px}
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:36px;padding:28px 20px 100px}
+.toc{position:sticky;top:70px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;font-size:13px;padding-right:8px}
+.toc h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc a{display:block;color:var(--muted);padding:4px 10px;border-left:2px solid var(--hair);margin-left:2px;border-radius:0 6px 6px 0}
+.toc a:hover{color:var(--ink);background:var(--card);text-decoration:none}
+.content{min-width:0;max-width:820px}
+.doc-title{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,42px);letter-spacing:-.015em;margin:0 0 6px}
+h2.sec{font-family:var(--disp);font-weight:600;font-size:23px;margin:46px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--ink);scroll-margin-top:80px}
+h3.sub{font-family:var(--disp);font-weight:600;font-size:17.5px;margin:26px 0 8px}
+h4.sub4{font-family:var(--disp);font-weight:600;font-size:15px;margin:18px 0 6px;color:#33291f}
+p{margin:11px 0}
+p.estep{font-family:var(--disp);font-weight:600;font-size:15.5px;margin:18px 0 6px;color:var(--accent-d)}
+p.minilabel{font-family:var(--disp);font-weight:600;font-size:14px;margin:16px 0 4px;color:var(--ink);background:var(--accent-soft);display:inline-block;padding:3px 10px;border-radius:8px}
+ul,ol{margin:11px 0;padding-left:22px}li{margin:5px 0}
+ul.checklist{list-style:none;padding-left:4px}
+ul.checklist li{position:relative;padding-left:26px;margin:6px 0}
+ul.checklist li::before{position:absolute;left:0;top:0;font-weight:700}
+ul.checklist li.ok::before{content:"✓";color:var(--green)}
+ul.checklist li.no::before{content:"✕";color:var(--coral)}
+ul.checklist li.arw::before{content:"→";color:var(--accent)}
+hr{border:none;border-top:1px solid var(--hair);margin:26px 0}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-d);padding:1px 6px;border-radius:5px}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;color:#3a2f22}
+.tablewrap{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--hair);padding:8px 12px}
+th{background:var(--card);font-family:var(--disp);font-weight:600}
+tbody tr:nth-child(even){background:#FBFAF8}
+.fig{margin:18px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px}
+.fig figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.code{position:relative;margin:14px 0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:#161a20}
+.code.inline{background:#20262f}
+.code.ascii{background:#1b2530}
+.code-tag{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8891a8;z-index:2}
+.code pre{margin:0;padding:15px 18px;overflow-x:auto}
+.code code{background:none;color:#e7ebf1;padding:0;font-size:13px;line-height:1.6;display:block}
+.code .language-plaintext{color:#cfe0dc;white-space:pre}
+.hero-viz{margin:18px 0 28px;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px;min-height:170px}
+.viz-cap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.viz-cap .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.readout{font-family:var(--mono);font-size:14px;margin-top:16px;color:var(--ink);min-height:20px}
+.readout .hit{color:var(--green);font-weight:700}
+.readout .warn{color:var(--coral);font-weight:700}
+/* casting ladder */
+.ladder{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rung{padding:9px 12px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-weight:700;font-size:13px;transition:all .45s ease}
+.rung.on{border-color:var(--green);background:#ECFDF3;transform:translateY(-3px)}
+.rung.warnon{border-color:var(--coral);background:#FEF2F2}
+.arrw{color:var(--muted);font-family:var(--mono)}
+/* jvm pipeline */
+.pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stage{padding:12px 14px;border-radius:12px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:center;min-width:92px;transition:all .4s ease}
+.stage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.stage.hot{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.stage small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;margin-top:2px}
+.flowarr{color:var(--accent);font-size:18px}
+/* oop dispatch */
+.dispatch{display:flex;flex-direction:column;gap:14px}
+.drow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{padding:9px 13px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;border:2px solid var(--hair);background:#fff;transition:all .45s}
+.pill.ref{border-color:var(--muted);color:var(--muted)}
+.pill.obj.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.pill.impl{border-color:var(--hair);opacity:.5}
+.pill.impl.win{border-color:var(--green);background:#ECFDF3;color:var(--green);opacity:1;transform:translateY(-3px)}
+.pagefoot{max-width:820px;margin:40px auto 0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.toc{display:none}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded',function(){try{document.querySelectorAll('code.language-java').forEach(function(b){hljs.highlightElement(b)});}catch(e){}});</script>
+
+</head><body>
+<div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">Variables &amp; Data Types</span></div>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-what-is-a-variable">What is a variable ?</a><a href="#s-types-of-variables">Types of variables</a><a href="#s-java-primitive-data-types">Java Primitive Data Types</a><a href="#s-2x27s-complement-in-java">2&#x27;s Complement in Java</a><a href="#s-types-of-type-conversion-in-java">Types of Type Conversion in Java</a><a href="#s-kinds-of-variables-in-java">Kinds of Variables in Java</a><a href="#s-pass-by-value-vs-pass-by-reference-in-java">Pass by Value vs Pass by Reference in Java</a><a href="#s-reference-data-types-non-primitive-date-types">Reference Data Types (Non-Primitive Date Types)</a><a href="#s-interface-reference-data-type-in-java">Interface Reference Data Type in Java</a><a href="#s-array-as-reference-data-type-in-java">Array as Reference Data Type in Java</a><a href="#s-class-as-reference-data-type-in-java">Class as Reference Data Type in Java</a><a href="#s-wrapper-classes">Wrapper Classes</a><a href="#s-constant-variable">Constant Variable</a></nav><main class="content"><h1 class="doc-title">Variables &amp; Data Types</h1>
+<div class="hero-viz" id="heroViz" data-viz="vars"></div>
+<hr>
+<h2 class="sec" id="s-what-is-a-variable">What is a variable ?</h2>
+<ul><li>It is a container which holds a value</li><li>How to declare ?  </li></ul>
+<p><code>Datatype Variable_Name = value;</code><br>Eg : int         i        =  1;</p>
+<div class="code ascii"><pre><code class="language-plaintext">    boolean    bool       = true ;  </code></pre></div>
+<hr>
+<ul><li>Java is <strong>Static typed language</strong> i.e. we mandatorily have do define the datatype of a variable.</li><li>Java is a <strong>Strongly Typed Language</strong> i.e there is a restriction on what value can be assigned to a variable.</li></ul>
+<hr>
+<h2 class="sec" id="s-types-of-variables">Types of variables</h2>
+<figure class="fig"><img src="images/vars1.png" alt="alt text" loading="lazy"></figure>
+<hr>
+<h2 class="sec" id="s-java-primitive-data-types">Java Primitive Data Types</h2>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Type</th><th style="text-align:left">Size (bits)</th><th style="text-align:left">Range</th><th style="text-align:left">Default Value</th></tr></thead><tbody><tr><td style="text-align:left">byte</td><td style="text-align:left">8</td><td style="text-align:left">-128 to 127</td><td style="text-align:left">0</td></tr><tr><td style="text-align:left">short</td><td style="text-align:left">16</td><td style="text-align:left">-32,768 to 32,767</td><td style="text-align:left">0</td></tr><tr><td style="text-align:left">int</td><td style="text-align:left">32</td><td style="text-align:left">-2^31 to 2^31 - 1  (-2,147,483,648 to 2,147,483,647)</td><td style="text-align:left">0</td></tr><tr><td style="text-align:left">long</td><td style="text-align:left">64</td><td style="text-align:left">-2^63 to 2^63 - 1</td><td style="text-align:left">0L</td></tr><tr><td style="text-align:left">float</td><td style="text-align:left">32</td><td style="text-align:left">±1.4E-45 to ±3.4028235E38</td><td style="text-align:left">0.0f</td></tr><tr><td style="text-align:left">double</td><td style="text-align:left">64</td><td style="text-align:left">±4.9E-324 to ±1.7976931348623157E308</td><td style="text-align:left">0.0d</td></tr><tr><td style="text-align:left">char</td><td style="text-align:left">16</td><td style="text-align:left">0 to 65,535 (Unicode characters)</td><td style="text-align:left">&#x27;\u0000&#x27;</td></tr><tr><td style="text-align:left">boolean</td><td style="text-align:left">JVM dependent (typically 1 bit internally)</td><td style="text-align:left">true / false</td><td style="text-align:left">false</td></tr></tbody></table></div>
+<h3 class="sub">Important Points</h3>
+<ul><li>Default values apply only to instance variables, not local variables.</li><li><code>char</code> stores Unicode characters (0 to 65535).</li><li><code>boolean</code> size is not precisely defined by JVM spec.</li><li><code>float</code> requires <code>f</code> suffix.</li><li><code>long</code> requires <code>L</code> suffix if value exceeds int range.</li></ul>
+<hr>
+<h2 class="sec" id="s-2x27s-complement-in-java">2&#x27;s Complement in Java</h2>
+<p>Two’s complement is a method to represent negative numbers in binary.</p>
+<h3 class="sub">Steps to Find 2’s Complement</h3>
+<ol><li>Convert number to binary</li><li>Invert all bits (1’s complement)</li><li>Add 1</li></ol>
+<h3 class="sub">Example: Represent -5 (8-bit)</h3>
+<p>5 = 00000101</p>
+<p>1’s complement: 11111010</p>
+<p>Add 1: 11111011</p>
+<p>So, -5 = 11111011</p>
+<h3 class="sub">Key Points</h3>
+<ul><li>MSB (Most Significant Bit) represents sign (0 = positive, 1 = negative)</li><li>int range = -2^31 to 2^31 - 1</li><li>Only one representation of zero</li></ul>
+<hr>
+<h2 class="sec" id="s-types-of-type-conversion-in-java">Types of Type Conversion in Java</h2>
+<figure class="fig"><img src="images/casting.png" alt="alt text" loading="lazy"></figure>
+<h3 class="sub">1. Widening (Implicit Conversion)</h3>
+<p>Smaller → Larger data type. Done automatically. No data loss.</p>
+<p>Example:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">int a = 10;
+double b = a;   // int → double (automatic)
+System.out.println(b);  // 10.0</code></pre></div>
+<p>Flow: byte → short → int → long → float → double</p>
+<hr>
+<h3 class="sub">2. Narrowing (Explicit Conversion)</h3>
+<p>Larger → Smaller data type. Manual casting required. May cause data loss.</p>
+<p>Syntax:<br><code>(target_type) value</code></p>
+<p>Example:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">double x = 10.75;
+int y = (int) x;
+System.out.println(y);  // 10 =&gt; Decimal part is lost.</code></pre></div>
+<hr>
+<h3 class="sub">3. Type Promotion in Expressions</h3>
+<p>Java automatically promotes smaller types:</p>
+<div class="code inline"><pre><code class="language-plaintext">byte, short, char → int</code></pre></div>
+<p>Example:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">byte a = 10;
+byte b = 20;
+int c = a + b;  // result is int</code></pre></div>
+<h3 class="sub">🧠 Important Rules</h3>
+<ul class="checklist">
+<li class="ok">boolean cannot be converted to any other type</li>
+<li class="ok">Cannot convert object types like primitives</li>
+<li class="ok">Arithmetic operations auto-promote to int</li>
+</ul>
+<hr>
+<h2 class="sec" id="s-kinds-of-variables-in-java">Kinds of Variables in Java</h2>
+<h3 class="sub">1️⃣ Instance (Member) Variables</h3>
+<ul><li>Declared inside a class but outside methods</li><li>Each object gets its own copy</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Student {
+    String name;   // instance variable
+    int age;       // instance variable
+}</code></pre></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Student s1 = new Student();
+Student s2 = new Student();</code></pre></div>
+<p>Memory:</p>
+<ul><li>s1.name → separate</li><li>s2.name → separate</li></ul>
+<p class="minilabel">🧠 Key Points</p>
+<ul class="checklist">
+<li class="ok">Stored in Heap memory</li>
+<li class="ok">Created when object is created</li>
+<li class="ok">Destroyed when object is destroyed</li>
+<li class="ok">Gets default values</li>
+<li class="ok">Accessed using object reference</li>
+</ul>
+<h3 class="sub">2️⃣ Static Variables (Class Variables)</h3>
+<ul><li>Declared using static keyword</li><li>Only ONE copy shared among all objects</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Student {
+    static String schoolName = &quot;ABC School&quot;;
+}</code></pre></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Student.schoolName = &quot;XYZ School&quot;;  // static variable can be accessed and modified without creating an instance of the class</code></pre></div>
+<p>Memory:</p>
+<ul><li>Only one copy</li><li>Shared by all objects</li></ul>
+<p class="minilabel">🧠 Key Points</p>
+<ul class="checklist">
+<li class="ok">Stored in <strong>Method Area (Metaspace in modern JVM)</strong></li>
+<li class="ok">Created when class is loaded</li>
+<li class="ok">Shared among all objects</li>
+<li class="ok">Gets default values</li>
+<li class="ok">Access using: ClassName.variable</li>
+</ul>
+<h3 class="sub">3️⃣ Local Variables</h3>
+<ul><li>Declared inside a method, constructor, or block</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Test {
+    void display() {
+        int x = 10;   // local variable
+    }
+}</code></pre></div>
+<p class="minilabel">🧠 Key Points</p>
+<ul class="checklist">
+<li class="ok">Stored in Stack memory</li>
+<li class="ok">Created when method is called</li>
+<li class="ok">Destroyed when method ends</li>
+<li class="ok">❌ No default value (must initialize)</li>
+<li class="ok">Cannot use access modifiers</li>
+</ul>
+<hr>
+<h2 class="sec" id="s-pass-by-value-vs-pass-by-reference-in-java">Pass by Value vs Pass by Reference in Java</h2>
+<p class="minilabel">🚨 Important Truth</p>
+<ul><li>Java is 100% Pass by Value.</li><li>There is NO pass by reference in Java.</li></ul>
+<p class="minilabel">🧠 What Does “Pass by Value” Mean?</p>
+<ul><li>When a method is called, A copy of the variable is passed</li><li>Changes inside method don&#x27;t affect original variable (for primitives)</li></ul>
+<p class="estep">1️⃣ Primitive Types</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Test {
+    static void change(int x) {
+        x = 100;
+    }
+
+    public static void main(String[] args) {
+        int a = 10;
+        change(a);
+        System.out.println(a);   // prints 10
+    }
+}</code></pre></div>
+<p>Why?</p>
+<ul><li>a is copied into x</li><li>Changing x doesn’t change a</li></ul>
+<p class="estep">2️⃣ Objects (Where Confusion Happens)</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Student {
+    String name;
+}
+
+class Test {
+    static void change(Student s) {
+        s.name = &quot;Rahul&quot;;
+    }
+
+    public static void main(String[] args) {
+        Student st = new Student();
+        st.name = &quot;Abhi&quot;;
+
+        change(st);
+        System.out.println(st.name);    // Prints Rahul
+    }
+}</code></pre></div>
+<p><strong>Why Did It Change?</strong> Because:</p>
+<ul><li><code>st</code> stores a reference</li><li>That reference is copied</li><li>Both references point to the same object</li><li>Modifying object affects original  </li></ul>
+<ul class="checklist">
+<li class="arw">But reference itself is still passed by value.</li>
+</ul>
+<hr>
+<h2 class="sec" id="s-reference-data-types-non-primitive-date-types">Reference Data Types (Non-Primitive Date Types)</h2>
+<p>There are mainly 4 type of renference data types :</p>
+<ul><li>Class</li><li>String</li><li>Interface</li><li>Array</li></ul>
+<hr>
+<h3 class="sub">What is reference ?</h3>
+<p>Let&#x27;s understand with an example of class So Let&#x27;s create a class -</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Employee {
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+}</code></pre></div>
+<p>Now to create an object of class Employee</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Main {
+    public static void main(String[] args) {
+        Employee employee = new Employee();
+    }
+}</code></pre></div>
+<p>New keyword allocates a memory block object and the variable&#x27;s name holds a reference to actual memory.</p>
+<figure class="fig"><img src="images/vars2.png" alt="alt text" loading="lazy"></figure>
+<hr>
+<h3 class="sub">String Reference Data Type in Java</h3>
+<p class="minilabel">🧠 What is String?</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">String s = &quot;Hello&quot;;</code></pre></div>
+<p>Here:<br>String → Class (from java.lang)<br>s → Reference variable<br>&quot;Hello&quot; → Object</p>
+<p class="estep">🔥 Where Strings Are Stored?</p>
+<p class="estep">1️⃣ String Literal (Stored in String Pool)</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">String s1 = &quot;Java&quot;;
+String s2 = &quot;Java&quot;;</code></pre></div>
+<ul class="checklist">
+<li class="ok">Only ONE object created in String pool.</li>
+<li class="ok">Both references point to same object.</li>
+</ul>
+<figure class="fig"><img src="images/vars3.png" alt="alt text" loading="lazy"></figure>
+<p class="estep">2️⃣ Using new Keyword (Stored in Heap)</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">String s3 = new String(&quot;Java&quot;);</code></pre></div>
+<ul class="checklist">
+<li class="ok">Creates a NEW object</li>
+<li class="ok">Does not reuse pool object</li>
+</ul>
+<p class="estep">🧪 Comparison Example</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">String s1 = &quot;Java&quot;;
+String s2 = &quot;Java&quot;;
+String s3 = new String(&quot;Java&quot;);
+
+System.out.println(s1 == s2);      // true
+System.out.println(s1 == s3);      // false
+System.out.println(s1.equals(s3)); // true</code></pre></div>
+<p class="minilabel">🧠 Important: String is Immutable</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">String s = &quot;Java&quot;;
+s.concat(&quot; Backend&quot;);
+System.out.println(s);      // Java
+s = s.concat(&quot; Backend&quot;);
+System.out.println(s);      // Java Backend</code></pre></div>
+<p>Why?</p>
+<ul><li>Strings cannot be modified  </li><li>concat() creates new object  </li><li>Original remains unchanged  </li></ul>
+<p class="minilabel">🧠 equals() vs ==</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">String a = &quot;Java&quot;;
+String b = new String(&quot;Java&quot;);
+
+a == b        // false
+a.equals(b)   // true</code></pre></div>
+<ul><li>== → reference comparison</li><li>equals() → content comparison</li></ul>
+<p class="minilabel">🧩 Internal Structure (Simplified)</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public final class String {
+    private final byte[] value;
+}</code></pre></div>
+<ul class="checklist">
+<li class="ok">final class</li>
+<li class="ok">internal array is final</li>
+<li class="ok">immutable design</li>
+</ul>
+<hr>
+<h2 class="sec" id="s-interface-reference-data-type-in-java">Interface Reference Data Type in Java</h2>
+<p>An interface can be used as a reference type to refer to an object of a class that implements it.</p>
+<p class="minilabel">🧠 Basic Idea</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">interface Animal {
+    void sound();
+}
+
+class Dog implements Animal {
+    public void sound() {
+        System.out.println(&quot;Dog barks&quot;);
+    }
+}</code></pre></div>
+<p>Now</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Animal a = new Dog();
+a.sound();  // Dog barks</code></pre></div>
+<p>Here:</p>
+<ul><li>Animal → Interface (reference type)</li><li>a → Interface reference variable</li><li>new Dog() → Object</li><li>Dog implements Animal</li></ul>
+<p class="minilabel">📌 Important Rules</p>
+<p class="estep">1️⃣ Interface cannot be instantiated</p>
+<p class="estep">2️⃣ Interface reference can only access Methods declared in interface</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Animal a = new Dog();
+a.sound();  // OK
+
+a.run();    // ❌ if run() not in Animal</code></pre></div>
+<p class="minilabel">🧠 Very Important Concept</p>
+<ul><li><strong>Reference type determines what methods are accessible.</strong></li><li><strong>Object type determines which method implementation runs.</strong></li></ul>
+<hr>
+<h2 class="sec" id="s-array-as-reference-data-type-in-java">Array as Reference Data Type in Java</h2>
+<ul><li>Array is a reference data type.</li><li>Array is an object stored in heap memory.</li><li>Reference variable is stored in stack.</li><li>Arrays are mutable.</li><li>Arrays have fixed size.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">int[] arr = new int[3];</code></pre></div>
+<hr>
+<h2 class="sec" id="s-class-as-reference-data-type-in-java">Class as Reference Data Type in Java</h2>
+<ul><li>A class is a blueprint for creating objects.</li><li>Objects are stored in heap memory.</li><li>Reference variable stores address of object.</li><li>Multiple references can point to same object.</li></ul>
+<p>Example:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Student s1 = new Student();</code></pre></div>
+<p>Memory: s1 → Student object in heap</p>
+<hr>
+<h2 class="sec" id="s-wrapper-classes">Wrapper Classes</h2>
+<ul><li>Wrapper classes are object representations of primitive data types.</li><li>Primitive → Wrapper Mapping</li></ul>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Primitive Type</th><th style="text-align:left">Wrapper Class</th><th style="text-align:left">Size (bits)</th><th style="text-align:left">Default Value (Primitive)</th><th style="text-align:left">Default Value (Wrapper)</th></tr></thead><tbody><tr><td style="text-align:left">byte</td><td style="text-align:left">Byte</td><td style="text-align:left">8</td><td style="text-align:left">0</td><td style="text-align:left">null</td></tr><tr><td style="text-align:left">short</td><td style="text-align:left">Short</td><td style="text-align:left">16</td><td style="text-align:left">0</td><td style="text-align:left">null</td></tr><tr><td style="text-align:left">int</td><td style="text-align:left">Integer</td><td style="text-align:left">32</td><td style="text-align:left">0</td><td style="text-align:left">null</td></tr><tr><td style="text-align:left">long</td><td style="text-align:left">Long</td><td style="text-align:left">64</td><td style="text-align:left">0L</td><td style="text-align:left">null</td></tr><tr><td style="text-align:left">float</td><td style="text-align:left">Float</td><td style="text-align:left">32</td><td style="text-align:left">0.0f</td><td style="text-align:left">null</td></tr><tr><td style="text-align:left">double</td><td style="text-align:left">Double</td><td style="text-align:left">64</td><td style="text-align:left">0.0d</td><td style="text-align:left">null</td></tr><tr><td style="text-align:left">char</td><td style="text-align:left">Character</td><td style="text-align:left">16</td><td style="text-align:left">&#x27;\u0000&#x27;</td><td style="text-align:left">null</td></tr><tr><td style="text-align:left">boolean</td><td style="text-align:left">Boolean</td><td style="text-align:left">1*</td><td style="text-align:left">false</td><td style="text-align:left">null</td></tr></tbody></table></div>
+<ul><li>All wrapper classes are in: ``<code>java.lang package</code>``</li><li><strong>Wrapper Objects Are Immutable</strong></li></ul>
+<p class="minilabel">📌 Why Do We Need Wrapper Classes?</p>
+<p>Primitives are:</p>
+<ul><li>Not objects</li><li>Cannot be used in Collections</li><li>Cannot call methods</li><li>Cannot be null. But many Java features require objects.</li></ul>
+<p class="minilabel">📌 What is Boxing?</p>
+<p class="estep">🔹 Manual Boxing (Before Java 5)</p>
+<p>Converting primitive → wrapper manually:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">int a = 10;
+Integer obj = new Integer(a);  // old way (deprecated)</code></pre></div>
+<p>Better way:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Integer obj = Integer.valueOf(a);</code></pre></div>
+<p class="minilabel">📌 What is Autoboxing?</p>
+<p>Automatic conversion of primitive → wrapper</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">int a = 10;
+Integer obj = a;   // Autoboxing</code></pre></div>
+<p>Compiler converts it to:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Integer obj = Integer.valueOf(a);</code></pre></div>
+<p class="minilabel">📌 What is Unboxing?</p>
+<p>Automatic conversion of wrapper → primitive</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Integer obj = 20;
+int a = obj;   // Unboxing</code></pre></div>
+<p>Compiler converts it to:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">int a = obj.intValue();</code></pre></div>
+<p class="minilabel">🧠 Real Example (Collections)</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+
+list.add(10);  // autoboxing
+int x = list.get(0);  // unboxing</code></pre></div>
+<h3 class="sub">Integer Caching (Very Important Interview Question)</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Integer a = 100;
+Integer b = 100;
+
+System.out.println(a == b);  // true -&gt; both point to the SAME cached object</code></pre></div>
+<p>Why? Because Java caches values from: -128 to 127</p>
+<p>But:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Integer a = 200;
+Integer b = 200;
+
+System.out.println(a == b);  // false</code></pre></div>
+<p>Because outside cache range.</p>
+<hr>
+<h2 class="sec" id="s-constant-variable">Constant Variable</h2>
+<ul><li>We cannot change the value of a constant variable. This is usually created using final keyword.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">static final int VAR = 10;</code></pre></div>
+<p>static =&gt; It means only one copy exists.<br>final =&gt; It means value of var can&#x27;t be changed.</p></main></div>
+<p class="pagefoot">Core Java · interview notes · built as I go</p>
+<script>
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e;}
+function cap(t){var c=el('div','viz-cap');c.appendChild(el('span','pulse'));c.appendChild(document.createTextNode(t));return c;}
+function buildViz(){var h=document.getElementById('heroViz');if(!h)return;var k=h.getAttribute('data-viz');
+  if(k==='vars')vizVars(h);else if(k==='jvm')vizJvm(h);else if(k==='oop')vizOop(h);}
+/* casting ladder */
+function vizVars(host){
+  host.innerHTML=''; host.appendChild(cap('Type casting · widening is automatic, narrowing needs a cast'));
+  var order=['byte','short','int','long','float','double']; var lad=el('div','ladder'); var rungs=[];
+  order.forEach(function(t,idx){var r=el('div','rung',t);rungs.push(r);lad.appendChild(r);
+    if(idx<order.length-1)lad.appendChild(el('span','arrw','→'));});
+  host.appendChild(lad); var read=el('div','readout'); host.appendChild(read);
+  var k=0,phase='widen';
+  function frame(){
+    rungs.forEach(function(r){r.className='rung';});
+    if(phase==='widen'){
+      for(var j=0;j<=k;j++)rungs[j].classList.add('on');
+      read.innerHTML='widening: '+order[0]+' → '+order[k]+' &nbsp;<span class="hit">automatic, no data loss</span>';
+      k++; if(k>=order.length){phase='narrow';k=order.length-1;setTimeout(frame,1300);}else setTimeout(frame,750);
+    }else{
+      rungs[5].classList.add('warnon'); rungs[2].classList.add('warnon');
+      read.innerHTML='narrowing: double → int needs <span class="warn">(int) cast</span> · decimals lost';
+      phase='widen';k=0; setTimeout(frame,1900);
+    }
+  } frame();
+}
+/* jvm compile+run pipeline */
+function vizJvm(host){
+  host.innerHTML=''; host.appendChild(cap('Compile once · run anywhere · JIT heats up hot code'));
+  var pipe=el('div','pipe');
+  var s=[['MyClass.java','source'],['javac','compiler'],['.class','bytecode'],['JVM','interpreter'],['native code','JIT compiled']];
+  var stages=[];
+  s.forEach(function(d,idx){var st=el('div','stage','<div>'+d[0]+'</div><small>'+d[1]+'</small>');stages.push(st);pipe.appendChild(st);
+    if(idx<s.length-1)pipe.appendChild(el('span','flowarr','▸'));});
+  host.appendChild(pipe); var read=el('div','readout'); host.appendChild(read);
+  var msgs=['You write Java source','javac compiles it','Bytecode: portable, runs on any JVM','JVM interprets bytecode first','JIT compiles hot methods → native, much faster'];
+  var k=0;
+  function frame(){
+    stages.forEach(function(x){x.classList.remove('on','hot');});
+    for(var j=0;j<=k;j++)stages[j].classList.add('on');
+    if(k===4){stages[4].classList.remove('on');stages[4].classList.add('hot');read.innerHTML='<span class="hit">'+msgs[k]+'</span>';}
+    else read.textContent=msgs[k];
+    k++; if(k>=stages.length){setTimeout(function(){k=0;frame();},1700);}else setTimeout(frame,1050);
+  } frame();
+}
+/* oop runtime dispatch */
+function vizOop(host){
+  host.innerHTML=''; host.appendChild(cap('Runtime polymorphism · the object decides which method runs'));
+  var wrap=el('div','dispatch');
+  var r1=el('div','drow'); r1.innerHTML='<span class="pill ref">Parent p</span><span class="arrw">=</span>';
+  var objP=el('span','pill obj','new Parent()'); var objC=el('span','pill obj','new Child()');
+  r1.appendChild(objP); r1.appendChild(el('span','arrw','/')); r1.appendChild(objC);
+  var r2=el('div','drow'); r2.innerHTML='<span class="arrw">p.marry() resolves to →</span>';
+  var implP=el('span','pill impl','Parent.marry()'); var implC=el('span','pill impl','Child.marry()');
+  r2.appendChild(implP); r2.appendChild(implC);
+  wrap.appendChild(r1); wrap.appendChild(r2); host.appendChild(wrap);
+  var read=el('div','readout'); host.appendChild(read);
+  var st=0;
+  function frame(){
+    [objP,objC].forEach(function(x){x.classList.remove('on');});[implP,implC].forEach(function(x){x.classList.remove('win');});
+    if(st===0){objP.classList.add('on');implP.classList.add('win');read.innerHTML='object is <b>Parent</b> → runs <span class="hit">Parent.marry()</span>';}
+    else{objC.classList.add('on');implC.classList.add('win');read.innerHTML='object is <b>Child</b> → runs <span class="hit">Child.marry()</span> (reference type is dummy)';}
+    st=1-st; setTimeout(frame,1900);
+  } frame();
+}
+window.addEventListener('DOMContentLoaded',buildViz);
+</script></body></html>
