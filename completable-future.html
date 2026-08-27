@@ -1,0 +1,468 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Future &amp; CompletableFuture — Core Java Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F3; --card:#FFFFFF; --ink:#1A1712; --muted:#6B635A; --hair:#E8E4DE;
+  --accent:#E8710A; --accent-d:#C25E00; --accent-soft:#FFF2E4;
+  --teal:#0E9C8E; --coral:#E5484D; --green:#12924F; --violet:#7C4DDB; --blue:#2563EB;
+  --disp:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.62;font-size:15.5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,245,243,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.top .home{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.top .home:hover{color:var(--accent);text-decoration:none}
+.top .crumb{font-family:var(--disp);font-weight:600;font-size:15px}
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:36px;padding:28px 20px 100px}
+.toc{position:sticky;top:70px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;font-size:13px;padding-right:8px}
+.toc h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc a{display:block;color:var(--muted);padding:4px 10px;border-left:2px solid var(--hair);margin-left:2px;border-radius:0 6px 6px 0}
+.toc a:hover{color:var(--ink);background:var(--card);text-decoration:none}
+.content{min-width:0;max-width:820px}
+.doc-title{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,42px);letter-spacing:-.015em;margin:0 0 6px}
+h2.sec{font-family:var(--disp);font-weight:600;font-size:23px;margin:46px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--ink);scroll-margin-top:80px}
+h3.sub{font-family:var(--disp);font-weight:600;font-size:17.5px;margin:26px 0 8px}
+h4.sub4{font-family:var(--disp);font-weight:600;font-size:15px;margin:18px 0 6px;color:#33291f}
+p{margin:11px 0}
+p.estep{font-family:var(--disp);font-weight:600;font-size:15.5px;margin:18px 0 6px;color:var(--accent-d)}
+p.minilabel{font-family:var(--disp);font-weight:600;font-size:14px;margin:16px 0 4px;color:var(--ink);background:var(--accent-soft);display:inline-block;padding:3px 10px;border-radius:8px}
+ul,ol{margin:11px 0;padding-left:22px}li{margin:5px 0}
+ul.checklist{list-style:none;padding-left:4px}
+ul.checklist li{position:relative;padding-left:26px;margin:6px 0}
+ul.checklist li::before{position:absolute;left:0;top:0;font-weight:700}
+ul.checklist li.ok::before{content:"✓";color:var(--green)}
+ul.checklist li.no::before{content:"✕";color:var(--coral)}
+ul.checklist li.arw::before{content:"→";color:var(--accent)}
+hr{border:none;border-top:1px solid var(--hair);margin:26px 0}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-d);padding:1px 6px;border-radius:5px}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;color:#3a2f22}
+.tablewrap{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--hair);padding:8px 12px}
+th{background:var(--card);font-family:var(--disp);font-weight:600}
+tbody tr:nth-child(even){background:#FBFAF8}
+.fig{margin:18px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px}
+.fig figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.code{position:relative;margin:14px 0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:#161a20}
+.code.inline{background:#20262f}
+.code.ascii{background:#1b2530}
+.code-tag{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8891a8;z-index:2}
+.code pre{margin:0;padding:15px 18px;overflow-x:auto}
+.code code{background:none;color:#e7ebf1;padding:0;font-size:13px;line-height:1.6;display:block}
+.code .language-plaintext{color:#cfe0dc;white-space:pre}
+.hero-viz{margin:18px 0 28px;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px;min-height:170px}
+.viz-cap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.viz-cap .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.readout{font-family:var(--mono);font-size:14px;margin-top:16px;color:var(--ink);min-height:20px}
+.readout .hit{color:var(--green);font-weight:700}
+.readout .warn{color:var(--coral);font-weight:700}
+/* casting ladder */
+.ladder{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rung{padding:9px 12px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-weight:700;font-size:13px;transition:all .45s ease}
+.rung.on{border-color:var(--green);background:#ECFDF3;transform:translateY(-3px)}
+.rung.warnon{border-color:var(--coral);background:#FEF2F2}
+.arrw{color:var(--muted);font-family:var(--mono)}
+/* jvm pipeline */
+.pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stage{padding:12px 14px;border-radius:12px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:center;min-width:92px;transition:all .4s ease}
+.stage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.stage.hot{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.stage small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;margin-top:2px}
+.flowarr{color:var(--accent);font-size:18px}
+/* oop dispatch */
+.dispatch{display:flex;flex-direction:column;gap:14px}
+.drow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{padding:9px 13px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;border:2px solid var(--hair);background:#fff;transition:all .45s}
+.pill.ref{border-color:var(--muted);color:var(--muted)}
+.pill.obj.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.pill.impl{border-color:var(--hair);opacity:.5}
+.pill.impl.win{border-color:var(--green);background:#ECFDF3;color:var(--green);opacity:1;transform:translateY(-3px)}
+.pagefoot{max-width:820px;margin:40px auto 0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.toc{display:none}}
+
+.states{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.state{padding:9px 13px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:700;transition:all .4s}
+.state.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d);transform:translateY(-3px)}
+.state.done{border-color:var(--green);background:#ECFDF3;color:var(--green)}
+.sarrow{color:var(--muted);font-family:var(--mono);font-size:12px}
+.casbox{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+.memcell{padding:12px 18px;border-radius:12px;border:2px solid var(--accent);background:var(--accent-soft);font-family:var(--mono);font-weight:700;font-size:20px;color:var(--accent-d);text-align:center}
+.memcell .lbl{font-size:10px;color:var(--muted);font-weight:400;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.threadcol{display:flex;flex-direction:column;gap:6px}
+.trow{display:flex;gap:8px;flex-wrap:wrap}
+.tcard{padding:7px 11px;border-radius:9px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12px;font-weight:600;transition:all .4s}
+.tcard.act{border-color:var(--accent);background:var(--accent-soft)}
+.tcard.okc{border-color:var(--green);background:#ECFDF3;color:var(--green)}
+.tcard.failc{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.poolwrap{display:flex;flex-direction:column;gap:10px}
+.poolrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.poollane{font-family:var(--mono);font-size:11px;color:var(--muted);width:66px;text-transform:uppercase;letter-spacing:.05em}
+.slot{width:30px;height:30px;border-radius:7px;border:2px dashed var(--hair);background:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;transition:all .35s}
+.slot.core{border-style:solid}
+.slot.fill{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d);border-style:solid}
+.slot.qfill{border-color:var(--violet);background:#F3EEFF;color:var(--violet);border-style:solid}
+.slot.reject{border-color:var(--coral);background:var(--coral);color:#fff;border-style:solid}
+.cfchain{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cfstage{padding:10px 13px;border-radius:11px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12px;font-weight:600;text-align:center;transition:all .4s}
+.cfstage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.cfstage small{display:block;color:var(--muted);font-weight:400;font-size:10px;margin-top:2px}
+.cfval{display:inline-block;padding:3px 9px;border-radius:7px;background:var(--green);color:#fff;font-family:var(--mono);font-weight:700;font-size:12px;margin-left:8px}
+.vtwrap{display:flex;flex-direction:column;gap:14px}
+.vtpool{display:flex;gap:6px;flex-wrap:wrap}
+.vt{width:34px;height:24px;border-radius:6px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .4s}
+.vt.mounted{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.vt.io{border-color:var(--violet);background:#F3EEFF;color:var(--violet)}
+.carriers{display:flex;gap:10px}
+.carrier{flex:1;border:2px solid var(--green);border-radius:10px;padding:8px;background:#ECFDF3;text-align:center;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green);min-height:52px}
+.carrier .cw{margin-top:5px;font-size:12px;color:var(--accent-d)}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded',function(){try{document.querySelectorAll('code.language-java').forEach(function(b){hljs.highlightElement(b)});}catch(e){}});</script>
+
+</head><body>
+<div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">Future &amp; CompletableFuture</span></div>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-problem-with-traditional-threadpoolexecutor">Problem with traditional ThreadPoolExecutor</a><a href="#s-future">Future</a><a href="#s-examples-of-using-threadpoolexecutor-with-submit-runnable-an">Examples of using ThreadPoolExecutor with submit(), Runnable and Callable</a><a href="#s-better-alternative-completablefuture">Better Alternative → CompletableFuture</a></nav><main class="content"><h1 class="doc-title">Future &amp; CompletableFuture</h1>
+<div class="hero-viz" id="heroViz" data-viz="cf"></div>
+<h3 class="sub"><code>execute()</code> vs. <code>submit()</code></h3>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Feature</th><th style="text-align:left">execute()</th><th style="text-align:left">submit()</th></tr></thead><tbody><tr><td style="text-align:left">Return value</td><td style="text-align:left">❌ No</td><td style="text-align:left">✅ Future</td></tr><tr><td style="text-align:left">Supports Callable</td><td style="text-align:left">❌ No</td><td style="text-align:left">✅ Yes</td></tr><tr><td style="text-align:left">Exception handling</td><td style="text-align:left">❌ No</td><td style="text-align:left">✅ Yes</td></tr><tr><td style="text-align:left">Use case</td><td style="text-align:left">Fire-and-forget</td><td style="text-align:left">Result tracking</td></tr></tbody></table></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">// execute()
+executor.execute(Runnable task);
+
+// submit()
+Future&lt;?&gt; future = executor.submit(Runnable task);
+//OR
+Future&lt;Integer&gt; future = executor.submit(Callable task);</code></pre></div>
+<p>With <code>submit()</code>:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Future&lt;?&gt; f = executor.submit(task);</code></pre></div>
+<ul class="checklist">
+<li class="arw">Even if task fails:</li>
+</ul>
+<ul><li>Thread pool doesn’t crash</li><li>Exception hidden until get()</li></ul>
+<h3 class="sub">Runnable vs. Callable</h3>
+<p>Core Difference</p>
+<ul class="checklist">
+<li class="arw">Runnable = No result, no checked exception</li>
+<li class="arw">Callable = Returns result + can throw checked exception</li>
+</ul>
+<figure class="fig"><img src="images/runnable_callable.png" alt="alt text" loading="lazy"></figure>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Feature</th><th style="text-align:left">Runnable</th><th style="text-align:left">Callable</th></tr></thead><tbody><tr><td style="text-align:left">Package</td><td style="text-align:left"><code>java.lang</code></td><td style="text-align:left"><code>java.util.concurrent</code></td></tr><tr><td style="text-align:left">Method</td><td style="text-align:left"><code>run()</code></td><td style="text-align:left"><code>call()</code></td></tr><tr><td style="text-align:left">Return value</td><td style="text-align:left">❌ No</td><td style="text-align:left">✅ Yes</td></tr><tr><td style="text-align:left">Checked exception</td><td style="text-align:left">❌ No</td><td style="text-align:left">✅ Yes</td></tr><tr><td style="text-align:left">Used with Thread</td><td style="text-align:left">✅ Yes</td><td style="text-align:left">❌ No (needs Executor)</td></tr><tr><td style="text-align:left">Used with Executor</td><td style="text-align:left">✅ Yes</td><td style="text-align:left">✅ Yes</td></tr><tr><td style="text-align:left">Future support</td><td style="text-align:left">Limited</td><td style="text-align:left">Full support</td></tr></tbody></table></div>
+<h4 class="sub4">Runnable can still be used with <code>submit()</code></h4>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Future&lt;?&gt; f = executor.submit(runnable);</code></pre></div>
+<ul class="checklist">
+<li class="arw">f.get() → always null</li>
+</ul>
+<h4 class="sub4">Callable cannot be used with Thread directly</h4>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">new Thread(callable); // ❌ Not allowed</code></pre></div>
+<h2 class="sec" id="s-problem-with-traditional-threadpoolexecutor">Problem with traditional <code>ThreadPoolExecutor</code></h2>
+<figure class="fig"><img src="images/threadpool-problem.png" alt="alt text" loading="lazy"></figure>
+<ul><li><code>submit()</code> returns a <code>Future&lt;?&gt;</code>, but it is ignored.</li><li>The caller (main thread) cannot know:</li><li>whether the task completed successfully</li><li>whether it failed with an exception</li><li>whether it is still running or cancelled</li></ul>
+<h2 class="sec" id="s-future">Future</h2>
+<ul><li>Future represents the result of an asynchronous computation — basically, a placeholder for a value that will be available later.</li><li>It is used to:</li><li>Execute a task in another thread</li><li>Get the result later (when it&#x27;s ready)</li><li>Check status (completed / cancelled)</li><li>Step-by-step:</li></ul>
+<ol><li>Submit a task to a thread pool</li><li>Immediately get a Future object</li><li>Task runs in background</li><li>Use future.get() to fetch result (blocks if not ready)</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">ThreadPoolExecutor executor =  new ThreadPoolExecutor(1,1,1,TimeUnit.HOURS,
+                new ArrayBlockingQueue&lt;&gt;(3),Executors.defaultThreadFactory(),
+                new ThreadPoolExecutor.AbortPolicy());
+
+Future&lt;Integer&gt; future = executor.submit(() -&gt; {
+    Thread.sleep(2000);
+    return 10 + 20;
+});
+
+// This will block until result is ready
+Integer result = future.get();
+System.out.println(&quot;Result: &quot; + result);
+
+executor.shutdown();</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Result: 30</code></pre></div>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Method</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left"><code>get()</code></td><td style="text-align:left">Waits and returns result (blocking)</td></tr><tr><td style="text-align:left"><code>get(timeout)</code></td><td style="text-align:left">Waits for specific time</td></tr><tr><td style="text-align:left"><code>isDone()</code></td><td style="text-align:left">Checks if task is complete</td></tr><tr><td style="text-align:left"><code>isCancelled()</code></td><td style="text-align:left">Checks if cancelled</td></tr><tr><td style="text-align:left"><code>cancel()</code></td><td style="text-align:left">Attempts to cancel task</td></tr></tbody></table></div>
+<p><strong>Note:</strong><br>get() is Blocking</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">future.get(); // waits until task completes</code></pre></div>
+<ul class="checklist">
+<li class="arw">This can pause your thread → not truly async if misused</li>
+</ul>
+<h2 class="sec" id="s-examples-of-using-threadpoolexecutor-with-submit-runnable-an">Examples of using ThreadPoolExecutor with <code>submit()</code>, <code>Runnable</code> and <code>Callable</code></h2>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+
+        ThreadPoolExecutor executor =  new ThreadPoolExecutor(1,1,1,TimeUnit.HOURS,
+                new ArrayBlockingQueue&lt;&gt;(3),Executors.defaultThreadFactory(),new ThreadPoolExecutor.AbortPolicy());
+
+        // Use case 1
+        Future&lt;?&gt; future1 = executor.submit(() -&gt; {
+            System.out.println(&quot;Task1 with Runnable&quot;);
+        });
+        Object o = future1.get();
+        System.out.println(o == null);
+
+
+        // Use case 2
+        List&lt;Integer&gt; result = new ArrayList&lt;&gt;();
+        Future&lt;List&lt;Integer&gt;&gt; future2 = executor.submit(() -&gt; {
+            System.out.println(&quot;Task2 with Runnable and return object&quot;);
+            result.add(10);
+        }, result);
+        List&lt;Integer&gt; future2Output = future2.get();
+        System.out.println(future2Output.get(0));
+
+
+        // Use case 3
+        Future&lt;List&lt;Integer&gt;&gt; future3 = executor.submit(() -&gt; {
+            System.out.println(&quot;Task3 with callable&quot;);
+            List&lt;Integer&gt; output = new ArrayList&lt;&gt;();
+            output.add(50);
+            return output;
+        });
+        List&lt;Integer&gt; future3Output =  future3.get();
+        System.out.println(future3Output.get(0));
+
+        executor.shutdown();
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Task1 with Runnable
+true
+Task2 with Runnable and return object
+10
+Task3 with callable
+50</code></pre></div>
+<h2 class="sec" id="s-better-alternative-completablefuture">Better Alternative → CompletableFuture</h2>
+<ul><li>Introduced in Java 8</li><li>Non-blocking</li><li>Supports chaining</li><li>Supports callbacks</li><li>Combine multiple async tasks</li></ul>
+<p><strong>How to use <code>CompletableFuture</code>?</strong></p>
+<ol><li><code>CompletableFuture.supplyAsync</code>:</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public static &lt;T&gt; CompletableFuture&lt;T&gt; supplyAsync(Supplier&lt;T&gt; supplier)
+
+public static &lt;T&gt; CompletableFuture&lt;T&gt; supplyAsync(
+    Supplier&lt;T&gt; supplier,
+    Executor executor
+)</code></pre></div>
+<ul><li>supplyAsync method initiates an Async operation.</li><li>supplier is executed asynchronously in a separate thread.</li><li>If we want more control on threads, we can pass an Executor in the method.</li><li>By default, it uses the shared ForkJoinPool executor.</li><li>It dynamically adjusts its pool size based on processors.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 1, TimeUnit.HOURS,
+                new ArrayBlockingQueue&lt;&gt;(3), Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
+
+        CompletableFuture&lt;String&gt; asyncTask = CompletableFuture.supplyAsync(() -&gt; &quot;Task completed&quot;, executor);
+
+        System.out.println(asyncTask.get());
+        executor.shutdown();
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Task completed</code></pre></div>
+<ol><li><code>thenApply</code> &amp; <code>thenApplyAsync</code>:</li></ol>
+<ul><li>Apply a function to the result of previous Async computation.</li><li>Return a new CompletableFuture object.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">
+CompletableFuture&lt;String&gt; asyncTask1 =
+    CompletableFuture.supplyAsync(() -&gt; {
+        // Task which thread need to execute
+        return &quot;Geeks for &quot;;
+    }, poolExecutor)
+    .thenApply((String val) -&gt; {
+        // functionality which can work on the result of previous async task
+        return val + &quot;Geeks&quot;;
+    });</code></pre></div>
+<p><code>thenApply</code> method:</p>
+<ul><li>It’s a Synchronous execution.</li><li>Means, it uses the same thread which completed the previous async task.</li></ul>
+<p><code>thenApplyAsync</code> method:</p>
+<ul><li>It’s an Asynchronous execution.</li><li>Means, it uses a different thread (from fork‑join pool, if we do not provide the executor in the method) to complete this function.</li><li>If multiple <code>thenApplyAsync</code> is used, ordering cannot be guaranteed —</li></ul>
+<p>they will run concurrently.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(1, 1, 1, TimeUnit.HOURS,
+                new ArrayBlockingQueue&lt;&gt;(3), Executors.defaultThreadFactory(), new ThreadPoolExecutor.AbortPolicy());
+
+        CompletableFuture&lt;String&gt; asyncTask = CompletableFuture.supplyAsync(() -&gt; {
+                    System.out.println(&quot;Running supplyAsync =&gt; &quot; + Thread.currentThread().getName());
+                    return &quot;Hello&quot;;
+                }, executor)
+                .thenApplyAsync((String val) -&gt; {
+                    System.out.println(&quot;Running thenApplyAsync =&gt; &quot; + Thread.currentThread().getName());
+                    return val + &quot; world!&quot;;
+                });
+
+        System.out.println(asyncTask.get());
+        executor.shutdown();
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Running supplyAsync =&gt; pool-1-thread-1
+Running thenApplyAsync =&gt; ForkJoinPool.commonPool-worker-1
+Hello world!</code></pre></div>
+<ol><li><code>thenCompose</code> and <code>thenComposeAsync</code>:</li></ol>
+<ul><li>Chain together dependent Async operations.</li><li>Means when next Async operation depends on the result of the previous Async one.</li><li>We can tie them together.</li><li>For async tasks, we can bring some ordering using this.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">CompletableFuture&lt;String&gt; asyncTask1 = CompletableFuture
+    .supplyAsync(() -&gt; {
+        System.out.println(
+            &quot;Thread Name which runs &#x27;supplyAsync&#x27;: &quot;
+            + Thread.currentThread().getName()
+        );
+        return &quot;Concept and &quot;;
+    }, poolExecutor)
+    .thenCompose((String val) -&gt; {
+        return CompletableFuture.supplyAsync(() -&gt; {
+            System.out.println(
+                &quot;Thread Name which runs &#x27;thenCompose&#x27;: &quot;
+                + Thread.currentThread().getName()
+            );
+            return val + &quot;Coding&quot;;
+        });
+    });</code></pre></div>
+<ol><li><code>thenAccept</code> and <code>thenAcceptAsync</code>:</li></ol>
+<ul><li>Generally end stage in the chain of Async operations.</li><li>It does not return anything.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">CompletableFuture&lt;Void&gt; asyncTask1 = CompletableFuture
+    .supplyAsync(() -&gt; {
+        System.out.println(
+            &quot;Thread Name which runs &#x27;supplyAsync&#x27;: &quot;
+            + Thread.currentThread().getName()
+        );
+        return &quot;Hello world!&quot;;
+    }, poolExecutor)
+    .thenAccept((String val) -&gt;
+        System.out.println(&quot;All stages completed&quot;)
+    );</code></pre></div>
+<ol><li><code>thenCombine</code> and <code>thenCombineAsync</code></li></ol>
+<ul><li>Used to combine the result of 2 <code>CompletableFuture</code>. </li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        CompletableFuture&lt;Integer&gt; asyncTask1 = CompletableFuture.supplyAsync(() -&gt; 10);
+        CompletableFuture&lt;String&gt; asyncTask2 = CompletableFuture.supplyAsync(() -&gt; &quot;K&quot;);
+        CompletableFuture&lt;String&gt; combinedTask = asyncTask1.thenCombine(asyncTask2, (Integer i, String s) -&gt; i + s);
+
+        System.out.println(combinedTask.get());
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">10K</code></pre></div></main></div>
+<p class="pagefoot">Core Java · interview notes · built as I go</p>
+<script>
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e;}
+function cap(t){var c=el('div','viz-cap');c.appendChild(el('span','pulse'));c.appendChild(document.createTextNode(t));return c;}
+function buildViz(){var h=document.getElementById('heroViz');if(!h)return;var k=h.getAttribute('data-viz');
+  ({life:vizLife,cas:vizCas,pool:vizPool,cf:vizCf,vt:vizVt}[k]||function(){})(h);}
+
+/* thread lifecycle state machine */
+function vizLife(host){
+  host.innerHTML=''; host.appendChild(cap('Thread lifecycle · states a thread moves through'));
+  var names=['New','Runnable','Running','Waiting','Runnable','Running','Terminated'];
+  var labels=['start()','scheduler picks it','wait() / IO','notify() / ready','scheduler picks it','run() finishes',''];
+  var uniq=['New','Runnable','Running','Waiting','Terminated'];
+  var row=el('div','states'); var map={};
+  uniq.forEach(function(u,i){var s=el('div','state',u);map[u]=s;row.appendChild(s);if(i<uniq.length-1)row.appendChild(el('span','sarrow','→'));});
+  host.appendChild(row); var read=el('div','readout'); host.appendChild(read);
+  var k=0;
+  function frame(){
+    uniq.forEach(function(u){map[u].classList.remove('on','done');});
+    var cur=names[k]; map[cur].classList.add(cur==='Terminated'?'done':'on');
+    read.innerHTML = cur==='Terminated' ? '<span class="hit">Terminated</span> — run() finished, thread is dead'
+      : '<b>'+cur+'</b>'+(labels[k]?' &nbsp;<span class="sarrow">next: '+labels[k]+'</span>':'');
+    k++; if(k>=names.length){setTimeout(function(){k=0;frame();},1900);}else setTimeout(frame,1300);
+  } frame();
+}
+
+/* CAS compare-and-swap with retry */
+function vizCas(host){
+  host.innerHTML=''; host.appendChild(cap('Compare-And-Swap · update only if value is unchanged, else retry'));
+  var box=el('div','casbox');
+  var mem=el('div','memcell','<div class="lbl">shared value</div><span id="memv">100</span>');
+  var col=el('div','threadcol');
+  var t1=el('div','tcard','T1: read 100, want 101');
+  var t2=el('div','tcard','T2: read 100, want 101');
+  col.appendChild(t1);col.appendChild(t2);
+  box.appendChild(mem);box.appendChild(col); host.appendChild(box);
+  var read=el('div','readout'); host.appendChild(read);
+  var memv=function(){return document.getElementById('memv');};
+  var st=0;
+  function frame(){
+    [t1,t2].forEach(function(t){t.className='tcard';});
+    if(st===0){memv().textContent='100';read.textContent='Both threads read the same value: 100';}
+    else if(st===1){t2.classList.add('okc');memv().textContent='101';read.innerHTML='T2 CAS(100→101): value was 100 → <span class="hit">success</span>, now 101';}
+    else if(st===2){t1.classList.add('failc');read.innerHTML='T1 CAS(100→101): value is 101, not 100 → <span class="warn">fail</span>';}
+    else{t1.classList.add('okc');memv().textContent='102';read.innerHTML='T1 <span class="hit">retries</span>: read 101, CAS(101→102) → success';}
+    st++; if(st>3){setTimeout(function(){st=0;frame();},2000);}else setTimeout(frame,1500);
+  } frame();
+}
+
+/* thread pool task admission: core -> queue -> max -> reject */
+function vizPool(host){
+  host.innerHTML=''; host.appendChild(cap('ThreadPoolExecutor · core → queue → max threads → reject'));
+  var w=el('div','poolwrap');
+  function lane(name,n,cls){var r=el('div','poolrow');r.appendChild(el('div','poollane',name));var slots=[];
+    for(var i=0;i<n;i++){var s=el('div','slot'+(cls==='core'?' core':''));slots.push(s);r.appendChild(s);}w.appendChild(r);return slots;}
+  var core=lane('core',2,'core'); var queue=lane('queue',3,'q'); var mx=lane('max +',2,'core');
+  host.appendChild(w); var read=el('div','readout'); host.appendChild(read);
+  // admission sequence: fill core(2), queue(3), extra max(2), then reject
+  var plan=[]; for(var i=0;i<2;i++)plan.push(['core',i]); for(i=0;i<3;i++)plan.push(['q',i]); for(i=0;i<2;i++)plan.push(['mx',i]); plan.push(['rej',0]);
+  var k=0;
+  function clearAll(){core.concat(queue,mx).forEach(function(s){s.className='slot'+(core.indexOf(s)>=0||mx.indexOf(s)>=0?' core':'');});}
+  function frame(){
+    if(k===0)clearAll();
+    var p=plan[k], t='T'+(k+1);
+    if(p[0]==='core'){core[p[1]].className='slot core fill';core[p[1]].textContent=t;read.innerHTML='task '+t+' → free <span class="hit">core thread</span> runs it';}
+    else if(p[0]==='q'){queue[p[1]].className='slot qfill';queue[p[1]].textContent=t;read.innerHTML='core busy → task '+t+' <span style="color:var(--violet)">waits in queue</span>';}
+    else if(p[0]==='mx'){mx[p[1]].className='slot core fill';mx[p[1]].textContent=t;read.innerHTML='queue full → spawn <span class="hit">extra thread</span> (up to max) for '+t;}
+    else{read.innerHTML='max reached & queue full → '+('T9')+' <span class="warn">rejected</span> (AbortPolicy)';}
+    k++; if(k>=plan.length){setTimeout(function(){k=0;frame();},2100);}else setTimeout(frame,900);
+  } frame();
+}
+
+/* CompletableFuture non-blocking chain */
+function vizCf(host){
+  host.innerHTML=''; host.appendChild(cap('CompletableFuture · non-blocking chain, value flows through stages'));
+  var chain=el('div','cfchain');
+  var s1=el('div','cfstage','supplyAsync<small>produce</small>');
+  var s2=el('div','cfstage','thenApply<small>transform</small>');
+  var s3=el('div','cfstage','thenAccept<small>consume</small>');
+  chain.appendChild(s1);chain.appendChild(el('span','sarrow','▸'));chain.appendChild(s2);chain.appendChild(el('span','sarrow','▸'));chain.appendChild(s3);
+  host.appendChild(chain); var read=el('div','readout'); host.appendChild(read);
+  var steps=[[s1,'produces <span class="cfval">"Hello"</span>'],[s2,'transforms → <span class="cfval">"Hello world!"</span>'],[s3,'prints it — chain done, main never blocked']];
+  var k=0;
+  function frame(){
+    [s1,s2,s3].forEach(function(s){s.classList.remove('on');});
+    for(var j=0;j<=k;j++)steps[j][0].classList.add('on');
+    read.innerHTML=steps[k][1];
+    k++; if(k>=steps.length){setTimeout(function(){k=0;frame();},2000);}else setTimeout(frame,1350);
+  } frame();
+}
+
+/* virtual threads mount on few carrier threads */
+function vizVt(host){
+  host.innerHTML=''; host.appendChild(cap('Virtual threads · many VTs share a few OS carrier threads'));
+  var wrap=el('div','vtwrap');
+  var pool=el('div','vtpool'); var vts=[];
+  for(var i=0;i<8;i++){var v=el('div','vt','VT'+(i+1));vts.push(v);pool.appendChild(v);}
+  var carriers=el('div','carriers');
+  var c1=el('div','carrier','Carrier-1<div class="cw" id="cw1">idle</div>');
+  var c2=el('div','carrier','Carrier-2<div class="cw" id="cw2">idle</div>');
+  carriers.appendChild(c1);carriers.appendChild(c2);
+  wrap.appendChild(pool);wrap.appendChild(carriers); host.appendChild(wrap);
+  var read=el('div','readout'); host.appendChild(read);
+  var frames=[
+    [[0,1],[],'VT1 & VT2 mount on the 2 carriers and run'],
+    [[2,3],[0,1],'VT1,VT2 hit I/O → unmount → VT3,VT4 mount (carriers reused)'],
+    [[4,5],[2,3],'Same 2 carriers now run VT5,VT6 — thousands can rotate through'],
+  ]; var k=0;
+  function frame(){
+    var f=frames[k];
+    vts.forEach(function(v){v.className='vt';});
+    f[1].forEach(function(i){vts[i].classList.add('io');});
+    f[0].forEach(function(i){vts[i].classList.add('mounted');});
+    document.getElementById('cw1').textContent='running '+ 'VT'+(f[0][0]+1);
+    document.getElementById('cw2').textContent='running '+ 'VT'+(f[0][1]+1);
+    read.innerHTML=(k===2?'<span class="hit">':'')+f[2]+(k===2?'</span>':'');
+    k++; if(k>=frames.length){setTimeout(function(){k=0;frame();},2100);}else setTimeout(frame,1800);
+  } frame();
+}
+window.addEventListener('DOMContentLoaded',buildViz);
+</script></body></html>

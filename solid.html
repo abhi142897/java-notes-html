@@ -1,0 +1,314 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SOLID Principles — Core Java Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F3; --card:#FFFFFF; --ink:#1A1712; --muted:#6B635A; --hair:#E8E4DE;
+  --accent:#E8710A; --accent-d:#C25E00; --accent-soft:#FFF2E4;
+  --teal:#0E9C8E; --coral:#E5484D; --green:#12924F; --violet:#7C4DDB; --blue:#2563EB;
+  --disp:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.62;font-size:15.5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,245,243,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.top .home{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.top .home:hover{color:var(--accent);text-decoration:none}
+.top .crumb{font-family:var(--disp);font-weight:600;font-size:15px}
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:36px;padding:28px 20px 100px}
+.toc{position:sticky;top:70px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;font-size:13px;padding-right:8px}
+.toc h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc a{display:block;color:var(--muted);padding:4px 10px;border-left:2px solid var(--hair);margin-left:2px;border-radius:0 6px 6px 0}
+.toc a:hover{color:var(--ink);background:var(--card);text-decoration:none}
+.content{min-width:0;max-width:820px}
+.doc-title{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,42px);letter-spacing:-.015em;margin:0 0 6px}
+h2.sec{font-family:var(--disp);font-weight:600;font-size:23px;margin:46px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--ink);scroll-margin-top:80px}
+h3.sub{font-family:var(--disp);font-weight:600;font-size:17.5px;margin:26px 0 8px}
+h4.sub4{font-family:var(--disp);font-weight:600;font-size:15px;margin:18px 0 6px;color:#33291f}
+p{margin:11px 0}
+p.estep{font-family:var(--disp);font-weight:600;font-size:15.5px;margin:18px 0 6px;color:var(--accent-d)}
+p.minilabel{font-family:var(--disp);font-weight:600;font-size:14px;margin:16px 0 4px;color:var(--ink);background:var(--accent-soft);display:inline-block;padding:3px 10px;border-radius:8px}
+ul,ol{margin:11px 0;padding-left:22px}li{margin:5px 0}
+ul.checklist{list-style:none;padding-left:4px}
+ul.checklist li{position:relative;padding-left:26px;margin:6px 0}
+ul.checklist li::before{position:absolute;left:0;top:0;font-weight:700}
+ul.checklist li.ok::before{content:"✓";color:var(--green)}
+ul.checklist li.no::before{content:"✕";color:var(--coral)}
+ul.checklist li.arw::before{content:"→";color:var(--accent)}
+hr{border:none;border-top:1px solid var(--hair);margin:26px 0}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-d);padding:1px 6px;border-radius:5px}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;color:#3a2f22}
+.tablewrap{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--hair);padding:8px 12px}
+th{background:var(--card);font-family:var(--disp);font-weight:600}
+tbody tr:nth-child(even){background:#FBFAF8}
+.fig{margin:18px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px}
+.fig figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.code{position:relative;margin:14px 0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:#161a20}
+.code.inline{background:#20262f}
+.code.ascii{background:#1b2530}
+.code-tag{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8891a8;z-index:2}
+.code pre{margin:0;padding:15px 18px;overflow-x:auto}
+.code code{background:none;color:#e7ebf1;padding:0;font-size:13px;line-height:1.6;display:block}
+.code .language-plaintext{color:#cfe0dc;white-space:pre}
+.hero-viz{margin:18px 0 28px;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px;min-height:170px}
+.viz-cap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.viz-cap .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.readout{font-family:var(--mono);font-size:14px;margin-top:16px;color:var(--ink);min-height:20px}
+.readout .hit{color:var(--green);font-weight:700}
+.readout .warn{color:var(--coral);font-weight:700}
+/* casting ladder */
+.ladder{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rung{padding:9px 12px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-weight:700;font-size:13px;transition:all .45s ease}
+.rung.on{border-color:var(--green);background:#ECFDF3;transform:translateY(-3px)}
+.rung.warnon{border-color:var(--coral);background:#FEF2F2}
+.arrw{color:var(--muted);font-family:var(--mono)}
+/* jvm pipeline */
+.pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stage{padding:12px 14px;border-radius:12px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:center;min-width:92px;transition:all .4s ease}
+.stage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.stage.hot{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.stage small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;margin-top:2px}
+.flowarr{color:var(--accent);font-size:18px}
+/* oop dispatch */
+.dispatch{display:flex;flex-direction:column;gap:14px}
+.drow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{padding:9px 13px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;border:2px solid var(--hair);background:#fff;transition:all .45s}
+.pill.ref{border-color:var(--muted);color:var(--muted)}
+.pill.obj.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.pill.impl{border-color:var(--hair);opacity:.5}
+.pill.impl.win{border-color:var(--green);background:#ECFDF3;color:var(--green);opacity:1;transform:translateY(-3px)}
+.pagefoot{max-width:820px;margin:40px auto 0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.toc{display:none}}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;gap:10px}
+.tlrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;opacity:.4;transition:opacity .4s}
+.tlrow.on{opacity:1}
+.tlver{font-family:var(--disp);font-weight:700;font-size:15px;min-width:112px;padding:7px 10px;border-radius:9px;border:2px solid var(--hair);background:#fff;text-align:center;transition:all .4s}
+.tlrow.on .tlver{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.tlfeat{display:flex;gap:6px;flex-wrap:wrap}
+.tlchip{padding:5px 10px;border-radius:8px;background:#F1EEEA;font-family:var(--mono);font-size:11.5px;font-weight:600;color:#4a423a}
+/* string pool */
+.poolbox{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+.poolregion{border:2px solid var(--hair);border-radius:12px;padding:12px 14px;min-width:150px;background:#fff}
+.poolregion .rn{font-family:var(--mono);font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;text-align:center}
+.strobj{padding:8px 12px;border-radius:9px;border:2px solid var(--accent);background:var(--accent-soft);color:var(--accent-d);font-family:var(--mono);font-weight:700;font-size:14px;text-align:center;margin:6px 0}
+.refline{font-family:var(--mono);font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;margin:5px 0}
+.refline .nm{color:var(--ink);font-weight:700}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.dot.v{background:var(--violet)}
+/* eq/hash */
+.eqwrap{display:flex;flex-direction:column;gap:14px}
+.eqrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:13px}
+.eqbox{padding:8px 12px;border-radius:9px;border:2px solid var(--hair);background:#fff;font-weight:700;transition:all .4s}
+.eqbox.eq{border-color:var(--green);background:#ECFDF3;color:var(--green)}
+.eqbox.hash{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+/* solid */
+.solidwrap{display:flex;flex-direction:column;gap:8px;max-width:560px}
+.solidrow{display:flex;align-items:center;gap:12px;padding:9px 13px;border-radius:10px;border:2px solid var(--hair);background:#fff;opacity:.4;transition:all .4s}
+.solidrow.on{opacity:1;border-color:var(--accent);background:var(--accent-soft)}
+.solidL{font-family:var(--disp);font-weight:700;font-size:20px;color:var(--accent-d);width:24px;text-align:center}
+.solidT{font-family:var(--body);font-size:13px}.solidT b{font-family:var(--disp)}
+/* strategy */
+.stgwrap{display:flex;flex-direction:column;gap:12px}
+.stgctx{font-family:var(--mono);font-size:13px;font-weight:700;padding:8px 12px;border-radius:9px;border:2px solid var(--ink);background:#fff;display:inline-block}
+.stgopts{display:flex;gap:8px;flex-wrap:wrap}
+.stgopt{padding:8px 12px;border-radius:9px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12px;font-weight:600;transition:all .4s}
+.stgopt.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d);transform:translateY(-3px)}
+/* observer */
+.obswrap{display:flex;align-items:center;gap:26px;flex-wrap:wrap}
+.subj{padding:12px 16px;border-radius:12px;border:2px solid var(--accent);background:var(--accent-soft);color:var(--accent-d);font-family:var(--mono);font-weight:700;font-size:13px;text-align:center;transition:all .3s}
+.subj.emit{box-shadow:0 0 0 6px rgba(232,113,10,.18)}
+.obss{display:flex;flex-direction:column;gap:8px}
+.obsnode{padding:7px 12px;border-radius:9px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12px;font-weight:600;transition:all .4s}
+.obsnode.notified{border-color:var(--green);background:#ECFDF3;color:var(--green);transform:translateX(6px)}
+/* decorator */
+.decwrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.declayer{padding:9px 13px;border-radius:10px;font-family:var(--mono);font-size:12.5px;font-weight:700;border:2px solid var(--hair);background:#fff;opacity:.35;transition:all .45s}
+.declayer.on{opacity:1;border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.decplus{color:var(--muted);font-family:var(--mono)}
+/* proxy */
+.pxwrap{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pxnode{padding:10px 14px;border-radius:11px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:700;text-align:center;transition:all .4s}
+.pxnode.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d);transform:translateY(-3px)}
+.pxnode.real.on{border-color:var(--green);background:#ECFDF3;color:var(--green)}
+.pxarr{color:var(--accent);font-size:16px}
+/* builder */
+.bldwrap{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+.bldsteps{display:flex;flex-direction:column;gap:6px}
+.bldstep{font-family:var(--mono);font-size:12.5px;font-weight:600;padding:7px 12px;border-radius:9px;border:2px solid var(--hair);background:#fff;opacity:.4;transition:all .4s}
+.bldstep.on{opacity:1;border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.bldobj{border:2px dashed var(--hair);border-radius:12px;padding:12px 16px;font-family:var(--mono);font-size:12.5px;min-width:160px;background:#fff}
+.bldobj .bl{color:var(--muted)}
+.bldobj.done{border-style:solid;border-color:var(--green);background:#ECFDF3}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded',function(){try{document.querySelectorAll('code.language-java').forEach(function(b){hljs.highlightElement(b)});}catch(e){}});</script>
+
+</head><body>
+<div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">SOLID Principles</span></div>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-s-single-responsibility-principle-srp">S — Single Responsibility Principle (SRP)</a><a href="#s-o-openclosed-principle-ocp">O — Open/Closed Principle (OCP)</a><a href="#s-l-liskov-substitution-principle-lsp">L — Liskov Substitution Principle (LSP)</a><a href="#s-i-interface-segregation-principle-isp">I — Interface Segregation Principle (ISP)</a><a href="#s-d-dependency-inversion-principle-dip">D — Dependency Inversion Principle (DIP)</a><a href="#s-why-they-work-together">Why they work together</a></nav><main class="content"><h1 class="doc-title">SOLID Principles</h1>
+<div class="hero-viz" id="heroViz" data-viz="solid"></div>
+<p>SOLID is five design principles that keep object-oriented code easy to change, test, and extend. They&#x27;re less about clever code and more about *where responsibilities live*. Interviewers love asking for a one-line definition plus an example — so each principle below has both.</p>
+<hr>
+<h2 class="sec" id="s-s-single-responsibility-principle-srp">S — Single Responsibility Principle (SRP)</h2>
+<p><strong>A class should have only one reason to change</strong> — it should do one job.</p>
+<p><strong>Picture:</strong> a Swiss-army knife is handy, but a kitchen uses separate knives because each does its job better and can be replaced independently.</p>
+<p><strong>Smell:</strong> an <code>Invoice</code> class that calculates totals, saves to the database, *and* emails the customer. Three unrelated reasons to change tangled in one place.</p>
+<p><strong>Fix:</strong> split into <code>InvoiceCalculator</code>, <code>InvoiceRepository</code>, and <code>InvoiceMailer</code>. Each changes for exactly one reason.</p>
+<hr>
+<h2 class="sec" id="s-o-openclosed-principle-ocp">O — Open/Closed Principle (OCP)</h2>
+<p><strong>Software should be open for extension but closed for modification</strong> — add new behaviour without editing tested code.</p>
+<p><strong>Picture:</strong> a phone with app support. You add features by installing apps, not by cracking open the phone and re-soldering it.</p>
+<p><strong>Smell:</strong> a <code>discount()</code> method with a growing <code>if (type == GOLD) … else if (type == SILVER) …</code> that you edit for every new tier.</p>
+<p><strong>Fix:</strong> define a <code>DiscountPolicy</code> interface and add a new class per tier. Existing code isn&#x27;t touched — this is exactly what the Strategy pattern enables.</p>
+<hr>
+<h2 class="sec" id="s-l-liskov-substitution-principle-lsp">L — Liskov Substitution Principle (LSP)</h2>
+<p><strong>A subclass must be usable anywhere its parent is, without surprising the caller.</strong></p>
+<p><strong>Picture:</strong> if a recipe calls for &quot;milk&quot;, almond milk should work. But if a &quot;milk&quot; that secretly curdles when heated is passed in, it breaks the recipe — that subtype violates the contract.</p>
+<p><strong>Smell:</strong> the classic <code>Square extends Rectangle</code>. Setting width and height independently is valid for a rectangle but breaks for a square, so a <code>Square</code> can&#x27;t safely stand in for a <code>Rectangle</code>.</p>
+<p><strong>Fix:</strong> don&#x27;t force an &quot;is-a&quot; that breaks behaviour. Model them separately, or use a common abstraction that both honour.</p>
+<hr>
+<h2 class="sec" id="s-i-interface-segregation-principle-isp">I — Interface Segregation Principle (ISP)</h2>
+<p><strong>Don&#x27;t force a class to implement methods it doesn&#x27;t use</strong> — prefer several small interfaces over one fat one.</p>
+<p><strong>Picture:</strong> a printer-scanner-fax combo forces a plain printer to &quot;implement&quot; scan and fax with dummy code. Split the buttons so each device only exposes what it can do.</p>
+<p><strong>Smell:</strong> a <code>Worker</code> interface with <code>work()</code> *and* <code>eat()</code>. A <code>RobotWorker</code> is forced to implement <code>eat()</code> with an empty or throwing method.</p>
+<p><strong>Fix:</strong> split into <code>Workable</code> and <code>Eatable</code>; classes implement only what applies.</p>
+<hr>
+<h2 class="sec" id="s-d-dependency-inversion-principle-dip">D — Dependency Inversion Principle (DIP)</h2>
+<p><strong>Depend on abstractions, not concrete classes</strong> — high-level code shouldn&#x27;t be nailed to low-level details.</p>
+<p><strong>Picture:</strong> a wall socket. Your laptop depends on the *socket shape* (an abstraction), not on the specific power plant. Swap the source behind the socket and the laptop neither knows nor cares.</p>
+<p><strong>Smell:</strong> <code>OrderService</code> that does <code>new MySQLDatabase()</code> inside itself — now it&#x27;s welded to MySQL and can&#x27;t be tested with a fake.</p>
+<p><strong>Fix:</strong> depend on a <code>Database</code> interface and have the concrete DB *injected* in (constructor injection). This is the idea behind Spring&#x27;s dependency injection.</p>
+<hr>
+<h2 class="sec" id="s-why-they-work-together">Why they work together</h2>
+<p>SRP keeps classes focused, ISP keeps interfaces focused, OCP lets you add without breaking, LSP keeps inheritance honest, and DIP keeps the wiring flexible. Follow them and features tend to become &quot;add a new class&quot;, not &quot;edit ten existing ones&quot;.</p></main></div>
+<p class="pagefoot">Core Java · interview notes · built as I go</p>
+<script>
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e;}
+function cap(t){var c=el('div','viz-cap');c.appendChild(el('span','pulse'));c.appendChild(document.createTextNode(t));return c;}
+var VIZ={};
+VIZ.timeline=function(host){
+  host.innerHTML=''; host.appendChild(cap('Java feature timeline · LTS releases build the language up'));
+  var data=[['Java 8','Lambdas','Streams','Optional'],['Java 11','var (10)','HttpClient'],
+    ['Java 17','Sealed','Records','Pattern matching'],['Java 21','Virtual threads','Record patterns','Switch patterns']];
+  var tl=el('div','tl'); var rows=[];
+  data.forEach(function(d){var r=el('div','tlrow');r.appendChild(el('div','tlver',d[0]));var f=el('div','tlfeat');
+    for(var i=1;i<d.length;i++)f.appendChild(el('span','tlchip',d[i]));r.appendChild(f);tl.appendChild(r);rows.push(r);});
+  host.appendChild(tl); var read=el('div','readout'); host.appendChild(read);
+  var notes=['Java 8 — the functional revolution','Java 11 LTS — modern APIs','Java 17 LTS — records, sealed, pattern matching','Java 21 LTS — virtual threads & richer patterns'];
+  var k=0;(function f(){rows.forEach(function(r,i){r.classList.toggle('on',i<=k);});
+    read.innerHTML=(k===3?'<span class="hit">':'')+notes[k]+(k===3?'</span>':'');
+    k++;if(k>=rows.length){setTimeout(function(){k=0;f();},2100);}else setTimeout(f,1200);})();
+};
+VIZ.pool2=function(host){
+  host.innerHTML=''; host.appendChild(cap('String pool · literals are shared, new String() is not'));
+  var box=el('div','poolbox');
+  var stack=el('div','poolregion'); stack.appendChild(el('div','rn','references'));
+  stack.appendChild(el('div','refline','<span class="dot"></span><span class="nm">s1</span> = "hi"'));
+  stack.appendChild(el('div','refline','<span class="dot"></span><span class="nm">s2</span> = "hi"'));
+  stack.appendChild(el('div','refline','<span class="dot v"></span><span class="nm">s3</span> = new String("hi")'));
+  var pool=el('div','poolregion'); pool.appendChild(el('div','rn','String pool')); var pooled=el('div','strobj','"hi"'); pool.appendChild(pooled);
+  var heap=el('div','poolregion'); heap.appendChild(el('div','rn','heap'));
+  var heapo=el('div','strobj','"hi"'); heapo.style.borderColor='var(--violet)'; heapo.style.background='#F3EEFF'; heapo.style.color='var(--violet)'; heap.appendChild(heapo);
+  box.appendChild(stack);box.appendChild(pool);box.appendChild(heap); host.appendChild(box);
+  var read=el('div','readout'); host.appendChild(read);
+  var msgs=['s1 and s2 are literals → same pooled object','s1 == s2 → <span class="hit">true</span> (same reference)',
+    's3 = new String() → a separate heap object','s1 == s3 → <span class="warn">false</span>, but s1.equals(s3) → <span class="hit">true</span>'];
+  var k=0;(function f(){pooled.style.boxShadow=(k<2?'0 0 0 3px rgba(232,113,10,.25)':'none');
+    heapo.style.boxShadow=(k>=2?'0 0 0 3px rgba(124,77,219,.25)':'none'); read.innerHTML=msgs[k];
+    k++;if(k>=msgs.length){setTimeout(function(){k=0;f();},2000);}else setTimeout(f,1400);})();
+};
+VIZ.eqhash=function(host){
+  host.innerHTML=''; host.appendChild(cap('equals() & hashCode() · the contract HashMap relies on'));
+  var w=el('div','eqwrap');
+  var r1=el('div','eqrow'); r1.innerHTML='<span>a.equals(b)</span>'; var eqv=el('span','eqbox','?'); r1.appendChild(eqv);
+  r1.appendChild(el('span','',' →&nbsp; hashCodes:')); var h1=el('span','eqbox hash','a.hashCode()'); var h2=el('span','eqbox hash','b.hashCode()'); r1.appendChild(h1);r1.appendChild(h2);
+  var r2=el('div','eqrow'); r2.innerHTML='<span>HashMap.get(key):</span>'; var st1=el('span','eqbox','hashCode → bucket'); var st2=el('span','eqbox','equals → exact key'); r2.appendChild(st1);r2.appendChild(st2);
+  w.appendChild(r1);w.appendChild(r2); host.appendChild(w); var read=el('div','readout'); host.appendChild(read);
+  var k=0;(function f(){h1.className='eqbox hash';h2.className='eqbox hash';eqv.className='eqbox';st1.className='eqbox';st2.className='eqbox';
+    if(k===0){eqv.textContent='true';eqv.classList.add('eq');read.innerHTML='If a.equals(b) is true → hashCodes <span class="hit">must match</span>';}
+    else if(k===1){eqv.textContent='true';eqv.classList.add('eq');h1.classList.add('eq');h2.classList.add('eq');read.innerHTML='equal objects → <span class="hit">same hashCode</span> (contract)';}
+    else if(k===2){st1.classList.add('hash');read.innerHTML='get() step 1: hashCode picks the <b>bucket</b>';}
+    else{st2.classList.add('eq');read.innerHTML='get() step 2: equals finds the <span class="hit">exact key</span>';}
+    k++;if(k>=4){setTimeout(function(){k=0;f();},2000);}else setTimeout(f,1500);})();
+};
+VIZ.solid=function(host){
+  host.innerHTML=''; host.appendChild(cap('SOLID · five principles for clean OOP design'));
+  var data=[['S','<b>Single Responsibility</b> — one reason to change'],['O','<b>Open/Closed</b> — extend without modifying'],
+    ['L','<b>Liskov Substitution</b> — subtypes swap in safely'],['I','<b>Interface Segregation</b> — small focused interfaces'],
+    ['D','<b>Dependency Inversion</b> — depend on abstractions']];
+  var w=el('div','solidwrap'); var rows=[]; data.forEach(function(d){var r=el('div','solidrow');r.appendChild(el('div','solidL',d[0]));r.appendChild(el('div','solidT',d[1]));w.appendChild(r);rows.push(r);});
+  host.appendChild(w); var read=el('div','readout'); host.appendChild(read);
+  var k=0;(function f(){rows.forEach(function(r,i){r.classList.toggle('on',i<=k);});
+    read.innerHTML=k===4?'<span class="hit">S O L I D</span> — maintainable, extensible code':'building up: '+data.slice(0,k+1).map(function(d){return d[0];}).join(' ');
+    k++;if(k>=rows.length){setTimeout(function(){k=0;f();},2200);}else setTimeout(f,1050);})();
+};
+VIZ.strategy=function(host){
+  host.innerHTML=''; host.appendChild(cap('Strategy · same call, swap the algorithm at runtime'));
+  var w=el('div','stgwrap'); w.appendChild(el('div','stgctx','checkout.pay(500)'));
+  var opts=el('div','stgopts'); var names=['UpiPayment','CardPayment','NetBankingPayment']; var cs=names.map(function(n){var o=el('div','stgopt',n);opts.appendChild(o);return o;});
+  w.appendChild(opts); host.appendChild(w); var read=el('div','readout'); host.appendChild(read);
+  var k=0;(function f(){cs.forEach(function(c,i){c.classList.toggle('on',i===k);});
+    read.innerHTML='strategy = <span class="hit">'+names[k]+'</span> → same checkout, different algorithm';
+    k=(k+1)%cs.length;setTimeout(f,1600);})();
+};
+VIZ.observer=function(host){
+  host.innerHTML=''; host.appendChild(cap('Observer · subject notifies every subscriber on change'));
+  var w=el('div','obswrap'); var subj=el('div','subj','Channel<br>uploads video'); w.appendChild(subj);
+  w.appendChild(el('span','pxarr','→'));
+  var obss=el('div','obss'); var names=['Abhishek','Riya','Karan']; var nodes=names.map(function(n){var o=el('div','obsnode',n);obss.appendChild(o);return o;}); w.appendChild(obss);
+  host.appendChild(w); var read=el('div','readout'); host.appendChild(read);
+  var k=-1;(function f(){
+    if(k===-1){subj.classList.add('emit');nodes.forEach(function(n){n.classList.remove('notified');});read.innerHTML='Channel uploads → <span class="hit">notify all subscribers</span>';k=0;setTimeout(f,700);}
+    else if(k<nodes.length){nodes[k].classList.add('notified');read.innerHTML=names[k]+' gets notified';k++;setTimeout(f,700);}
+    else{subj.classList.remove('emit');k=-1;setTimeout(f,1400);}
+  })();
+};
+VIZ.decorator=function(host){
+  host.innerHTML=''; host.appendChild(cap('Decorator · wrap the object to add behaviour & cost'));
+  var w=el('div','decwrap');
+  var base=el('div','declayer','SimpleCoffee $2.0'); var p1=el('span','decplus','+'); var milk=el('div','declayer','Milk +$0.5'); var p2=el('span','decplus','+'); var sugar=el('div','declayer','Sugar +$0.2');
+  w.appendChild(base);w.appendChild(p1);w.appendChild(milk);w.appendChild(p2);w.appendChild(sugar); host.appendChild(w);
+  var read=el('div','readout'); host.appendChild(read);
+  var steps=[[ [base],'2.0','plain coffee'],[[base,milk],'2.5','wrap with Milk'],[[base,milk,sugar],'2.7','wrap with Sugar']]; var k=0;
+  (function f(){[base,milk,sugar].forEach(function(x){x.classList.remove('on');});steps[k][0].forEach(function(x){x.classList.add('on');});
+    read.innerHTML=steps[k][2]+' → cost = <span class="hit">$'+steps[k][1]+'</span>';
+    k++;if(k>=steps.length){setTimeout(function(){k=0;f();},1900);}else setTimeout(f,1300);})();
+};
+VIZ.proxy=function(host){
+  host.innerHTML=''; host.appendChild(cap('Proxy · stands in front of the real object to control access'));
+  var w=el('div','pxwrap'); var client=el('div','pxnode','Client'); var a1=el('span','pxarr','→'); var proxy=el('div','pxnode','ImageProxy<br><small>check / lazy-load</small>'); var a2=el('span','pxarr','→'); var real=el('div','pxnode real','RealImage<br><small>heavy load</small>');
+  w.appendChild(client);w.appendChild(a1);w.appendChild(proxy);w.appendChild(a2);w.appendChild(real); host.appendChild(w);
+  var read=el('div','readout'); host.appendChild(read);
+  var k=0;(function f(){[client,proxy,real].forEach(function(x){x.classList.remove('on');});
+    if(k===0){client.classList.add('on');read.textContent='Client calls display() — talks to the proxy, not the real object';}
+    else if(k===1){proxy.classList.add('on');read.innerHTML='Proxy runs its checks, then <span class="hit">lazy-loads</span> the real image on first use';}
+    else{real.classList.add('on');read.innerHTML='Only now is the <span class="hit">heavy RealImage</span> created & shown';}
+    k++;if(k>=3){setTimeout(function(){k=0;f();},2000);}else setTimeout(f,1500);})();
+};
+VIZ.builder=function(host){
+  host.innerHTML=''; host.appendChild(cap('Builder · assemble a complex object step by step'));
+  var w=el('div','bldwrap'); var steps=el('div','bldsteps');
+  var s=['.name("Abhishek")','.age(25)','.city("Pune")','.build()']; var cs=s.map(function(t){var e=el('div','bldstep',t);steps.appendChild(e);return e;});
+  var obj=el('div','bldobj','<div class="bl">Person {</div><div id="bn">&nbsp;&nbsp;name: —</div><div id="ba">&nbsp;&nbsp;age: —</div><div id="bc">&nbsp;&nbsp;city: —</div><div class="bl">}</div>');
+  w.appendChild(steps);w.appendChild(obj); host.appendChild(w); var read=el('div','readout'); host.appendChild(read);
+  var k=0;(function f(){cs.forEach(function(c,i){c.classList.toggle('on',i===k);});obj.classList.remove('done');
+    if(k===0){obj.querySelector('#bn').innerHTML='&nbsp;&nbsp;name: "Abhishek"';read.textContent='set name';}
+    else if(k===1){obj.querySelector('#ba').innerHTML='&nbsp;&nbsp;age: 25';read.textContent='set age';}
+    else if(k===2){obj.querySelector('#bc').innerHTML='&nbsp;&nbsp;city: "Pune"';read.textContent='set optional city';}
+    else{obj.classList.add('done');read.innerHTML='build() → <span class="hit">immutable Person ready</span>';}
+    k++;if(k>=cs.length){setTimeout(function(){k=0;obj.querySelector('#bn').innerHTML='&nbsp;&nbsp;name: —';obj.querySelector('#ba').innerHTML='&nbsp;&nbsp;age: —';obj.querySelector('#bc').innerHTML='&nbsp;&nbsp;city: —';f();},2100);}else setTimeout(f,1150);})();
+};
+function buildViz(){document.querySelectorAll('.hero-viz').forEach(function(h){var k=h.getAttribute('data-viz');if(VIZ[k])VIZ[k](h);});}
+window.addEventListener('DOMContentLoaded',buildViz);
+</script></body></html>

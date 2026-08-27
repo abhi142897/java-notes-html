@@ -23,7 +23,7 @@
   .sub{color:var(--muted);font-size:16px;max-width:60ch;margin:0}
   .progress{margin-top:22px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:13px;color:var(--muted)}
   .bar{flex:1;height:8px;background:var(--hair);border-radius:99px;overflow:hidden;max-width:300px}
-  .bar span{display:block;height:100%;width:66.7%;background:var(--accent);border-radius:99px}
+  .bar span{display:block;height:100%;width:100%;background:var(--accent);border-radius:99px}
   .seclabel{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:40px 0 14px;display:flex;align-items:center;gap:12px}
   .seclabel::after{content:"";flex:1;height:1px;background:var(--hair)}
   .list{display:flex;flex-direction:column;gap:10px}
@@ -46,7 +46,7 @@
     <p class="kicker">Interview Prep · Java</p>
     <h1>Complete Java</h1>
     <p class="sub">Interview-focused Java notes — refined, simplified, and heavy on the areas interviewers actually probe. Each topic: clear explanations, diagrams, and the gotchas that trip people up under pressure.</p>
-    <div class="progress"><span>10 / 15 topics</span><span class="bar"><span></span></span></div>
+    <div class="progress"><span>25 / 25 topics</span><span class="bar"><span></span></span></div>
   </header>
 
   <p class="seclabel">Topics</p>
@@ -104,34 +104,84 @@
       <span class="body"><p class="topic">Exception Handling</p><p class="meta">checked vs unchecked · try/catch/finally · throw/throws · custom exceptions</p></span>
       <span class="go">Open&nbsp;↗</span></a>
 
-    <div class="row soon">
+    <a class="row" href="operators.html">
       <span class="idx">11</span>
-      <span class="body"><p class="topic">Strings &amp; Immutability</p><p class="meta">Coming soon</p></span>
-      <span class="go">Soon</span></div>
+      <span class="body"><p class="topic">Operators</p><p class="meta">arithmetic · relational · bitwise &amp; shift · ternary · precedence</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
 
-    <div class="row soon">
+    <a class="row" href="control-flow.html">
       <span class="idx">12</span>
-      <span class="body"><p class="topic">Collections Framework</p><p class="meta">Coming soon</p></span>
-      <span class="go">Soon</span></div>
+      <span class="body"><p class="topic">Control Flow</p><p class="meta">if / switch · loops · break &amp; continue · order of execution</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
 
-    <div class="row soon">
+    <a class="row" href="collections.html">
       <span class="idx">13</span>
-      <span class="body"><p class="topic">Multithreading &amp; Concurrency</p><p class="meta">Coming soon</p></span>
-      <span class="go">Soon</span></div>
+      <span class="body"><p class="topic">Collections Framework</p><p class="meta">List / Set / Map / Queue · HashMap internals · Comparable vs Comparator · concurrent collections</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
 
-    <div class="row soon">
+    <a class="row" href="streams.html">
       <span class="idx">14</span>
-      <span class="body"><p class="topic">Java 8 — Streams &amp; Lambdas</p><p class="meta">Coming soon</p></span>
-      <span class="go">Soon</span></div>
+      <span class="body"><p class="topic">Streams</p><p class="meta">pipeline · intermediate vs terminal ops · lazy evaluation · parallel streams</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
 
-    <div class="row soon">
+    <a class="row" href="multithreading-locks.html">
       <span class="idx">15</span>
-      <span class="body"><p class="topic">Design Patterns</p><p class="meta">Coming soon</p></span>
-      <span class="go">Soon</span></div>
+      <span class="body"><p class="topic">Multithreading — Locks</p><p class="meta">thread vs process · lifecycle · monitor lock · producer-consumer · ReentrantLock / ReadWrite / Stamped / Semaphore</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="lock-free.html">
+      <span class="idx">16</span>
+      <span class="body"><p class="topic">Multithreading — Lock-Free</p><p class="meta">CAS · ABA problem · atomic variables · volatile vs atomic · concurrent collections</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="threadpool.html">
+      <span class="idx">17</span>
+      <span class="body"><p class="topic">Thread Pools &amp; Executors</p><p class="meta">ThreadPoolExecutor params · queue types · rejection · Fork/Join work-stealing · scheduled pools</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="completable-future.html">
+      <span class="idx">18</span>
+      <span class="body"><p class="topic">Future &amp; CompletableFuture</p><p class="meta">Runnable vs Callable · execute vs submit · Future · CompletableFuture chaining</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="virtual-threads.html">
+      <span class="idx">19</span>
+      <span class="body"><p class="topic">ThreadLocal &amp; Virtual Threads</p><p class="meta">ThreadLocal isolation · virtual threads (Java 21) · carrier threads · platform vs virtual</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="latest-features-and-misc.html">
+      <span class="idx">20</span>
+      <span class="body"><p class="topic">Latest Features &amp; Misc Topics</p><p class="meta">sealed · switch expressions · pattern matching · records · text blocks · var · Optional · Strings &amp; immutability · equals/hashCode</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="design-patterns.html">
+      <span class="idx">21</span>
+      <span class="body"><p class="topic">Design Patterns</p><p class="meta">Singleton · Factory · Abstract Factory · Builder · Adapter · Decorator · Proxy · Strategy · Observer</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="solid.html">
+      <span class="idx">22</span>
+      <span class="body"><p class="topic">SOLID Principles</p><p class="meta">single responsibility · open/closed · Liskov · interface segregation · dependency inversion</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="comparable-comparator.html">
+      <span class="idx">23</span>
+      <span class="body"><p class="topic">Comparable vs Comparator</p><p class="meta">natural vs external order · compareTo vs compare · comparator chaining · thenComparing</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="serialization.html">
+      <span class="idx">24</span>
+      <span class="body"><p class="topic">Serialization</p><p class="meta">Serializable · serialVersionUID · transient · object graph · Externalizable · security</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
+
+    <a class="row" href="file-operations.html">
+      <span class="idx">25</span>
+      <span class="body"><p class="topic">File Operations</p><p class="meta">Path &amp; Files (NIO) · read/write · try-with-resources · byte vs char streams · legacy File</p></span>
+      <span class="go">Open&nbsp;↗</span></a>
 
   </div>
 
-  <p class="foot">Built as I go · more topics landing soon</p>
+  <p class="foot">Complete Java · 25 topics · built as I go</p>
 </div>
 </body>
 </html>

@@ -1,0 +1,827 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collections Framework — Core Java Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F3; --card:#FFFFFF; --ink:#1A1712; --muted:#6B635A; --hair:#E8E4DE;
+  --accent:#E8710A; --accent-d:#C25E00; --accent-soft:#FFF2E4;
+  --teal:#0E9C8E; --coral:#E5484D; --green:#12924F; --violet:#7C4DDB; --blue:#2563EB;
+  --disp:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.62;font-size:15.5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,245,243,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.top .home{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.top .home:hover{color:var(--accent);text-decoration:none}
+.top .crumb{font-family:var(--disp);font-weight:600;font-size:15px}
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:36px;padding:28px 20px 100px}
+.toc{position:sticky;top:70px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;font-size:13px;padding-right:8px}
+.toc h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc a{display:block;color:var(--muted);padding:4px 10px;border-left:2px solid var(--hair);margin-left:2px;border-radius:0 6px 6px 0}
+.toc a:hover{color:var(--ink);background:var(--card);text-decoration:none}
+.content{min-width:0;max-width:820px}
+.doc-title{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,42px);letter-spacing:-.015em;margin:0 0 6px}
+h2.sec{font-family:var(--disp);font-weight:600;font-size:23px;margin:46px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--ink);scroll-margin-top:80px}
+h3.sub{font-family:var(--disp);font-weight:600;font-size:17.5px;margin:26px 0 8px}
+h4.sub4{font-family:var(--disp);font-weight:600;font-size:15px;margin:18px 0 6px;color:#33291f}
+p{margin:11px 0}
+p.estep{font-family:var(--disp);font-weight:600;font-size:15.5px;margin:18px 0 6px;color:var(--accent-d)}
+p.minilabel{font-family:var(--disp);font-weight:600;font-size:14px;margin:16px 0 4px;color:var(--ink);background:var(--accent-soft);display:inline-block;padding:3px 10px;border-radius:8px}
+ul,ol{margin:11px 0;padding-left:22px}li{margin:5px 0}
+ul.checklist{list-style:none;padding-left:4px}
+ul.checklist li{position:relative;padding-left:26px;margin:6px 0}
+ul.checklist li::before{position:absolute;left:0;top:0;font-weight:700}
+ul.checklist li.ok::before{content:"✓";color:var(--green)}
+ul.checklist li.no::before{content:"✕";color:var(--coral)}
+ul.checklist li.arw::before{content:"→";color:var(--accent)}
+hr{border:none;border-top:1px solid var(--hair);margin:26px 0}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-d);padding:1px 6px;border-radius:5px}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;color:#3a2f22}
+.tablewrap{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--hair);padding:8px 12px}
+th{background:var(--card);font-family:var(--disp);font-weight:600}
+tbody tr:nth-child(even){background:#FBFAF8}
+.fig{margin:18px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px}
+.fig figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.code{position:relative;margin:14px 0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:#161a20}
+.code.inline{background:#20262f}
+.code.ascii{background:#1b2530}
+.code-tag{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8891a8;z-index:2}
+.code pre{margin:0;padding:15px 18px;overflow-x:auto}
+.code code{background:none;color:#e7ebf1;padding:0;font-size:13px;line-height:1.6;display:block}
+.code .language-plaintext{color:#cfe0dc;white-space:pre}
+.hero-viz{margin:18px 0 28px;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px;min-height:170px}
+.viz-cap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.viz-cap .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.readout{font-family:var(--mono);font-size:14px;margin-top:16px;color:var(--ink);min-height:20px}
+.readout .hit{color:var(--green);font-weight:700}
+.readout .warn{color:var(--coral);font-weight:700}
+/* casting ladder */
+.ladder{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rung{padding:9px 12px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-weight:700;font-size:13px;transition:all .45s ease}
+.rung.on{border-color:var(--green);background:#ECFDF3;transform:translateY(-3px)}
+.rung.warnon{border-color:var(--coral);background:#FEF2F2}
+.arrw{color:var(--muted);font-family:var(--mono)}
+/* jvm pipeline */
+.pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stage{padding:12px 14px;border-radius:12px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:center;min-width:92px;transition:all .4s ease}
+.stage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.stage.hot{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.stage small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;margin-top:2px}
+.flowarr{color:var(--accent);font-size:18px}
+/* oop dispatch */
+.dispatch{display:flex;flex-direction:column;gap:14px}
+.drow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{padding:9px 13px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;border:2px solid var(--hair);background:#fff;transition:all .45s}
+.pill.ref{border-color:var(--muted);color:var(--muted)}
+.pill.obj.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.pill.impl{border-color:var(--hair);opacity:.5}
+.pill.impl.win{border-color:var(--green);background:#ECFDF3;color:var(--green);opacity:1;transform:translateY(-3px)}
+.pagefoot{max-width:820px;margin:40px auto 0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.toc{display:none}}
+
+.bits{display:flex;gap:6px}
+.bit{width:38px;height:38px;border-radius:8px;border:2px solid var(--hair);background:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:15px;transition:all .4s}
+.bit.one{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.execwrap{display:flex;flex-direction:column;gap:7px;max-width:360px}
+.exline{padding:10px 14px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:13px;font-weight:600;transition:all .4s;opacity:.5}
+.exline.on{opacity:1;border-color:var(--green);background:#ECFDF3;color:var(--green);transform:translateX(4px)}
+.hmwrap{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
+.buckets{display:flex;flex-direction:column;gap:5px}
+.brow{display:flex;align-items:center;gap:8px}
+.bidx{font-family:var(--mono);font-size:11px;color:var(--muted);width:16px;text-align:right}
+.bcell{width:26px;height:26px;border:2px solid var(--hair);border-radius:6px;background:#fff;flex:none;transition:all .4s}
+.bcell.filled{border-color:var(--accent);background:var(--accent-soft)}
+.chain{display:flex;align-items:center;gap:5px}
+.hnode{padding:4px 8px;border-radius:7px;border:2px solid var(--accent);background:var(--accent-soft);font-family:var(--mono);font-size:11px;font-weight:700;color:var(--accent-d);animation:drop .35s ease;white-space:nowrap}
+.hnode.collide{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.hlink{color:var(--muted);font-family:var(--mono)}
+.pipe2{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pstage{padding:9px 13px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;transition:all .4s;text-align:center}
+.pstage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.pstage.term{border-color:var(--green)}
+.pstage.term.on{background:#ECFDF3;color:var(--green);border-color:var(--green)}
+.token{display:inline-block;min-width:26px;padding:3px 8px;border-radius:7px;background:var(--accent);color:#fff;font-family:var(--mono);font-weight:700;font-size:12px;margin-left:8px}
+.token.drop{opacity:.3;text-decoration:line-through}
+.parr{color:var(--accent);font-size:16px}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded',function(){try{document.querySelectorAll('code.language-java').forEach(function(b){hljs.highlightElement(b)});}catch(e){}});</script>
+
+</head><body>
+<div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">Collections Framework</span></div>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-what-is-java-collection-framework">What is java Collection Framework?</a><a href="#s-why-we-need-java-collection-framework">Why we need java Collection Framework?</a><a href="#s-collection-framework-hierarchy">Collection Framework hierarchy</a><a href="#s-iterable">Iterable:</a><a href="#s-collection">Collection:</a><a href="#s-collection-vs-collections">Collection vs Collections</a><a href="#s-queue">Queue</a><a href="#s-comparator-vs-comparable">Comparator vs. Comparable</a><a href="#s-priorityqueue">PriorityQueue</a><a href="#s-deque-double-ended-queue">Deque (Double Ended Queue)</a><a href="#s-list">List</a><a href="#s-map">Map</a><a href="#s-set">Set</a><a href="#s-concurrent-collections">Concurrent Collections</a><a href="#s-dsa-quick-summary-which-data-structure-to-use">DSA Quick Summary: Which Data Structure to Use?</a></nav><main class="content"><h1 class="doc-title">Collections Framework</h1>
+<div class="hero-viz" id="heroViz" data-viz="hashmap"></div>
+<hr>
+<h2 class="sec" id="s-what-is-java-collection-framework">What is java Collection Framework?</h2>
+<ul><li>Added in java version 1.2</li><li>Collections is nothing but group of objects</li><li>Present in <code>java.util</code> package</li><li>Framework provides architecture to manage group of objects.    </li></ul>
+<hr>
+<h2 class="sec" id="s-why-we-need-java-collection-framework">Why we need java Collection Framework?</h2>
+<ul><li>Prior to java collections framework, we have Array, Vector, Hash Tables.</li><li>But problem with that is, there is no common interface and hence, its difficult to remember methods for each.</li></ul>
+<hr>
+<h2 class="sec" id="s-collection-framework-hierarchy">Collection Framework hierarchy</h2>
+<figure class="fig"><img src="images/collection-hierarchy.png" alt="Collections hierarchy" loading="lazy"><figcaption>Collections hierarchy</figcaption></figure>
+<hr>
+<h2 class="sec" id="s-iterable">Iterable:</h2>
+<p>It is used to traverse the collection.</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+        list.add(10);
+        list.add(20);
+        list.add(30);
+        list.add(40);
+        list.add(50);
+
+        Iterator&lt;Integer&gt; iterator = list.iterator();
+
+        while (iterator.hasNext()){
+            int value = iterator.next();
+            System.out.println(value);
+            if(value == 30){
+                iterator.remove();
+            }
+        }
+
+        System.out.println(&quot;foreach method: &quot;);
+        list.forEach((Integer element) -&gt; System.out.print(element + &quot; &quot;));
+    }
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-collection">Collection:</h2>
+<ul><li>It represents the group of objects. It is an interface which provided methods to work on group of objects.</li><li>Below are the most common used methods which are implemented by its child classes like ArrayList, Stack, LinkedList etc.</li></ul>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">S.NO</th><th style="text-align:left">Method</th><th style="text-align:left">Available In</th><th style="text-align:left">Usage</th></tr></thead><tbody><tr><td style="text-align:left">1</td><td style="text-align:left"><code>size()</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Returns the total number of elements present in the collection.</td></tr><tr><td style="text-align:left">2</td><td style="text-align:left"><code>isEmpty()</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Checks if the collection is empty. Returns <code>true</code> or <code>false</code>.</td></tr><tr><td style="text-align:left">3</td><td style="text-align:left"><code>contains(Object o)</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Searches for an element in the collection. Returns <code>true</code> or <code>false</code>.</td></tr><tr><td style="text-align:left">4</td><td style="text-align:left"><code>toArray()</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Converts the collection into an array.</td></tr><tr><td style="text-align:left">5</td><td style="text-align:left"><code>add(E e)</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Inserts an element into the collection.</td></tr><tr><td style="text-align:left">6</td><td style="text-align:left"><code>remove(Object o)</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Removes an element from the collection.</td></tr><tr><td style="text-align:left">7</td><td style="text-align:left"><code>addAll(Collection c)</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Inserts all elements from another collection into the current collection.</td></tr><tr><td style="text-align:left">8</td><td style="text-align:left"><code>removeAll(Collection c)</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Removes all elements from the current collection that are also present in the specified collection.</td></tr><tr><td style="text-align:left">9</td><td style="text-align:left"><code>clear()</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Removes all elements from the collection.</td></tr><tr><td style="text-align:left">10</td><td style="text-align:left"><code>equals(Object o)</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Checks whether two collections are equal.</td></tr><tr><td style="text-align:left">11</td><td style="text-align:left"><code>stream()</code> / <code>parallelStream()</code></td><td style="text-align:left">Java 1.8</td><td style="text-align:left">Provides a way to process collection elements using stream operations like filtering, mapping, and processing.</td></tr><tr><td style="text-align:left">12</td><td style="text-align:left"><code>iterator()</code></td><td style="text-align:left">Java 1.2</td><td style="text-align:left">Returns an iterator to traverse elements of the collection.</td></tr></tbody></table></div>
+<hr>
+<h2 class="sec" id="s-collection-vs-collections">Collection vs Collections</h2>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Feature</th><th style="text-align:left">Collection</th><th style="text-align:left">Collections</th></tr></thead><tbody><tr><td style="text-align:left">Type</td><td style="text-align:left">Interface</td><td style="text-align:left">Utility Class</td></tr><tr><td style="text-align:left">Package</td><td style="text-align:left"><code>java.util</code></td><td style="text-align:left"><code>java.util</code></td></tr><tr><td style="text-align:left">Purpose</td><td style="text-align:left">Represents a group of objects</td><td style="text-align:left">Provides utility methods for collections</td></tr><tr><td style="text-align:left">Implemented by</td><td style="text-align:left">List, Set, Queue</td><td style="text-align:left">Not implemented (static methods only)</td></tr><tr><td style="text-align:left">Methods type</td><td style="text-align:left">Instance methods</td><td style="text-align:left">Static methods</td></tr><tr><td style="text-align:left">Example methods</td><td style="text-align:left"><code>add()</code>, <code>remove()</code>, <code>size()</code></td><td style="text-align:left"><code>sort()</code>, <code>reverse()</code>, <code>shuffle()</code></td></tr></tbody></table></div>
+<h3 class="sub">Common Methods of Collections Class</h3>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Method</th><th style="text-align:left">Usage</th></tr></thead><tbody><tr><td style="text-align:left"><code>sort()</code></td><td style="text-align:left">Sort list</td></tr><tr><td style="text-align:left"><code>reverse()</code></td><td style="text-align:left">Reverse list</td></tr><tr><td style="text-align:left"><code>shuffle()</code></td><td style="text-align:left">Random order</td></tr><tr><td style="text-align:left"><code>min()</code></td><td style="text-align:left">Find minimum</td></tr><tr><td style="text-align:left"><code>max()</code></td><td style="text-align:left">Find maximum</td></tr><tr><td style="text-align:left"><code>binarySearch()</code></td><td style="text-align:left">Search element</td></tr></tbody></table></div>
+<hr>
+<h2 class="sec" id="s-queue">Queue</h2>
+<ul><li>It is a child interface of Collection interface.</li><li>Generally it follows FIFO approach. (except PriorityQueue)</li><li>Supports all the methods available in collection + some other methods mentioned below - </li></ul>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">S.No</th><th style="text-align:left">Method</th><th style="text-align:left">Usage</th></tr></thead><tbody><tr><td style="text-align:left">1</td><td style="text-align:left"><code>add(E e)</code></td><td style="text-align:left">Inserts the element into the queue. Returns <strong>true</strong> if insertion is successful and throws an <strong>Exception</strong> if insertion fails. Null elements are not allowed (throws <strong>NullPointerException</strong>).</td></tr><tr><td style="text-align:left">2</td><td style="text-align:left"><code>offer(E e)</code></td><td style="text-align:left">Inserts the element into the queue. Returns <strong>true</strong> if insertion is successful and <strong>false</strong> if insertion fails. Null elements are not allowed (throws <strong>NullPointerException</strong>).</td></tr><tr><td style="text-align:left">3</td><td style="text-align:left"><code>poll()</code></td><td style="text-align:left">Retrieves and removes the head of the queue. Returns <strong>null</strong> if the queue is empty.</td></tr><tr><td style="text-align:left">4</td><td style="text-align:left"><code>remove()</code></td><td style="text-align:left">Retrieves and removes the head of the queue. Throws <strong>NoSuchElementException</strong> if the queue is empty.</td></tr><tr><td style="text-align:left">5</td><td style="text-align:left"><code>peek()</code></td><td style="text-align:left">Retrieves the element at the head of the queue but <strong>does not remove it</strong>. Returns <strong>null</strong> if the queue is empty.</td></tr><tr><td style="text-align:left">6</td><td style="text-align:left"><code>element()</code></td><td style="text-align:left">Retrieves the element at the head of the queue but <strong>does not remove it</strong>. Throws <strong>NoSuchElementException</strong> if the queue is empty.</td></tr></tbody></table></div>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Operation</th><th style="text-align:left">Returns null if empty</th><th style="text-align:left">Throws Exception if empty</th></tr></thead><tbody><tr><td style="text-align:left">Remove Head</td><td style="text-align:left"><code>poll()</code></td><td style="text-align:left"><code>remove()</code></td></tr><tr><td style="text-align:left">View Head</td><td style="text-align:left"><code>peek()</code></td><td style="text-align:left"><code>element()</code></td></tr><tr><td style="text-align:left">Insert</td><td style="text-align:left"><code>offer()</code></td><td style="text-align:left"><code>add()</code></td></tr></tbody></table></div>
+<hr>
+<h2 class="sec" id="s-comparator-vs-comparable">Comparator vs. Comparable</h2>
+<p>Comparator and Comparable both provides a way to sort Collection of objects.</p>
+<ol><li>Primitive Collection sorting:  </li></ol>
+<p>Using <code>Arrays.sort()</code>:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        int[] arr = {10, 30, 50, 60, 20, 35, 45};
+        Arrays.sort(arr);  // Sorted in ascending order
+    }
+}</code></pre></div>
+<p>Using Collections.sort():</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        ArrayList&lt;String&gt; wordsList = new ArrayList&lt;&gt;();
+        wordsList.add(&quot;banana&quot;);
+        wordsList.add(&quot;apple&quot;);
+        wordsList.add(&quot;cherry&quot;);
+        wordsList.add(&quot;date&quot;);
+        System.out.println(&quot;Original list: &quot; + wordsList); // Original list: [banana, apple, cherry, date]
+
+        Collections.sort(wordsList);
+        System.out.println(&quot;Sorted list: &quot; + wordsList); // Sorted list: [apple, banana, cherry, date]
+    }
+}</code></pre></div>
+<ol><li>Object Collection sorting:  </li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+
+    public static void main(String[] args) {
+        //Using Collections.sort()
+        List&lt;Person&gt; people = new ArrayList&lt;&gt;(Arrays.asList(
+                new Person(&quot;Alice&quot;, 30, 65.5),
+                new Person(&quot;Bob&quot;, 25, 75.0),
+                new Person(&quot;Charlie&quot;, 35, 80.0)
+        ));
+        System.out.println(&quot;Original people list: &quot; + people);
+        Collections.sort(people);  // ❌ CE: reason: no instance(s) of type variable(s) T exist so that Person conforms to Comparable&lt;? super T&gt;
+        System.out.println(&quot;Sorted people list: &quot; + people);
+
+        //Using Arrays.sort()
+        Person[] peopleArr = {new Person(&quot;Alice&quot;, 30, 65.5),
+                new Person(&quot;Bob&quot;, 25, 75.0),
+                new Person(&quot;Charlie&quot;, 35, 80.0)};
+        System.out.println(&quot;Original people list: &quot; + people);
+        Arrays.sort(peopleArr);   // Runtime error
+        System.out.println(&quot;Sorted people list: &quot; + people);
+    }
+}
+
+
+class Person{
+    String name;
+    int age;
+    double weight;
+
+    public Person(String name, int age, double weight) {
+        this.name = name;
+        this.age = age;
+        this.weight = weight;
+    }
+
+    @Override
+    public String toString() {
+        return &quot;Person [name=&quot; + name + &quot;, age=&quot; + age + &quot;, weight=&quot; + weight + &quot; kgs]&quot;;
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Exception in thread &quot;main&quot; java.lang.ClassCastException: class Person cannot be cast to class java.lang.Comparable (Person is in unnamed module of loader &#x27;app&#x27;; java.lang.Comparable is in module java.base of loader &#x27;bootstrap&#x27;)</code></pre></div>
+<p>The error occurs because the Person class does not implement the Comparable interface, and there is no way for the sorting method to know how to compare two Person objects. To sort custom objects like Person, we need to provide a way to compare these objects. Java offers two main approaches to achieve this: </p>
+<ol><li>Implementing the <code>Comparable</code> Interface: This allows a class to define its natural ordering by implementing the <code>compareTo</code> method.  </li><li>Using the <code>Comparator</code> Interface: This allows us to create separate classes or lambda expressions to define multiple ways of comparing objects.</li></ol>
+<h3 class="sub">How to Use the <code>Comparable</code> Interface</h3>
+<ul><li>Java provides a Comparable interface to define a natural ordering for objects of a user-defined class. </li><li>By implementing the Comparable interface, a class can provide a single natural ordering that can be used to sort its instances. </li><li>This is particularly useful when you need a default way to compare and sort objects.</li><li>The Comparable interface contains a single method, compareTo(), which compares the current object with the specified object for order. The method returns:</li><li>A negative integer if the current object is less than the specified object. <code>(o1 &lt; o2)</code></li><li>Zero if the current object is equal to the specified object. <code>(o1 == o2)</code></li><li>A positive integer if the current object is greater than the specified object. <code>(o1 &gt; o2)</code></li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class PersonV2 implements Comparable&lt;PersonV2&gt; {
+    String name;
+    int age;
+    double weight;
+
+    public PersonV2(String name, int age, double weight) {
+        this.name = name;
+        this.age = age;
+        this.weight = weight;
+    }
+
+    @Override
+    public String toString() {
+        return &quot;PersonV2 [name=&quot; + name + &quot;, age=&quot; + age + &quot;, weight=&quot; + weight + &quot; kgs]&quot;;
+    }
+
+    @Override
+    public int compareTo(PersonV2 other) {
+        return this.age - other.age;
+    }
+}</code></pre></div>
+<p>In this implementation, the <code>compareTo()</code> method compares the <code>age</code> attribute of the current <code>PersonV2</code> object with the age attribute of the specified <code>PersonV2</code> object by subtracting one age from the other. We can also use <code>Integer.compare(this.age, other.age)</code> instead of performing the arithmetic operation manually. Now we can sort a list of PersonV2 objects using Collections.sort():</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        List&lt;PersonV2&gt; people = new ArrayList&lt;&gt;(Arrays.asList(
+                new PersonV2(&quot;Alice&quot;, 30, 65.5),
+                new PersonV2(&quot;Bob&quot;, 25, 75.0),
+                new PersonV2(&quot;Charlie&quot;, 35, 80.0)
+        ));
+        System.out.println(&quot;Original people list: &quot; + people);
+
+        Collections.sort(people);  // Ascending order
+        System.out.println(&quot;Sorted people list: &quot; + people);
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Original people list: [PersonV2 [name=Alice, age=30, weight=65.5 kgs], PersonV2 [name=Bob, age=25, weight=75.0 kgs], PersonV2 [name=Charlie, age=35, weight=80.0 kgs]]
+Sorted people list: [PersonV2 [name=Bob, age=25, weight=75.0 kgs], PersonV2 [name=Alice, age=30, weight=65.5 kgs], PersonV2 [name=Charlie, age=35, weight=80.0 kgs]]</code></pre></div>
+<p>Limitations of <code>Comparable</code>:</p>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Issue</th><th style="text-align:left">Explanation</th></tr></thead><tbody><tr><td style="text-align:left">Only one sorting logic</td><td style="text-align:left"><code>compareTo()</code> allows only one natural ordering</td></tr><tr><td style="text-align:left">Changes class behavior</td><td style="text-align:left">You must modify the class itself</td></tr><tr><td style="text-align:left">Not flexible</td><td style="text-align:left">Cannot easily support multiple sorting strategies</td></tr></tbody></table></div>
+<p>If we want to change it to reverse ordering then we need to modify <code>compareTo</code> method&#x27;s implementation in the <code>PersonV2</code> class itself -</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">@Override
+    public int compareTo(PersonV2 other) {
+        return other.age - this.age;  // reverse order
+    }</code></pre></div>
+<hr>
+<h3 class="sub">How to Use the <code>Comparator</code> Interface</h3>
+<ul><li>The Comparator interface in Java provides a way to define multiple ways of comparing and sorting objects. </li><li>Unlike the Comparable interface, which allows only a single natural ordering, Comparator is designed to offer flexibility by allowing multiple sorting strategies. </li><li>This makes it particularly useful for scenarios where objects need to be sorted in different ways.</li></ul>
+<h4 class="sub4">How Comparator Allows for Multiple Ways of Ordering Objects?</h4>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">//Person class 
+public class Person{
+    String name;
+    int age;
+    double weight;
+
+    public Person(String name, int age, double weight) {
+        this.name = name;
+        this.age = age;
+        this.weight = weight;
+    }
+
+    @Override
+    public String toString() {
+        return &quot;Person [name=&quot; + name + &quot;, age=&quot; + age + &quot;, weight=&quot; + weight + &quot; kgs]&quot;;
+    }
+}
+
+// Comparator by Name
+public class PersonNameComparator implements Comparator&lt;Person&gt; {
+
+    @Override
+    public int compare(Person p1, Person p2) {
+        return p1.getName().compareTo(p2.getName());
+    }
+}
+
+
+// Comparator by Age
+public class PersonAgeComparator implements Comparator&lt;Person&gt; {
+
+    @Override
+    public int compare(Person p1, Person p2) {
+        return p1.getAge() - p2.getAge();
+    }
+}
+
+
+// Comparator by Weight
+public class PersonWeightComparator implements Comparator&lt;Person&gt; {
+
+    @Override
+    public int compare(Person p1, Person p2) {
+        return (int) (p1.getWeight() - p2.getWeight());
+    }
+}
+
+
+// Usage
+public class Practice {
+    public static void main(String[] args) {
+        List&lt;Person&gt; people = new ArrayList&lt;&gt;(Arrays.asList(
+                new Person(&quot;Alice&quot;, 30, 65.5),
+                new Person(&quot;Bob&quot;, 25, 75.0),
+                new Person(&quot;Charlie&quot;, 35, 80.0)
+        ));
+        System.out.println(&quot;Original people list: &quot; + people);
+
+        Collections.sort(people, new PersonNameComparator());
+        System.out.println(&quot;Sorted people list by name: &quot; + people);
+
+        Collections.sort(people, new PersonAgeComparator());
+        System.out.println(&quot;Sorted people list by age: &quot; + people);
+
+        Collections.sort(people, new PersonWeightComparator());
+        System.out.println(&quot;Sorted people list by weight: &quot; + people);
+    }
+}</code></pre></div>
+<p>Output: </p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Original people list: [Person [name=Alice, age=30, weight=65.5 kgs], Person [name=Bob, age=25, weight=75.0 kgs], Person [name=Charlie, age=35, weight=80.0 kgs]]
+Sorted people list by name: [Person [name=Alice, age=30, weight=65.5 kgs], Person [name=Bob, age=25, weight=75.0 kgs], Person [name=Charlie, age=35, weight=80.0 kgs]]
+Sorted people list by age: [Person [name=Bob, age=25, weight=75.0 kgs], Person [name=Alice, age=30, weight=65.5 kgs], Person [name=Charlie, age=35, weight=80.0 kgs]]
+Sorted people list by weight: [Person [name=Alice, age=30, weight=65.5 kgs], Person [name=Bob, age=25, weight=75.0 kgs], Person [name=Charlie, age=35, weight=80.0 kgs]]</code></pre></div>
+<p>Instead of this - <code>Collections.sort(people, new PersonNameComparator());</code> we can also use lambda expressions -&gt;</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Collections.sort(people, (Person p1, Person p2) -&gt; (p2.getName().compareTo(p1.getName())));</code></pre></div>
+<hr>
+<h2 class="sec" id="s-priorityqueue"><code>PriorityQueue</code></h2>
+<p>PriorityQueue is a queue implementation where elements are processed based on priority.</p>
+<h3 class="sub">Key Properties</h3>
+<ul><li>Uses binary heap internally</li><li>Default ordering is natural ordering</li><li>Smallest element has highest priority</li><li>Null elements not allowed</li><li>Duplicate elements allowed</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        // Min Heap by default
+        PriorityQueue&lt;Integer&gt; queue =  new PriorityQueue&lt;&gt;();
+        queue.add(10);
+        queue.add(50);
+        queue.add(30);
+
+        System.out.println(queue);   // [10, 50, 30]  (Smallest element has highest priority)
+
+        System.out.println(queue.poll()); // 10  (Smallest element removed first.)
+
+        //Custom Priority Using Comparator (Max Heap)
+        PriorityQueue&lt;Integer&gt; pq = new PriorityQueue&lt;&gt;(Collections.reverseOrder());
+        pq.add(10);
+        pq.add(50);
+        pq.add(30);
+        System.out.println(pq);  // [50, 10, 30] 
+    }
+}</code></pre></div>
+<hr>
+<h2 class="sec" id="s-deque-double-ended-queue"><code>Deque</code> (Double Ended Queue)</h2>
+<ul><li>A Deque allows insertion and removal of elements from both ends (front and rear).</li><li>It extends the <code>Queue</code> interface.</li><li>Common implementations:</li><li>ArrayDeque (most commonly used)</li><li>LinkedList</li><li>Important Deque Methods</li></ul>
+<p>Deque provides two sets of operations:</p>
+<p>Front operations</p>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Method</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left"><code>addFirst()</code></td><td style="text-align:left">Insert element at front</td></tr><tr><td style="text-align:left"><code>offerFirst()</code></td><td style="text-align:left">Insert at front</td></tr><tr><td style="text-align:left"><code>removeFirst()</code></td><td style="text-align:left">Remove front element</td></tr><tr><td style="text-align:left"><code>pollFirst()</code></td><td style="text-align:left">Remove front element</td></tr><tr><td style="text-align:left"><code>getFirst()</code></td><td style="text-align:left">View front element</td></tr><tr><td style="text-align:left"><code>peekFirst()</code></td><td style="text-align:left">View front element</td></tr></tbody></table></div>
+<p>Rear operations</p>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Method</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left"><code>addLast()</code></td><td style="text-align:left">Insert element at rear</td></tr><tr><td style="text-align:left"><code>offerLast()</code></td><td style="text-align:left">Insert at rear</td></tr><tr><td style="text-align:left"><code>removeLast()</code></td><td style="text-align:left">Remove last element</td></tr><tr><td style="text-align:left"><code>pollLast()</code></td><td style="text-align:left">Remove last element</td></tr><tr><td style="text-align:left"><code>getLast()</code></td><td style="text-align:left">View last element</td></tr><tr><td style="text-align:left"><code>peekLast()</code></td><td style="text-align:left">View last element</td></tr></tbody></table></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">import java.util.ArrayDeque;
+import java.util.Deque;
+
+public class Test {
+    public static void main(String[] args) {
+
+        Deque&lt;Integer&gt; dq = new ArrayDeque&lt;&gt;();
+
+        dq.addFirst(10);
+        dq.addLast(20);
+        dq.addFirst(5);
+
+        System.out.println(dq);   // [5, 10, 20]
+    }
+}</code></pre></div>
+<h3 class="sub">Using Deque as <code>Stack</code></h3>
+<p>Deque can act as a stack (LIFO).</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();
+
+stack.push(10);
+stack.push(20);
+
+System.out.println(stack.pop());  // 20</code></pre></div>
+<p>Methods used internally:</p>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Stack Method</th><th style="text-align:left">Deque Equivalent</th></tr></thead><tbody><tr><td style="text-align:left"><code>push()</code></td><td style="text-align:left"><code>addFirst()</code></td></tr><tr><td style="text-align:left"><code>pop()</code></td><td style="text-align:left"><code>removeFirst()</code></td></tr><tr><td style="text-align:left"><code>peek()</code></td><td style="text-align:left"><code>peekFirst()</code></td></tr></tbody></table></div>
+<h3 class="sub">Using Deque as Queue</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Deque&lt;Integer&gt; queue = new ArrayDeque&lt;&gt;();
+
+queue.addLast(10);
+queue.addLast(20);
+
+System.out.println(queue.removeFirst()); // 10</code></pre></div>
+<hr>
+<h2 class="sec" id="s-list">List</h2>
+<hr>
+<ul><li>List is an ordered collection of objects.</li><li>In Queue, insertion/removal/access can only happen at start or end of the queue, while in List, data can be inserted, accessed, removed from anywhere.</li></ul>
+<h3 class="sub"><code>ArrayList</code></h3>
+<ul><li>Unlike traditional arrays which have a fixed size, an ArrayList can automatically grow or shrink as elements are added or removed.</li><li>Elements are stored in the order they are inserted and can be accessed using a zero-based index.</li><li>Can have duplicate or null values.</li><li>Methods available in <code>List</code> interface (<code>ArrayList</code> implementation):</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        List&lt;Integer&gt; list = new ArrayList&lt;&gt;();
+        list.add(10);
+        list.add(25);
+        list.add(12);
+        list.add(35);
+
+        List&lt;Integer&gt; list1 = new ArrayList&lt;&gt;();
+        list1.add(20);
+        list1.add(15);
+        list1.add(65);
+
+        list.addAll(2, list1);
+        list.forEach((Integer element) -&gt; System.out.print(element + &quot; &quot;));   // [10 25 20 15 65 12 35]
+        //get(int index)
+        System.out.println(list.get(3));  // 15
+
+        System.out.println();
+
+        list.replaceAll((Integer val) -&gt; -1 * val);
+        list.forEach((Integer element) -&gt; System.out.print(element + &quot; &quot;));  // [-10 -25 -20 -15 -65 -12 -35]
+
+        list.sort((Integer v1, Integer v2) -&gt; v1 - v2);  // Ascending
+        list.sort((Integer v1, Integer v2) -&gt; v2 - v1);  // Descending
+
+
+        ListIterator&lt;Integer&gt; it = list.listIterator();
+        // Forward Traversal
+        while(it.hasNext()) {
+            Integer val = it.next();
+            System.out.println(val);
+            if(val == 20) {
+                it.set(200);   // Modify Element Using ListIterator
+            }
+        }
+
+        // Backward Traversal
+        while(it.hasPrevious()) {
+            System.out.println(it.previous());
+        }
+    }
+}</code></pre></div>
+<h4 class="sub4">Internal working of <code>ArrayList</code>:</h4>
+<ol><li>Creating an ArrayList  </li></ol>
+<ul><li>No internal array is created at this moment.</li><li>Memory allocation happens when the first element is added.</li></ul>
+<ol><li>Adding the First Element</li></ol>
+<ul><li>An internal array is created with default capacity 10.</li><li>The first element is stored at index 0.</li></ul>
+<ol><li>Adding Elements Up to Capacity</li></ol>
+<ul><li>Elements are added one by one.</li><li>No resizing happens because there is enough space.</li></ul>
+<ol><li>Adding the 11th Element (Resizing Happens)</li></ol>
+<ul><li>Now the internal array becomes full. ArrayList performs the following operations:</li><li>Creates a new array with larger size</li><li>New capacity = old capacity + (old capacity / 2)  =&gt; 10 + 5 = 15</li><li>Copies old elements to the new array</li><li>Adds the new element</li></ul>
+<hr>
+<h3 class="sub"><code>LinkedList</code></h3>
+<ul><li>LinkedList is a linear data structure where elements are stored as nodes, and each node contains:</li><li>Data</li><li>Reference to next node</li><li>Reference to previous node (in Java implementation)</li><li>Java LinkedList is implemented as a: <code>Doubly Linked List</code>  </li></ul>
+<figure class="fig"><img src="images/dll.png" alt="Doubly linked list" loading="lazy"><figcaption>Doubly linked list</figcaption></figure>
+<ul><li>It implements both <code>Deque</code> and <code>List</code> and hence it supports <code>Deque</code> methods like <code>addFirst()</code>, <code>removeFirst()</code>, <code>addLast()</code>, <code>removeLast()</code> etc.  along with <code>List</code> methods like <code>add()</code>, <code>get()</code>, <code>set()</code> etc.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+    public static void main(String[] args) {
+
+        LinkedList&lt;Integer&gt; list = new LinkedList&lt;&gt;();
+
+        list.add(10);
+        list.add(20);
+        list.add(30);
+ 
+        System.out.println(list);  // [10, 20, 30]
+    }
+}</code></pre></div>
+<ul><li>Each element is stored as a Node object:</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Node {
+    Object data;
+    Node prev;
+    Node next;
+}</code></pre></div>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">First node → head
+Last node → tail</code></pre></div>
+<hr>
+<h3 class="sub"><code>Vector</code></h3>
+<ul><li>Works like ArrayList. But thread-safe by <strong>default</strong>. It is a legacy class.</li><li>Puts lock when operation is performed on <code>Vector</code>.</li><li>Less efficient than <code>ArrayList</code> as for each operation it do lock/unlock internally (all methods are <code>synchronized</code>).</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+    public static void main(String[] args) {
+
+        Vector&lt;Integer&gt; v = new Vector&lt;&gt;();
+
+        v.add(10);
+        v.add(20);
+        v.add(30);
+
+        System.out.println(v);
+    }
+}</code></pre></div>
+<ul><li>For concurrent scenarios use below options instead of <code>Vector</code>  </li></ul>
+<p>Option 1: <code>ArrayList</code> + <code>Synchronization</code></p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">List&lt;Integer&gt; list = Collections.synchronizedList(new ArrayList&lt;&gt;());</code></pre></div>
+<p>Option 2: <code>CopyOnWriteArrayList</code></p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">List&lt;Integer&gt; list = new CopyOnWriteArrayList&lt;&gt;();</code></pre></div>
+<hr>
+<h3 class="sub"><code>Stack</code></h3>
+<ul><li><code>Stack</code> is a LIFO (Last In First Out) data structure. It is also a legacy class.</li><li><code>Stack extends Vector</code> hence all methods are synchronized.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Test {
+    public static void main(String[] args) {
+
+        Stack&lt;Integer&gt; stack = new Stack&lt;&gt;();
+
+        stack.push(10);
+        stack.push(20);
+        stack.push(30);
+
+        System.out.println(stack.pop());   // 30
+        System.out.println(stack.peek());  // 20
+    }
+}</code></pre></div>
+<ul><li>Important Methods  </li></ul>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Method</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left"><code>push()</code></td><td style="text-align:left">Add element</td></tr><tr><td style="text-align:left"><code>pop()</code></td><td style="text-align:left">Remove top element</td></tr><tr><td style="text-align:left"><code>peek()</code></td><td style="text-align:left">View top element</td></tr><tr><td style="text-align:left"><code>empty()</code></td><td style="text-align:left">Check if empty</td></tr><tr><td style="text-align:left"><code>search()</code></td><td style="text-align:left">Find element position</td></tr></tbody></table></div>
+<ul><li>Modern Replacement: Use <code>Deque</code> (<code>ArrayDeque</code>) instead of Stack.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Deque&lt;Integer&gt; stack = new ArrayDeque&lt;&gt;();
+
+stack.push(10);
+stack.push(20);
+
+System.out.println(stack.pop());   // 20</code></pre></div>
+<hr>
+<h2 class="sec" id="s-map">Map</h2>
+<hr>
+<ul><li><code>Map</code> is used to store data in key-value pairs.</li><li>Map Hierarchy:  </li></ul>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Map
+ |
+ |---- HashMap
+ |---- LinkedHashMap
+ |---- TreeMap
+ |---- Hashtable (legacy)</code></pre></div>
+<ul><li>Properties of Map Interface</li></ul>
+<ol><li>Stores Data in Key-Value Pair  </li><li>Keys Must Be Unique (Duplicate keys overwrite old value)  </li><li>Values Can Be Duplicate  </li><li>Not Part of Collection Interface  </li><li>Can Have One Null Key (HashMap)  </li></ol>
+<ul><li>Important methods:  </li></ul>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Method</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left"><code>put()</code></td><td style="text-align:left">Insert/update</td></tr><tr><td style="text-align:left"><code>get()</code></td><td style="text-align:left">Get value</td></tr><tr><td style="text-align:left"><code>remove()</code></td><td style="text-align:left">Delete entry</td></tr><tr><td style="text-align:left"><code>containsKey()</code></td><td style="text-align:left">Check key</td></tr><tr><td style="text-align:left"><code>containsValue()</code></td><td style="text-align:left">Check value</td></tr><tr><td style="text-align:left"><code>keySet()</code></td><td style="text-align:left">Get all keys</td></tr><tr><td style="text-align:left"><code>values()</code></td><td style="text-align:left">Get all values</td></tr><tr><td style="text-align:left"><code>entrySet()</code></td><td style="text-align:left">Get key-value pairs</td></tr><tr><td style="text-align:left"><code>size()</code></td><td style="text-align:left">Count entries</td></tr><tr><td style="text-align:left"><code>isEmpty()</code></td><td style="text-align:left">Check empty</td></tr><tr><td style="text-align:left"><code>clear()</code></td><td style="text-align:left">Remove all</td></tr></tbody></table></div>
+<hr>
+<h3 class="sub">Hashmap</h3>
+<ul><li><code>HashMap</code> stores data in key-value pairs and provides O(1) average time complexity for put/get operations.</li><li><code>HashMap</code> uses <code>Array + Hashing + Buckets + LinkedList/Tree</code></li></ul>
+<h4 class="sub4">Internal working of <code>HashMap</code></h4>
+<figure class="fig"><img src="images/hashmap-buckets.png" alt="HashMap buckets" loading="lazy"><figcaption>HashMap buckets</figcaption></figure>
+<ol><li>Create HashMap:</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Map&lt;String, Integer&gt; map = new HashMap&lt;&gt;();</code></pre></div>
+<ul><li>Java creates new HashMap object in memory.</li><li>The following fields are initialized with default values.</li><li>capacity = 16</li><li>load factor = .75f</li><li>threshold = 12</li><li>capacity * load factor = 16 * .75 = 12. So the table resizes when 12 entries are added.</li><li>At this point no internal array is being created. To save memory java does not create an array when you create an instance of HashMap. This is called Lazy Initialization.</li></ul>
+<ol><li>Add/put key-value pair:</li></ol>
+<p>When we do - </p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">map.put(key, value);</code></pre></div>
+<p>Internally -</p>
+<ul><li>The array is initialized with default size 16.</li><li>Adding element takes place in below steps  </li></ul>
+<p>Step 1: Hashing</p>
+<ul><li>Calculate hashcode: <code>int hash = key.hashCode();</code>  </li></ul>
+<p>Step 2: Find index</p>
+<ul><li>Index is calculated using =&gt; <code>index = (n - 1) &amp; hash;</code>  </li></ul>
+<p>Step 3: Inserting the node</p>
+<ul><li>If no node exists at that index, a new &lt;Key, Value&gt; node is inserted directly.</li><li>If a node already exists at that index (collision),</li><li>Java traverses the linked list (or tree if it&#x27;s been treeified) to: </li><li>Check if the key already exists ➡ update value.</li><li>If the key is new ➡ insert the new node at the end of the list.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Node&lt;K,V&gt; {
+    int hash;
+    K key;
+    V value;
+    Node&lt;K,V&gt; next;
+}</code></pre></div>
+<p>Step 4: Collision Handling</p>
+<ul><li>Collision = when two keys map to same bucket</li><li>Handled using: LinkedList (before java 8) and LinkedList + Tree (red-black tree) (java 8+).</li></ul>
+<p>Step 5: Treeification </p>
+<ul><li>When collisions increase:  </li></ul>
+<div class="code ascii"><pre><code class="language-plaintext">    If bucket size &gt; 8 → convert to Red-Black Tree  
+    If bucket size &lt; 6 → convert back to LinkedList</code></pre></div>
+<p>Visual flow:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">put(K, V)
+   ↓
+hashCode()
+   ↓
+index calculation
+   ↓
+Go to bucket
+   ↓
+Is bucket empty?
+   ↓ Yes → Insert
+   ↓ No
+Check equals()
+   ↓
+Collision?
+   ↓
+Add to LinkedList / Tree</code></pre></div>
+<p><strong>What is Treeify Threshold?</strong></p>
+<ul><li>Treeify Threshold = 8</li><li>It is the threshold at which a bucket (linked list) in a HashMap is converted into a balanced tree (Red-Black Tree).</li><li>Treeification happens when:</li><li>Number of nodes in a bucket ≥ 8 (TREEIFY_THRESHOLD)</li><li>AND total HashMap capacity ≥ 64 (MIN_TREEIFY_CAPACITY)  </li></ul>
+<ul class="checklist">
+<li class="arw">Otherwise, instead of treeifying, the map will resize (rehash).</li>
+</ul>
+<p><strong>equals() and hashCode() Contract</strong></p>
+<ul class="checklist">
+<li class="ok">Rule 1:</li>
+</ul>
+<p>If two objects are equal (equals() returns true) ➡ they MUST have same hashCode()</p>
+<ul class="checklist">
+<li class="no">Rule 2:</li>
+</ul>
+<p>If two objects have same hashCode() ➡ they may or may not be equal</p>
+<p><strong>How HashMap uses them (<code>get(key)</code>)?</strong></p>
+<ul><li><code>hashCode()</code> is called to find correct bucket.</li><li>Traverse bucket</li><li><code>equals()</code> is called -&gt; <code>if (existingKey.equals(searchKey))</code>  </li></ul>
+<ul class="checklist">
+<li class="arw">If TRUE → return value</li>
+<li class="arw">If not found → return null</li>
+</ul>
+<p><code>hashCode()</code>	=&gt; Finds bucket (fast lookup) <code>equals()</code>	    =&gt; Finds exact key inside bucket</p>
+<hr>
+<h3 class="sub">LinkedHashMap</h3>
+<figure class="fig"><img src="images/linkedHashMap.png" alt="LinkedHashMap" loading="lazy"><figcaption>LinkedHashMap</figcaption></figure>
+<ul><li>LinkedHashMap is a HashMap + Linked List combination</li><li>👉 It maintains:  </li></ul>
+<div class="code ascii"><pre><code class="language-plaintext">    ✅ Key-Value storage like HashMap  
+    ✅ Insertion order (or access order) using a doubly linked list  </code></pre></div>
+<ul><li>It maintains Insertion Order</li></ul>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Feature</th><th style="text-align:left">HashMap</th><th style="text-align:left">LinkedHashMap</th></tr></thead><tbody><tr><td style="text-align:left">Order</td><td style="text-align:left">❌ No order</td><td style="text-align:left">✅ Maintains order</td></tr><tr><td style="text-align:left">Performance</td><td style="text-align:left">Slightly faster</td><td style="text-align:left">Slightly slower</td></tr><tr><td style="text-align:left">Memory</td><td style="text-align:left">Less</td><td style="text-align:left">More (extra pointers)</td></tr></tbody></table></div>
+<ul><li>Works same as HashMap and additionally maintains before and after pointers.</li></ul>
+<hr>
+<h3 class="sub">TreeMap</h3>
+<ul><li>TreeMap is a Sorted Map implementation in Java.</li><li>It stores key-value pairs in sorted order of keys using a 👉 Red-Black Tree (self-balancing BST)</li><li>Supports both Natural and custom ordering:</li></ul>
+<p>Natural Ordering:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Map&lt;Integer, String&gt; map = new TreeMap&lt;&gt;();
+map.put(3, &quot;C&quot;);
+map.put(1, &quot;A&quot;);
+map.put(2, &quot;B&quot;);
+
+System.out.println(map);
+// Output: {1=A, 2=B, 3=C}</code></pre></div>
+<p>Custom ordering: </p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Map&lt;Integer, String&gt; map =
+    new TreeMap&lt;&gt;(Comparator.reverseOrder());</code></pre></div>
+<p>Note:</p>
+<ul><li>No null key</li><li>Keys must be comparable Otherwise we will get <code>ClassCastException</code></li></ul>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Feature</th><th style="text-align:left">HashMap</th><th style="text-align:left">LinkedHashMap</th><th style="text-align:left">TreeMap</th></tr></thead><tbody><tr><td style="text-align:left">Order</td><td style="text-align:left">❌ None</td><td style="text-align:left">✅ Insertion</td><td style="text-align:left">✅ Sorted</td></tr><tr><td style="text-align:left">Structure</td><td style="text-align:left">Hash Table</td><td style="text-align:left">Hash + DLL</td><td style="text-align:left">Red-Black Tree</td></tr><tr><td style="text-align:left">Time</td><td style="text-align:left">O(1)</td><td style="text-align:left">O(1)</td><td style="text-align:left">O(log n)</td></tr></tbody></table></div>
+<h3 class="sub">Hashtable</h3>
+<ul><li>A Hashtable in Java is a thread-safe key–value data structure that stores data using hashing.</li><li>Introduced before Java Collections Framework (legacy class).</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">import java.util.Hashtable;
+
+Hashtable&lt;Integer, String&gt; map = new Hashtable&lt;&gt;();
+
+map.put(1, &quot;Java&quot;);
+map.put(2, &quot;Spring&quot;);
+
+System.out.println(map.get(1)); // Java</code></pre></div>
+<ul><li>All methods are synchronized</li><li>No null allowed</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">map.put(null, &quot;value&quot;); // ❌ NullPointerException
+map.put(1, null);       // ❌ NullPointerException</code></pre></div>
+<h3 class="sub">Hashtable vs HashMap</h3>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Feature</th><th style="text-align:left">Hashtable</th><th style="text-align:left">HashMap</th></tr></thead><tbody><tr><td style="text-align:left">Thread-safe</td><td style="text-align:left">✅ Yes</td><td style="text-align:left">❌ No</td></tr><tr><td style="text-align:left">Performance</td><td style="text-align:left">Slow</td><td style="text-align:left">Fast</td></tr><tr><td style="text-align:left">Null key</td><td style="text-align:left">❌ Not allowed</td><td style="text-align:left">✅ One null key</td></tr><tr><td style="text-align:left">Null value</td><td style="text-align:left">❌ Not allowed</td><td style="text-align:left">✅ Multiple</td></tr><tr><td style="text-align:left">Synchronization</td><td style="text-align:left">Method-level</td><td style="text-align:left">Not synchronized</td></tr><tr><td style="text-align:left">Legacy</td><td style="text-align:left">✅ Yes</td><td style="text-align:left">❌ Modern</td></tr></tbody></table></div>
+<hr>
+<h2 class="sec" id="s-set">Set</h2>
+<hr>
+<ul><li>Set Interface represents a collection of unique elements.</li><li>Most implementations allow only one null</li><li>Implementations:</li></ul>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Implementation</th><th style="text-align:left">Order</th></tr></thead><tbody><tr><td style="text-align:left">HashSet</td><td style="text-align:left">❌ No order</td></tr><tr><td style="text-align:left">LinkedHashSet</td><td style="text-align:left">✅ Insertion order</td></tr><tr><td style="text-align:left">TreeSet</td><td style="text-align:left">✅ Sorted order</td></tr></tbody></table></div>
+<ul><li>HashSet internally uses:</li></ul>
+<ul class="checklist">
+<li class="arw">HashMap</li>
+</ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">map.put(element, PRESENT);</code></pre></div>
+<p>Value is dummy → only keys matter</p>
+<ul><li>No Index-Based Access</li><li>Important Methods of Set Interface:</li></ul>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Category</th><th style="text-align:left">Method</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left">➕ Add</td><td style="text-align:left"><code>add(E e)</code></td><td style="text-align:left">Adds element if not already present</td></tr><tr><td style="text-align:left">➕ Add</td><td style="text-align:left"><code>addAll(Collection&lt;? extends E&gt; c)</code></td><td style="text-align:left">Adds all elements from another collection</td></tr><tr><td style="text-align:left">❌ Remove</td><td style="text-align:left"><code>remove(Object o)</code></td><td style="text-align:left">Removes a specific element</td></tr><tr><td style="text-align:left">❌ Remove</td><td style="text-align:left"><code>removeAll(Collection&lt;?&gt; c)</code></td><td style="text-align:left">Removes all matching elements</td></tr><tr><td style="text-align:left">❌ Remove</td><td style="text-align:left"><code>retainAll(Collection&lt;?&gt; c)</code></td><td style="text-align:left">Keeps only common elements (intersection)</td></tr><tr><td style="text-align:left">❌ Remove</td><td style="text-align:left"><code>clear()</code></td><td style="text-align:left">Removes all elements</td></tr><tr><td style="text-align:left">🔍 Search</td><td style="text-align:left"><code>contains(Object o)</code></td><td style="text-align:left">Checks if element exists</td></tr><tr><td style="text-align:left">🔍 Search</td><td style="text-align:left"><code>containsAll(Collection&lt;?&gt; c)</code></td><td style="text-align:left">Checks if all elements exist</td></tr><tr><td style="text-align:left">🔍 Search</td><td style="text-align:left"><code>isEmpty()</code></td><td style="text-align:left">Checks if set is empty</td></tr><tr><td style="text-align:left">🔍 Search</td><td style="text-align:left"><code>size()</code></td><td style="text-align:left">Returns number of elements</td></tr><tr><td style="text-align:left">🔁 Traversal</td><td style="text-align:left"><code>iterator()</code></td><td style="text-align:left">Returns iterator to traverse set</td></tr><tr><td style="text-align:left">🔄 Conversion</td><td style="text-align:left"><code>toArray()</code></td><td style="text-align:left">Converts set to Object array</td></tr><tr><td style="text-align:left">🔄 Conversion</td><td style="text-align:left"><code>&lt;T&gt; T[] toArray(T[] a)</code></td><td style="text-align:left">Converts set to typed array</td></tr></tbody></table></div>
+<p><strong>Note:</strong></p>
+<ul><li>add() returns false if duplicate</li><li>No get(index) method ❌</li><li>Order depends on implementation (HashSet / LinkedHashSet / TreeSet)</li></ul>
+<hr>
+<h2 class="sec" id="s-concurrent-collections">Concurrent Collections</h2>
+<ul><li>Concurrent Collections are thread-safe collection classes designed to handle multiple threads efficiently without blocking everything.</li><li>They are part of: <code>java.util.concurrent</code> package</li></ul>
+<h3 class="sub">Traditional Approach</h3>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">Collections.synchronizedList(list);</code></pre></div>
+<p>Limitations:</p>
+<ul class="checklist">
+<li class="arw">Uses single lock</li>
+<li class="arw">Only one thread at a time ❌</li>
+<li class="arw">Poor performance under high concurrency</li>
+</ul>
+<h3 class="sub">Concurrent Collections (Solution)</h3>
+<ul class="checklist">
+<li class="arw">Use <strong>fine-grained locking / lock-free algorithms</strong></li>
+<li class="ok">Better performance</li>
+<li class="ok">Higher scalability</li>
+<li class="ok">Safe in multi-threaded environments</li>
+</ul>
+<p><strong>Important Concurrent Collections in Java:</strong></p>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Collection</th><th style="text-align:left">Type</th><th style="text-align:left">Ordering</th><th style="text-align:left">Thread-Safety Mechanism</th><th style="text-align:left">Best Use Case</th></tr></thead><tbody><tr><td style="text-align:left">ConcurrentHashMap</td><td style="text-align:left">Map</td><td style="text-align:left">❌ No order</td><td style="text-align:left">CAS + fine-grained locking</td><td style="text-align:left">High-performance concurrent key-value store</td></tr><tr><td style="text-align:left">CopyOnWriteArrayList</td><td style="text-align:left">List</td><td style="text-align:left">✅ Insertion order</td><td style="text-align:left">Copy-on-write (immutable snapshot)</td><td style="text-align:left">Read-heavy applications</td></tr><tr><td style="text-align:left">CopyOnWriteArraySet</td><td style="text-align:left">Set</td><td style="text-align:left">✅ Insertion order</td><td style="text-align:left">Copy-on-write</td><td style="text-align:left">Read-heavy + no duplicates</td></tr><tr><td style="text-align:left">ConcurrentSkipListMap</td><td style="text-align:left">Map</td><td style="text-align:left">✅ Sorted</td><td style="text-align:left">Skip list + CAS</td><td style="text-align:left">Concurrent sorted data</td></tr><tr><td style="text-align:left">ConcurrentSkipListSet</td><td style="text-align:left">Set</td><td style="text-align:left">✅ Sorted</td><td style="text-align:left">Skip list + CAS</td><td style="text-align:left">Concurrent sorted set</td></tr><tr><td style="text-align:left">ArrayBlockingQueue</td><td style="text-align:left">Queue</td><td style="text-align:left">✅ FIFO</td><td style="text-align:left">Locks (bounded)</td><td style="text-align:left">Producer-Consumer (fixed size)</td></tr><tr><td style="text-align:left">LinkedBlockingQueue</td><td style="text-align:left">Queue</td><td style="text-align:left">✅ FIFO</td><td style="text-align:left">Separate locks (unbounded/bounded)</td><td style="text-align:left">High-throughput producer-consumer</td></tr><tr><td style="text-align:left">PriorityBlockingQueue</td><td style="text-align:left">Queue</td><td style="text-align:left">✅ Priority-based</td><td style="text-align:left">Heap + locks</td><td style="text-align:left">Task scheduling</td></tr><tr><td style="text-align:left">DelayQueue</td><td style="text-align:left">Queue</td><td style="text-align:left">⏳ Time-based</td><td style="text-align:left">Priority queue + delay</td><td style="text-align:left">Scheduled task execution</td></tr></tbody></table></div>
+<h4 class="sub4">Hashtable vs ConcurrentHashMap</h4>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Feature</th><th style="text-align:left">Hashtable</th><th style="text-align:left">ConcurrentHashMap</th></tr></thead><tbody><tr><td style="text-align:left">Thread Safety</td><td style="text-align:left">✅ Yes</td><td style="text-align:left">✅ Yes</td></tr><tr><td style="text-align:left">Locking</td><td style="text-align:left">🔒 Whole map (coarse)</td><td style="text-align:left">🔓 Fine-grained (bucket/node level)</td></tr><tr><td style="text-align:left">Concurrency</td><td style="text-align:left">❌ Low</td><td style="text-align:left">🚀 High</td></tr><tr><td style="text-align:left">Performance</td><td style="text-align:left">❌ Slow</td><td style="text-align:left">✅ Fast</td></tr><tr><td style="text-align:left">Null Key</td><td style="text-align:left">❌ Not allowed</td><td style="text-align:left">❌ Not allowed</td></tr><tr><td style="text-align:left">Null Value</td><td style="text-align:left">❌ Not allowed</td><td style="text-align:left">❌ Not allowed</td></tr><tr><td style="text-align:left">Iteration</td><td style="text-align:left">Not fail-safe</td><td style="text-align:left">✅ Weakly consistent</td></tr><tr><td style="text-align:left">Introduced</td><td style="text-align:left">Legacy (Java 1.0)</td><td style="text-align:left">Modern (Java 1.5)</td></tr></tbody></table></div>
+<p>Example Scenario<br>🔴 Hashtable:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">map.put(1, &quot;A&quot;); // locks entire map</code></pre></div>
+<ul class="checklist">
+<li class="arw">Other threads:</li>
+</ul>
+<p>Cannot read<br>Cannot write</p>
+<p>🟢 ConcurrentHashMap:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">map.put(1, &quot;A&quot;); // locks only one bucket</code></pre></div>
+<ul class="checklist">
+<li class="arw">Other threads:</li>
+</ul>
+<p>Can read other buckets<br>Can write other buckets</p>
+<hr>
+<h2 class="sec" id="s-dsa-quick-summary-which-data-structure-to-use">DSA Quick Summary: Which Data Structure to Use?</h2>
+<blockquote>Complexities below are for common Java implementations and average-case behavior.</blockquote>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Data Structure (Java)</th><th style="text-align:left">Use When</th><th style="text-align:left">Ordering</th><th style="text-align:left">Access</th><th style="text-align:left">Search</th><th style="text-align:left">Insert</th><th style="text-align:left">Delete</th><th style="text-align:left">Notes</th></tr></thead><tbody><tr><td style="text-align:left"><code>Array</code></td><td style="text-align:left">Fixed size, index-based problems</td><td style="text-align:left">Index order</td><td style="text-align:left"><code>O(1)</code></td><td style="text-align:left"><code>O(n)</code></td><td style="text-align:left"><code>O(n)</code>*</td><td style="text-align:left"><code>O(n)</code>*</td><td style="text-align:left">*Middle insert/delete shifts elements</td></tr><tr><td style="text-align:left"><code>ArrayList</code></td><td style="text-align:left">Frequent reads + append operations</td><td style="text-align:left">Insertion order</td><td style="text-align:left"><code>O(1)</code></td><td style="text-align:left"><code>O(n)</code></td><td style="text-align:left"><code>O(1)</code> amortized (end), <code>O(n)</code> middle</td><td style="text-align:left"><code>O(n)</code></td><td style="text-align:left">Best general-purpose dynamic array</td></tr><tr><td style="text-align:left"><code>LinkedList</code></td><td style="text-align:left">Frequent insert/delete at ends or via iterator/node ref</td><td style="text-align:left">Insertion order</td><td style="text-align:left"><code>O(n)</code></td><td style="text-align:left"><code>O(n)</code></td><td style="text-align:left"><code>O(1)</code> at ends, <code>O(n)</code> by index</td><td style="text-align:left"><code>O(1)</code> at ends, <code>O(n)</code> by index</td><td style="text-align:left">Poor random index access</td></tr><tr><td style="text-align:left"><code>ArrayDeque</code> (<code>Deque</code>)</td><td style="text-align:left">Efficient stack/queue implementation</td><td style="text-align:left">Depends on usage</td><td style="text-align:left"><code>O(1)</code> at ends</td><td style="text-align:left"><code>O(n)</code></td><td style="text-align:left"><code>O(1)</code> at ends</td><td style="text-align:left"><code>O(1)</code> at ends</td><td style="text-align:left">Prefer over legacy <code>Stack</code></td></tr><tr><td style="text-align:left"><code>PriorityQueue</code> (Heap)</td><td style="text-align:left">Need repeated min/max or top-k</td><td style="text-align:left">Priority order (not fully sorted)</td><td style="text-align:left"><code>O(1)</code> for peek</td><td style="text-align:left"><code>O(n)</code></td><td style="text-align:left"><code>O(log n)</code></td><td style="text-align:left"><code>O(log n)</code> for poll</td><td style="text-align:left">Useful for Top-K and scheduling</td></tr><tr><td style="text-align:left"><code>HashMap</code></td><td style="text-align:left">Fast key-value lookup</td><td style="text-align:left">No order</td><td style="text-align:left">N/A</td><td style="text-align:left"><code>O(1)</code> avg (<code>get</code>)</td><td style="text-align:left"><code>O(1)</code> avg (<code>put</code>)</td><td style="text-align:left"><code>O(1)</code> avg</td><td style="text-align:left">Worst-case may degrade</td></tr><tr><td style="text-align:left"><code>LinkedHashMap</code></td><td style="text-align:left">Need map + insertion/access order</td><td style="text-align:left">Maintains order</td><td style="text-align:left">N/A</td><td style="text-align:left"><code>O(1)</code> avg</td><td style="text-align:left"><code>O(1)</code> avg</td><td style="text-align:left"><code>O(1)</code> avg</td><td style="text-align:left">Good for LRU-style cache patterns</td></tr><tr><td style="text-align:left"><code>TreeMap</code></td><td style="text-align:left">Need sorted keys/range queries</td><td style="text-align:left">Sorted by key</td><td style="text-align:left">N/A</td><td style="text-align:left"><code>O(log n)</code></td><td style="text-align:left"><code>O(log n)</code></td><td style="text-align:left"><code>O(log n)</code></td><td style="text-align:left">Red-Black Tree based</td></tr><tr><td style="text-align:left"><code>HashSet</code></td><td style="text-align:left">Need uniqueness + fast membership test</td><td style="text-align:left">No order</td><td style="text-align:left">N/A</td><td style="text-align:left"><code>O(1)</code> avg</td><td style="text-align:left"><code>O(1)</code> avg</td><td style="text-align:left"><code>O(1)</code> avg</td><td style="text-align:left">Backed by <code>HashMap</code></td></tr><tr><td style="text-align:left"><code>LinkedHashSet</code></td><td style="text-align:left">Need uniqueness + insertion order</td><td style="text-align:left">Insertion order</td><td style="text-align:left">N/A</td><td style="text-align:left"><code>O(1)</code> avg</td><td style="text-align:left"><code>O(1)</code> avg</td><td style="text-align:left"><code>O(1)</code> avg</td><td style="text-align:left">Slight memory overhead vs <code>HashSet</code></td></tr><tr><td style="text-align:left"><code>TreeSet</code></td><td style="text-align:left">Need unique + sorted elements</td><td style="text-align:left">Sorted</td><td style="text-align:left">N/A</td><td style="text-align:left"><code>O(log n)</code></td><td style="text-align:left"><code>O(log n)</code></td><td style="text-align:left"><code>O(log n)</code></td><td style="text-align:left">Good for range operations</td></tr></tbody></table></div>
+<h3 class="sub">Quick DSA Picks</h3>
+<ul><li><strong>Top K frequent elements</strong> → <code>HashMap + PriorityQueue</code></li><li><strong>Fast lookup by key</strong> → <code>HashMap</code></li><li><strong>Sorted keys / floor / ceiling / ranges</strong> → <code>TreeMap</code> / <code>TreeSet</code></li><li><strong>Unique elements (no ordering needed)</strong> → <code>HashSet</code></li><li><strong>Stack / Queue implementation</strong> → <code>ArrayDeque</code></li><li><strong>Frequent random index access</strong> → <code>ArrayList</code></li><li><strong>Frequent insert/delete in middle with node references</strong> → <code>LinkedList</code></li></ul></main></div>
+<p class="pagefoot">Core Java · interview notes · built as I go</p>
+<script>
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e;}
+function cap(t){var c=el('div','viz-cap');c.appendChild(el('span','pulse'));c.appendChild(document.createTextNode(t));return c;}
+function buildViz(){var h=document.getElementById('heroViz');if(!h)return;var k=h.getAttribute('data-viz');
+  if(k==='bits')vizBits(h);else if(k==='exec')vizExec(h);else if(k==='hashmap')vizHashmap(h);else if(k==='stream')vizStream(h);}
+
+/* left shift doubles the value */
+function vizBits(host){
+  host.innerHTML=''; host.appendChild(cap('Bitwise left shift · each << 1 doubles the value'));
+  var row=el('div','bits'); var cells=[];
+  for(var i=0;i<8;i++){var c=el('div','bit','0');cells.push(c);row.appendChild(c);}
+  host.appendChild(row); var read=el('div','readout'); host.appendChild(read);
+  var vals=[5,10,20,40]; var k=0;
+  function draw(v){var b=v.toString(2).padStart(8,'0');for(var i=0;i<8;i++){cells[i].textContent=b[i];cells[i].classList.toggle('one',b[i]==='1');}}
+  function frame(){
+    draw(vals[k]);
+    if(k===0)read.innerHTML='start: <span class="hit">5</span> = 00000101';
+    else read.innerHTML=vals[k-1]+' &lt;&lt; 1 = <span class="hit">'+vals[k]+'</span>  (×2)';
+    k++; if(k>=vals.length){setTimeout(function(){k=0;frame();},1700);}else setTimeout(frame,1200);
+  } frame();
+}
+
+/* order of execution: static -> instance block -> constructor */
+function vizExec(host){
+  host.innerHTML=''; host.appendChild(cap('Order of execution · when each block runs'));
+  var w=el('div','execwrap');
+  var items=['static variables + static block','(main starts)','instance block','constructor body','method call'];
+  var lines=items.map(function(t){var e=el('div','exline',t);w.appendChild(e);return e;});
+  host.appendChild(w); var read=el('div','readout'); host.appendChild(read);
+  var notes=['static runs ONCE when the class loads','then main() begins','instance block runs on every new object','...right before the constructor body','methods run when called'];
+  var k=0;
+  function frame(){
+    lines.forEach(function(l,idx){l.classList.toggle('on',idx===k);});
+    read.innerHTML=(k===0?'<span class="hit">':'')+notes[k]+(k===0?'</span>':'');
+    k++; if(k>=lines.length){setTimeout(function(){k=0;frame();},1700);}else setTimeout(frame,1150);
+  } frame();
+}
+
+/* HashMap internal working: hash -> index -> bucket, chaining on collision */
+function vizHashmap(host){
+  host.innerHTML=''; host.appendChild(cap('HashMap internals · hash → index, collisions chain in a bucket'));
+  var wrap=el('div','hmwrap');
+  var bk=el('div','buckets'); var cells=[]; var chains=[];
+  for(var i=0;i<8;i++){var r=el('div','brow');r.appendChild(el('div','bidx',i));var c=el('div','bcell');cells.push(c);r.appendChild(c);
+    var ch=el('div','chain');chains.push(ch);r.appendChild(ch);bk.appendChild(r);}
+  wrap.appendChild(bk); host.appendChild(wrap);
+  var read=el('div','readout'); host.appendChild(read);
+  // (key, index, isCollision)
+  var seq=[['book:10',1,false],['pen:20',5,false],['pencil:80',1,true],['cup:30',5,true]];
+  var k=0;
+  function frame(){
+    if(k===0){cells.forEach(function(c){c.classList.remove('filled');});chains.forEach(function(c){c.innerHTML='';});}
+    var s=seq[k], idx=s[1];
+    cells[idx].classList.add('filled');
+    if(chains[idx].children.length>0){chains[idx].appendChild(el('span','hlink','→'));}
+    var node=el('span','hnode'+(s[2]?' collide':''),s[0]);
+    chains[idx].appendChild(node);
+    if(s[2])read.innerHTML='put('+s[0]+') → index '+idx+' <span class="warn">collision → chained</span>';
+    else read.innerHTML='put('+s[0]+') → hash → index <span class="hit">'+idx+'</span>';
+    k++; if(k>=seq.length){setTimeout(function(){k=0;frame();},2100);}else setTimeout(frame,1350);
+  } frame();
+}
+
+/* stream pipeline: lazy, one element flows through */
+function vizStream(host){
+  host.innerHTML=''; host.appendChild(cap('Stream pipeline · lazy — one element flows end to end'));
+  var pipe=el('div','pipe2');
+  var s1=el('div','pstage','filter(even)');
+  var s2=el('div','pstage','map(×10)');
+  var s3=el('div','pstage term','collect()');
+  pipe.appendChild(s1);pipe.appendChild(el('span','parr','▸'));pipe.appendChild(s2);pipe.appendChild(el('span','parr','▸'));pipe.appendChild(s3);
+  host.appendChild(pipe); var read=el('div','readout'); host.appendChild(read);
+  // element, passesFilter
+  var data=[[3,false],[4,true],[7,false],[6,true]]; var k=0;
+  function frame(){
+    [s1,s2,s3].forEach(function(s){s.classList.remove('on');});
+    var d=data[k], v=d[0], pass=d[1];
+    s1.classList.add('on');
+    if(!pass){read.innerHTML='element <span class="token drop">'+v+'</span> fails filter(even) → dropped, next element';}
+    else{s2.classList.add('on');s3.classList.add('on');
+      read.innerHTML='element <span class="token">'+v+'</span> → map → <span class="token">'+(v*10)+'</span> → collected';}
+    k++; if(k>=data.length){setTimeout(function(){k=0;frame();},1900);}else setTimeout(frame,1350);
+  } frame();
+}
+window.addEventListener('DOMContentLoaded',buildViz);
+</script></body></html>

@@ -1,0 +1,1031 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Multithreading — Locks — Core Java Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F6F5F3; --card:#FFFFFF; --ink:#1A1712; --muted:#6B635A; --hair:#E8E4DE;
+  --accent:#E8710A; --accent-d:#C25E00; --accent-soft:#FFF2E4;
+  --teal:#0E9C8E; --coral:#E5484D; --green:#12924F; --violet:#7C4DDB; --blue:#2563EB;
+  --disp:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);line-height:1.62;font-size:15.5px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.top{position:sticky;top:0;z-index:20;background:rgba(246,245,243,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);padding:12px 20px;display:flex;align-items:center;gap:14px}
+.top .home{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.top .home:hover{color:var(--accent);text-decoration:none}
+.top .crumb{font-family:var(--disp);font-weight:600;font-size:15px}
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:240px 1fr;gap:36px;padding:28px 20px 100px}
+.toc{position:sticky;top:70px;align-self:start;max-height:calc(100vh - 96px);overflow:auto;font-size:13px;padding-right:8px}
+.toc h4{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 10px}
+.toc a{display:block;color:var(--muted);padding:4px 10px;border-left:2px solid var(--hair);margin-left:2px;border-radius:0 6px 6px 0}
+.toc a:hover{color:var(--ink);background:var(--card);text-decoration:none}
+.content{min-width:0;max-width:820px}
+.doc-title{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,42px);letter-spacing:-.015em;margin:0 0 6px}
+h2.sec{font-family:var(--disp);font-weight:600;font-size:23px;margin:46px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--ink);scroll-margin-top:80px}
+h3.sub{font-family:var(--disp);font-weight:600;font-size:17.5px;margin:26px 0 8px}
+h4.sub4{font-family:var(--disp);font-weight:600;font-size:15px;margin:18px 0 6px;color:#33291f}
+p{margin:11px 0}
+p.estep{font-family:var(--disp);font-weight:600;font-size:15.5px;margin:18px 0 6px;color:var(--accent-d)}
+p.minilabel{font-family:var(--disp);font-weight:600;font-size:14px;margin:16px 0 4px;color:var(--ink);background:var(--accent-soft);display:inline-block;padding:3px 10px;border-radius:8px}
+ul,ol{margin:11px 0;padding-left:22px}li{margin:5px 0}
+ul.checklist{list-style:none;padding-left:4px}
+ul.checklist li{position:relative;padding-left:26px;margin:6px 0}
+ul.checklist li::before{position:absolute;left:0;top:0;font-weight:700}
+ul.checklist li.ok::before{content:"✓";color:var(--green)}
+ul.checklist li.no::before{content:"✕";color:var(--coral)}
+ul.checklist li.arw::before{content:"→";color:var(--accent)}
+hr{border:none;border-top:1px solid var(--hair);margin:26px 0}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-d);padding:1px 6px;border-radius:5px}
+blockquote{margin:16px 0;padding:10px 16px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 10px 10px 0;color:#3a2f22}
+.tablewrap{overflow-x:auto;margin:16px 0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{border:1px solid var(--hair);padding:8px 12px}
+th{background:var(--card);font-family:var(--disp);font-weight:600}
+tbody tr:nth-child(even){background:#FBFAF8}
+.fig{margin:18px 0;text-align:center}
+.fig img{max-width:100%;height:auto;border:1px solid var(--hair);border-radius:12px;background:#fff;padding:8px}
+.fig figcaption{font-size:12.5px;color:var(--muted);margin-top:8px;font-family:var(--mono)}
+.code{position:relative;margin:14px 0;border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:#161a20}
+.code.inline{background:#20262f}
+.code.ascii{background:#1b2530}
+.code-tag{position:absolute;top:8px;right:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#8891a8;z-index:2}
+.code pre{margin:0;padding:15px 18px;overflow-x:auto}
+.code code{background:none;color:#e7ebf1;padding:0;font-size:13px;line-height:1.6;display:block}
+.code .language-plaintext{color:#cfe0dc;white-space:pre}
+.hero-viz{margin:18px 0 28px;background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px;min-height:170px}
+.viz-cap{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.viz-cap .pulse{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.readout{font-family:var(--mono);font-size:14px;margin-top:16px;color:var(--ink);min-height:20px}
+.readout .hit{color:var(--green);font-weight:700}
+.readout .warn{color:var(--coral);font-weight:700}
+/* casting ladder */
+.ladder{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.rung{padding:9px 12px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-weight:700;font-size:13px;transition:all .45s ease}
+.rung.on{border-color:var(--green);background:#ECFDF3;transform:translateY(-3px)}
+.rung.warnon{border-color:var(--coral);background:#FEF2F2}
+.arrw{color:var(--muted);font-family:var(--mono)}
+/* jvm pipeline */
+.pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.stage{padding:12px 14px;border-radius:12px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:600;text-align:center;min-width:92px;transition:all .4s ease}
+.stage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.stage.hot{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.stage small{display:block;font-weight:400;color:var(--muted);font-size:10.5px;margin-top:2px}
+.flowarr{color:var(--accent);font-size:18px}
+/* oop dispatch */
+.dispatch{display:flex;flex-direction:column;gap:14px}
+.drow{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pill{padding:9px 13px;border-radius:10px;font-family:var(--mono);font-weight:700;font-size:13px;border:2px solid var(--hair);background:#fff;transition:all .45s}
+.pill.ref{border-color:var(--muted);color:var(--muted)}
+.pill.obj.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.pill.impl{border-color:var(--hair);opacity:.5}
+.pill.impl.win{border-color:var(--green);background:#ECFDF3;color:var(--green);opacity:1;transform:translateY(-3px)}
+.pagefoot{max-width:820px;margin:40px auto 0;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:900px){.shell{grid-template-columns:1fr}.toc{display:none}}
+
+.states{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.state{padding:9px 13px;border-radius:10px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12.5px;font-weight:700;transition:all .4s}
+.state.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d);transform:translateY(-3px)}
+.state.done{border-color:var(--green);background:#ECFDF3;color:var(--green)}
+.sarrow{color:var(--muted);font-family:var(--mono);font-size:12px}
+.casbox{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start}
+.memcell{padding:12px 18px;border-radius:12px;border:2px solid var(--accent);background:var(--accent-soft);font-family:var(--mono);font-weight:700;font-size:20px;color:var(--accent-d);text-align:center}
+.memcell .lbl{font-size:10px;color:var(--muted);font-weight:400;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.threadcol{display:flex;flex-direction:column;gap:6px}
+.trow{display:flex;gap:8px;flex-wrap:wrap}
+.tcard{padding:7px 11px;border-radius:9px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12px;font-weight:600;transition:all .4s}
+.tcard.act{border-color:var(--accent);background:var(--accent-soft)}
+.tcard.okc{border-color:var(--green);background:#ECFDF3;color:var(--green)}
+.tcard.failc{border-color:var(--coral);background:#FEF2F2;color:var(--coral)}
+.poolwrap{display:flex;flex-direction:column;gap:10px}
+.poolrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.poollane{font-family:var(--mono);font-size:11px;color:var(--muted);width:66px;text-transform:uppercase;letter-spacing:.05em}
+.slot{width:30px;height:30px;border-radius:7px;border:2px dashed var(--hair);background:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;font-weight:700;transition:all .35s}
+.slot.core{border-style:solid}
+.slot.fill{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d);border-style:solid}
+.slot.qfill{border-color:var(--violet);background:#F3EEFF;color:var(--violet);border-style:solid}
+.slot.reject{border-color:var(--coral);background:var(--coral);color:#fff;border-style:solid}
+.cfchain{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.cfstage{padding:10px 13px;border-radius:11px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:12px;font-weight:600;text-align:center;transition:all .4s}
+.cfstage.on{border-color:var(--accent);background:var(--accent-soft);transform:translateY(-3px)}
+.cfstage small{display:block;color:var(--muted);font-weight:400;font-size:10px;margin-top:2px}
+.cfval{display:inline-block;padding:3px 9px;border-radius:7px;background:var(--green);color:#fff;font-family:var(--mono);font-weight:700;font-size:12px;margin-left:8px}
+.vtwrap{display:flex;flex-direction:column;gap:14px}
+.vtpool{display:flex;gap:6px;flex-wrap:wrap}
+.vt{width:34px;height:24px;border-radius:6px;border:2px solid var(--hair);background:#fff;font-family:var(--mono);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .4s}
+.vt.mounted{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-d)}
+.vt.io{border-color:var(--violet);background:#F3EEFF;color:var(--violet)}
+.carriers{display:flex;gap:10px}
+.carrier{flex:1;border:2px solid var(--green);border-radius:10px;padding:8px;background:#ECFDF3;text-align:center;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--green);min-height:52px}
+.carrier .cw{margin-top:5px;font-size:12px;color:var(--accent-d)}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>window.addEventListener('DOMContentLoaded',function(){try{document.querySelectorAll('code.language-java').forEach(function(b){hljs.highlightElement(b)});}catch(e){}});</script>
+
+</head><body>
+<div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">Multithreading — Locks</span></div>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-thread-vs-process">Thread vs Process</a><a href="#s-what-happens-internally-when-we-run--gt-java--xms256m--xmx2g">What happens internally when we run -&gt; java -Xms256m -Xmx2g Test</a><a href="#s-multitasking-vs-multithreading">Multitasking vs. Multithreading</a><a href="#s-ways-to-create-threads-in-java">Ways to Create Threads in Java</a><a href="#s-thread-lifecycle">Thread lifecycle</a><a href="#s-monitor-lock">Monitor lock</a><a href="#s-shared-resource-example">Shared resource example</a><a href="#s-producer-consumer-problem">Producer-Consumer problem</a><a href="#s-unsafe-thread-operations">Unsafe thread operations:</a><a href="#s-thread-join">Thread join</a><a href="#s-thread-priority">Thread Priority</a><a href="#s-daemon-thread">Daemon thread –</a><a href="#s-custom-locks-and-their-types">Custom locks and their types</a></nav><main class="content"><h1 class="doc-title">Multithreading — Locks</h1>
+<div class="hero-viz" id="heroViz" data-viz="life"></div>
+<hr>
+<h2 class="sec" id="s-thread-vs-process">Thread vs Process</h2>
+<h3 class="sub">Process</h3>
+<ul><li>Process is an instance of a program that is getting executed.</li><li>It has its own resource like memory, thread etc. OS allocate these resources to process when it is created.</li><li>Compilation (<code>javac Test.java</code>) : generates bytecode that can be executed by JVM.</li><li>Execution (<code>java Test</code>) : at this point, JVM starts the new Process, here Test is the class which has <code>public static void main(String args[])</code> method.</li><li>How much memory does process gets?</li><li>While creating the process with <code>java MainClassName</code> command, a new JVM instance will get created and we can tell how much heap memory need to be allocated.</li><li><code>java -Xms256m -Xmx2g MainClassName</code></li><li>Where <code>Xms</code> is initial allocated size and <code>Xmx</code> is maximum size process can get. If it tries to go beyond Xmx size then we will get <code>OutOfMemoryError</code>.</li></ul>
+<h3 class="sub">Thread</h3>
+<ul><li>Thread is know as lightweight process OR Smallest sequence of instructions that are executed by CPU independently.</li><li>1 process can have multiple threads.</li><li>When a Process is created, it starts with 1 thread and that initial thread known as &#x27;main thread&#x27; and from that we can create multiple threads to perform task concurrently.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">
+public class MultithreadingLearning {
+
+    public static void main(String args[]) {
+        System.out.println(&quot;Thread Name: &quot; + Thread.currentThread().getName());
+    }
+}</code></pre></div>
+<p>Output: </p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Thread Name: main</code></pre></div>
+<p>So basically,<br>A thread is a lightweight process. Any process can have multiple threads running in it. For example in a web browser, we can have one thread which will load the user interface and another thread which will actually retrieve all the data that needs to be displayed in that interface.</p>
+<p>Process = JVM instance<br>Threads = Multiple tasks running inside JVM</p>
+<figure class="fig"><img src="images/threads-processes.png" alt="alt text" loading="lazy"></figure>
+<hr>
+<h2 class="sec" id="s-what-happens-internally-when-we-run--gt-java--xms256m--xmx2g">What happens internally when we run -&gt; <code>java -Xms256m -Xmx2g Test</code></h2>
+<h3 class="sub">Step-by-step Execution Flow:</h3>
+<p>-&gt; A new JVM process is started by the OS.<br>-&gt; The JVM allocates memory using -Xms (initial = 256MB) and -Xmx (maximum = 2GB).<br>-&gt; The JVM creates the main thread to run the main() method.<br>-&gt; The Just-In-Time (JIT) compiler starts converting frequently used bytecode into native machine code for better performance.<br>-&gt; JVM identifies required threads and creates them. Each thread gets:</p>
+<ul><li>Program Counter (PC) Register – stores the address of the current instruction.  </li><li>JVM Stack – stores method frames (local variables, operand stack).  </li><li>Native Thread – backed by an OS-level thread.  </li></ul>
+<p>-&gt; The JIT-generated native code is stored in the code cache (code segment) for reuse.</p>
+<figure class="fig"><img src="images/threads-processes-internals.png" alt="alt text" loading="lazy"></figure>
+<ol><li>Code Segment:  </li></ol>
+<ul><li>Contains the compiled BYTECODE (i.e machine code) of the Java Program.</li><li>It is read only.</li><li>All threads within the same process, share the same code segment.</li></ul>
+<ol><li>Data Segment:  </li></ol>
+<ul><li>Contains the GLOBAL and STATIC variables.</li><li>All threads within the same process, share the same data segment.</li><li>Threads can read and modify the same data.</li><li>Synchronization is required between multiple threads.</li></ul>
+<ol><li>Heap</li></ol>
+<ul><li>Objects created at runtime using the new keyword are allocated in the heap.</li><li>Heap is shared among all the threads of the same process (but NOT across processes).</li><li>(For example: in Process1, heap memory address X8000 may point to some physical memory location; the same X8000 in Process2 will point to a different physical memory location.)</li><li>Threads can read and modify the heap data.</li><li>Synchronization is required between multiple threads.</li></ul>
+<ol><li>Stack</li></ol>
+<ul><li>Each thread has its own stack.</li><li>Stack manages:</li><li>Method calls</li><li>Local variables</li></ul>
+<ol><li>Register</li></ol>
+<ul><li>When JIT (Just‑In‑Time) compiler converts bytecode into native machine code, it uses CPU registers to optimize the generated machine code.</li><li>Registers also help in context switching.</li><li>Each thread has its own register set.</li></ul>
+<ol><li>Counter</li></ol>
+<ul><li>Also known as Program Counter, it points to the instruction which is getting executed.</li><li>Increments its counter after successful execution of the instruction.</li></ul>
+<p>All these are managed by JVM.</p>
+<h3 class="sub">🧠 Behind the Scenes: CPU Registers &amp; Context Switching</h3>
+<ul><li>Context Switching is the process where the CPU switches from one thread to another.</li><li>Since CPU can execute only one thread at a time (per core), it rapidly switches between threads to give an illusion of parallelism.</li><li>Context = Current state of a thread:</li><li>Program Counter (PC) → points to current instruction</li><li>Registers → hold temporary values, stack pointer, flags</li><li>Stack Pointer → points to current stack frame</li><li>When switching happens:</li><li>Save current thread state to Thread Control Block (TCB)</li><li>Load next thread state from Thread Control Block (TCB)</li><li>Resume execution</li><li>Example:</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class ContextSwitchDemo {
+
+    public static void main(String[] args) {
+
+        Runnable task = () -&gt; {
+            for (int i = 1; i &lt;= 5; i++) {
+                System.out.println(Thread.currentThread().getName() + &quot; - &quot; + i);
+                try {
+                    Thread.sleep(500); // Forces context switch
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Thread t1 = new Thread(task, &quot;Thread-1&quot;);
+        Thread t2 = new Thread(task, &quot;Thread-2&quot;);
+
+        t1.start();
+        t2.start();
+    }
+}</code></pre></div>
+<p>Output will look like:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Thread-1 - 1
+Thread-2 - 1
+Thread-1 - 2
+Thread-2 - 2
+...</code></pre></div>
+<p><strong>Why interleaving?</strong><br>-&gt; Because:</p>
+<ul><li><code>Thread.sleep(100)</code> tells CPU → &quot;I’m idle, schedule another thread&quot;</li><li>OS performs context switch from Thread-1 → Thread-2</li></ul>
+<ul><li>Flow:</li></ul>
+<ol><li>JVM starts the main thread  </li><li><code>t1.start()</code> → Thread‑1 becomes Runnable  </li><li><code>t2.start()</code> → Thread‑2 becomes Runnable  </li><li>Scheduler picks Thread‑1  </li><li>Thread‑1 executes → hits <code>Thread.sleep(500)</code>  </li><li>Thread‑1 goes to TIMED_WAITING  </li><li>Scheduler switches CPU to Thread‑2 ✅ (context switch)  </li><li>Thread‑2 executes → sleeps  </li><li>CPU switches back to Thread‑1  </li><li>This repeats until both threads finish  </li></ol>
+<h3 class="sub">What is Thread Control Block (TCB)?</h3>
+<ul><li>Thread Control Block (TCB) is a data structure used by the Operating System to manage each thread.</li><li>Think of it as a “thread’s identity card + current state snapshot”.</li></ul>
+<p><strong>What does TCB store?</strong><br>Each thread has its own TCB, which contains:</p>
+<ul class="checklist">
+<li class="ok">1. Thread State</li>
+</ul>
+<p>NEW / RUNNABLE / BLOCKED / WAITING / TERMINATED</p>
+<ul class="checklist">
+<li class="ok">2. Program Counter (PC)</li>
+</ul>
+<p>Which instruction the thread is currently executing</p>
+<ul class="checklist">
+<li class="ok">3. Registers</li>
+</ul>
+<p>CPU register values (important for resuming execution)</p>
+<ul class="checklist">
+<li class="ok">4. Stack Pointer</li>
+</ul>
+<p>Points to thread’s stack (local variables, method calls)</p>
+<ul class="checklist">
+<li class="ok">5. Thread ID</li>
+</ul>
+<p>Unique identifier</p>
+<ul class="checklist">
+<li class="ok">6. Scheduling Info</li>
+</ul>
+<p>Priority<br>CPU time slice<br>Queue position</p>
+<p><strong>Why TCB is Important?</strong></p>
+<ul class="checklist">
+<li class="arw">During context switching:</li>
+</ul>
+<ul><li>Current thread state is saved into its TCB</li><li>Next thread’s state is loaded from its TCB</li><li>Execution resumes</li></ul>
+<p><strong>Flow of Context Switching with TCB</strong></p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Thread-1 running
+   ↓ (interrupt / sleep)
+Save state → TCB-1
+
+Load state ← TCB-2
+   ↓
+Thread-2 running</code></pre></div>
+<ul class="checklist">
+<li class="arw">This is how CPU jumps between threads seamlessly</li>
+</ul>
+<h2 class="sec" id="s-multitasking-vs-multithreading">Multitasking vs. Multithreading</h2>
+<p><strong>Multitasking runs multiple processes concurrently, whereas multithreading runs multiple threads concurrently within the same process.</strong></p>
+<hr>
+<h2 class="sec" id="s-ways-to-create-threads-in-java">Ways to Create Threads in Java</h2>
+<p>Java provides two main ways to create threads:</p>
+<figure class="fig"><img src="images/thread-runnable.png" alt="alt text" loading="lazy"></figure>
+<ol><li>By implementing the Runnable interface</li></ol>
+<ul><li>Runnable is an interface with only one method: <code>void run();</code></li><li>The run() method defines the task that the thread will execute</li><li>Thread execution does not start automatically by calling run()</li></ul>
+<h3 class="sub">Steps to Create Thread using Runnable</h3>
+<ul><li>Create a class that implements Runnable</li><li>Implement the run() method to define the task</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">
+class MyTask implements Runnable {
+    public void run() {
+        // task logic
+    }
+}</code></pre></div>
+<ul><li>Create an instance of the class that implements Runnable</li><li>Pass it to a Thread object</li><li>Call start() to begin execution</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        System.out.println(&quot;Main thread is running : &quot; + Thread.currentThread().getName());
+        Runnable runnable = new MyClass();
+        Thread thread = new Thread(runnable);
+        thread.start();
+        System.out.println(&quot;Main thread finished&quot;);
+    }
+}
+
+class MyClass implements Runnable {
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName() + &quot; is running&quot;);
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Main thread is running : main
+Main thread finished
+Thread-0 is running</code></pre></div>
+<ul><li><code>start()</code> internally calls <code>run()</code></li></ul>
+<ol><li>By extending the Thread class</li></ol>
+<ul><li>Create a class extending the Thread class</li><li>override the <code>run()</code> method</li><li>The class itself becomes a thread</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        System.out.println(&quot;Main thread is running : &quot; + Thread.currentThread().getName());
+        Thread thread = new MyClass();
+        thread.start();
+        System.out.println(&quot;Main thread finished&quot;);
+    }
+}
+
+class MyClass extends Thread {
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName() + &quot; is running&quot;);
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Main thread is running : main
+Main thread finished
+Thread-0 is running</code></pre></div>
+<p><strong>Why Do We Have Two Ways to Create Threads?</strong></p>
+<ul><li>✅ A class can implement multiple interfaces</li><li>❌ A class can extend only one class</li></ul>
+<p>Conclusion:<br>Runnable is preferred when:</p>
+<ul><li>Your class already extends another class  </li><li>You want better design &amp; flexibility</li></ul>
+<h2 class="sec" id="s-thread-lifecycle">Thread lifecycle</h2>
+<figure class="fig"><img src="images/thread-life.png" alt="alt text" loading="lazy"></figure>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Lifecycle State</th><th style="text-align:left">Description</th></tr></thead><tbody><tr><td style="text-align:left"><strong>New</strong></td><td style="text-align:left">• Thread has been created but not started&lt;br&gt;• It’s just an object in memory</td></tr><tr><td style="text-align:left"><strong>Runnable</strong></td><td style="text-align:left">• Thread is ready to run&lt;br&gt;• Waiting for CPU time</td></tr><tr><td style="text-align:left"><strong>Running</strong></td><td style="text-align:left">• When thread starts executing its code</td></tr><tr><td style="text-align:left"><strong>Blocked</strong></td><td style="text-align:left">• Different scenarios where runnable thread goes into blocking state:&lt;br&gt;&lt;br&gt;– I/O: like reading from a file or database&lt;br&gt;– Lock acquired: if a thread wants to lock a resource locked by another thread, it has to wait&lt;br&gt;&lt;br&gt;• Releases all the monitor locks</td></tr><tr><td style="text-align:left"><strong>Waiting</strong></td><td style="text-align:left">• Thread goes into this state when <code>wait()</code> is called, making it non-runnable&lt;br&gt;• Returns to runnable when <code>notify()</code> or <code>notifyAll()</code> is called&lt;br&gt;• <strong>Releases all the monitor locks</strong></td></tr><tr><td style="text-align:left"><strong>Timed Waiting</strong></td><td style="text-align:left">• Thread waits for a specific period and returns to runnable after conditions are met&lt;br&gt;• Examples: <code>sleep()</code>, <code>join()</code>&lt;br&gt;&lt;br&gt;• <strong>Does not release any monitor lock</strong></td></tr><tr><td style="text-align:left"><strong>Terminated</strong></td><td style="text-align:left">• Life of thread is completed; it cannot be restarted</td></tr></tbody></table></div>
+<h3 class="sub"><code>Thread.yield()</code></h3>
+<ul><li>It is a hint to the thread scheduler that: “I’m willing to pause now, let other threads run.”</li><li>When a thread calls <code>yield()</code>:  </li></ul>
+<ol><li>It moves from RUNNING → RUNNABLE  </li><li>Scheduler may pick:  </li></ol>
+<ul><li>Same thread again 😅  </li><li>Or another thread  </li></ul>
+<ul><li>No guarantee that another thread will run</li></ul>
+<p><code>yield()</code> vs <code>sleep()</code></p>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Feature</th><th style="text-align:left">yield()</th><th style="text-align:left">sleep()</th></tr></thead><tbody><tr><td style="text-align:left">Guarantees pause</td><td style="text-align:left">❌ No</td><td style="text-align:left">✅ Yes</td></tr><tr><td style="text-align:left">Releases CPU</td><td style="text-align:left">Maybe</td><td style="text-align:left">Yes</td></tr><tr><td style="text-align:left">Releases lock</td><td style="text-align:left">❌ No</td><td style="text-align:left">❌ No</td></tr><tr><td style="text-align:left">Time-based</td><td style="text-align:left">❌ No</td><td style="text-align:left">✅ Yes</td></tr></tbody></table></div>
+<p><code>yield()</code> vs <code>wait()</code></p>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Feature</th><th style="text-align:left"><code>yield()</code></th><th style="text-align:left"><code>wait()</code></th></tr></thead><tbody><tr><td style="text-align:left">Guarantees pause</td><td style="text-align:left">❌ No</td><td style="text-align:left">✅ Yes (until <code>notify()</code>, <code>notifyAll()</code>, timeout, or interruption)</td></tr><tr><td style="text-align:left">Releases CPU</td><td style="text-align:left">⚠️ Requests to give up CPU; scheduler may ignore it</td><td style="text-align:left">✅ Yes</td></tr><tr><td style="text-align:left">Releases lock</td><td style="text-align:left">❌ No</td><td style="text-align:left">✅ Yes (releases the object&#x27;s monitor)</td></tr><tr><td style="text-align:left">Time-based</td><td style="text-align:left">❌ No</td><td style="text-align:left">Optional (<code>wait(timeout)</code>)</td></tr><tr><td style="text-align:left">Purpose</td><td style="text-align:left">Hint to the scheduler to allow other runnable threads to execute</td><td style="text-align:left">Inter-thread communication and synchronization</td></tr><tr><td style="text-align:left">Thread State</td><td style="text-align:left">Usually remains <code>RUNNABLE</code> (scheduler-dependent)</td><td style="text-align:left">Enters <code>WAITING</code> or <code>TIMED_WAITING</code></td></tr><tr><td style="text-align:left">Static Method</td><td style="text-align:left">✅ Yes</td><td style="text-align:left">❌ No (instance method of <code>Object</code>)</td></tr><tr><td style="text-align:left">Requires owning monitor?</td><td style="text-align:left">❌ No</td><td style="text-align:left">✅ Yes, otherwise <code>IllegalMonitorStateException</code></td></tr></tbody></table></div>
+<h2 class="sec" id="s-monitor-lock">Monitor lock</h2>
+<ul><li>It ensures that only one thread can go inside the particular section of code (synchronized block or method).</li><li>Synchronized instance method locks the object, static synchronized locks the class, and synchronized block locks only the specified section.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        MonitorLockExample monitorLockExample = new MonitorLockExample();
+        Thread t1 = new Thread(()-&gt; monitorLockExample.task1());
+        Thread t2 = new Thread(()-&gt; monitorLockExample.task2());
+        Thread t3 = new Thread(()-&gt; monitorLockExample.task3());
+
+        t1.start();
+        t2.start();
+        t3.start();
+
+        System.out.println(&quot;finished -&gt; &quot; + Thread.currentThread().getName());
+
+    }
+}
+
+class MonitorLockExample {
+    public synchronized void task1() {
+        try {
+            System.out.println(&quot;Inside task1 &quot; + Thread.currentThread().getName());
+            System.out.println(Thread.currentThread().getName() + &quot; is going to sleep&quot;);
+            Thread.sleep(10000);
+            System.out.println(Thread.currentThread().getName() + &quot; is woke up and lock is released&quot;);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void task2() {
+
+        System.out.println(&quot;Inside task2, before synchronization&quot;);
+        synchronized (this){     // t2 has to wait here since the lock is acquired by t1
+            System.out.println(&quot;Inside task2 synchronized block&quot;);
+        }
+    }
+
+    public void task3(){
+        System.out.println(&quot;Inside task3&quot;);
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">finished -&gt; main
+
+Inside task1 Thread-0
+Thread-0 is going to sleep
+
+Inside task2, before synchronization
+
+Inside task3
+
+(wait 10 seconds)
+
+Thread-0 is woke up and lock is released
+
+Inside task2 synchronized block</code></pre></div>
+<p>Key points -</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Thread	Needs monitor lock?	What happens?
+t1	Yes (task1 is synchronized)	Acquires the lock and sleeps while still holding it.
+t2	Yes (synchronized(this))	Prints the first line, then becomes BLOCKED waiting for the lock.
+t3	No	Executes immediately because it doesn&#x27;t require the monitor lock.</code></pre></div>
+<h2 class="sec" id="s-shared-resource-example">Shared resource example</h2>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+
+        SharedResource sharedResource = new SharedResource();
+        Thread producer  =  new Thread(() -&gt; {
+            System.out.println(&quot;Producer thread &quot; + Thread.currentThread().getName());
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            sharedResource.addItem();
+        });
+
+        Thread consumer =  new Thread(() -&gt; {
+            System.out.println(&quot;Consumer thread &quot; + Thread.currentThread().getName());
+            sharedResource.consumeItem();
+        });
+
+        producer.start();
+        consumer.start();
+
+        System.out.println(&quot;Main thread finished&quot;);
+
+    }
+}
+
+class SharedResource{
+    boolean isItemAvailable = false;
+
+    public synchronized void addItem(){
+        isItemAvailable = true;
+        System.out.println(&quot;Item added by &quot; + Thread.currentThread().getName() + &quot; and notifying/invoking all threads which are waiting.&quot;);
+        notifyAll();
+    }
+
+    public synchronized void consumeItem(){
+        System.out.println(&quot;ConsumeItem method called by &quot; + Thread.currentThread().getName());
+
+        while(!isItemAvailable){
+            try {
+                System.out.println(&quot;Consumer Thread: &quot; + Thread.currentThread().getName() + &quot; is waiting...&quot;);
+                wait();  // it will release monitor lock
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        System.out.println(&quot;Item consumed by &quot; + Thread.currentThread().getName());
+        isItemAvailable = false;
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Main thread finished
+Consumer thread Thread-1
+Producer thread Thread-0
+ConsumeItem method called by Thread-1
+Consumer Thread: Thread-1 is waiting...
+Item added by Thread-0 and notifying/invoking all threads which are waiting.
+Item consumed by Thread-1</code></pre></div>
+<hr>
+<h2 class="sec" id="s-producer-consumer-problem">Producer-Consumer problem</h2>
+<p>Question: Two threads, a producer and a consumer, share a common, fixed-size buffer as a queue. The producer&#x27;s job is to generate data and put it into the buffer, while the consumer&#x27;s job is to consume the data from the buffer. The problem is to make sure that the producer won&#x27;t produce data if the buffer is full, and the consumer won&#x27;t consume data if the buffer is empty.</p>
+<p>Solution:</p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+
+        SharedResource sharedResource = new SharedResource(5);
+        Thread producer = new Thread(() -&gt; {
+            System.out.println(&quot;Producer thread &quot; + Thread.currentThread().getName());
+            for (int i = 1; i &lt;= 8; i++) {
+                try {
+                    sharedResource.produce(i);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        Thread consumer = new Thread(() -&gt; {
+            System.out.println(&quot;Consumer thread &quot; + Thread.currentThread().getName());
+            for (int i = 1; i &lt;= 8; i++) {
+                try {
+                    sharedResource.consume();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        producer.start();
+        consumer.start();
+
+        System.out.println(&quot;Main thread finished&quot;);
+
+    }
+}
+
+class SharedResource {
+    private Queue&lt;Integer&gt; sharedBuffer;
+    private int buffersize;
+
+    public SharedResource(int buffersize) {
+        sharedBuffer = new LinkedList&lt;&gt;();
+        this.buffersize = buffersize;
+    }
+
+    public synchronized void produce(int item) throws InterruptedException {
+        while (sharedBuffer.size() == buffersize) {
+            System.out.println(&quot;Buffer is full, producer is waiting for consumer&quot;);
+            wait(); // releases the lock
+        }
+        sharedBuffer.add(item);
+        System.out.println(&quot;Produced item -&gt; &quot; + item);
+        notify();
+    }
+
+    public synchronized int consume() throws InterruptedException {
+        while (sharedBuffer.isEmpty()) {
+            System.out.println(&quot;Buffer is empty, Consumer is waiting for producer&quot;);
+            wait(); // releases the lock
+        }
+        int item = sharedBuffer.poll();
+        System.out.println(&quot;Consumed item -&gt; &quot; + item);
+        notify();
+        return item;
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Main thread finished
+Producer thread Thread-0
+Consumer thread Thread-1
+Produced item -&gt; 1
+Produced item -&gt; 2
+Produced item -&gt; 3
+Produced item -&gt; 4
+Produced item -&gt; 5
+Buffer is full, producer is waiting for consumer
+Consumed item -&gt; 1
+Consumed item -&gt; 2
+Consumed item -&gt; 3
+Consumed item -&gt; 4
+Consumed item -&gt; 5
+Buffer is empty, Consumer is waiting for producer
+Produced item -&gt; 6
+Produced item -&gt; 7
+Produced item -&gt; 8
+Consumed item -&gt; 6
+Consumed item -&gt; 7
+Consumed item -&gt; 8</code></pre></div>
+<hr>
+<h2 class="sec" id="s-unsafe-thread-operations">Unsafe thread operations:</h2>
+<p>In Java Thread class:</p>
+<ul><li><code>stop()</code>  </li><li><code>suspend()</code>  </li><li><code>resume()</code>  </li></ul>
+<ul class="checklist">
+<li class="arw">All are deprecated because they are unsafe</li>
+</ul>
+<ol><li>Why <code>stop()</code> is deprecated?  </li></ol>
+<ul><li>It kills thread abruptly</li><li>Thread may be in middle of critical operation</li><li>Locks are released immediately</li><li>Object state may become inconsistent (corrupt data)</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">synchronized (obj) {
+    obj.balance -= 100;  // deducted
+    thread.stop(); // thread stopped here ❌
+    obj.logTransaction(); // never executed
+}</code></pre></div>
+<ul class="checklist">
+<li class="arw">Result:</li>
+</ul>
+<p>Money deducted<br>No record → data inconsistency</p>
+<ol><li>Why <code>suspend()</code> is deprecated?</li></ol>
+<ul><li>It causes deadlock</li><li>Thread is paused while holding a lock</li><li>Other threads waiting for that lock → blocked forever</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">synchronized (obj) {
+    thread.suspend(); // holds lock forever ❌
+}</code></pre></div>
+<ul class="checklist">
+<li class="arw">Other threads:</li>
+</ul>
+<p>Can’t access obj<br>System gets stuck → deadlock</p>
+<ol><li>Why resume() is problematic?</li></ol>
+<ul><li>Unpredictable behavior</li><li>If <code>resume()</code> is called before <code>suspend()</code></li></ul>
+<p>  → thread may never resume</p>
+<ul><li>Leads to:</li><li>Lost signals</li><li>Hard-to-debug bugs</li></ul>
+<div class="tablewrap"><table><thead><tr><th style="text-align:left">Method</th><th style="text-align:left">Problem</th></tr></thead><tbody><tr><td style="text-align:left"><code>stop()</code></td><td style="text-align:left">Data inconsistency</td></tr><tr><td style="text-align:left"><code>suspend()</code></td><td style="text-align:left">Deadlock</td></tr><tr><td style="text-align:left"><code>resume()</code></td><td style="text-align:left">Unpredictable / lost signals</td></tr></tbody></table></div>
+<h3 class="sub">Modern Alternatives</h3>
+<ol><li>Instead of <code>stop()</code> use flag-based control</li></ol>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Task implements Runnable {
+    volatile boolean running = true;
+
+    public void run() {
+        while (running) {
+            System.out.println(&quot;Running...&quot;);
+        }
+    }
+
+    public void stop() {
+        running = false;
+    }
+}</code></pre></div>
+<ol><li>Instead of suspend()/resume()  </li></ol>
+<ul><li><code>wait()</code> / <code>notify()</code></li><li>Lock + Condition</li><li><code>Thread.sleep()</code> (controlled pause)</li></ul>
+<hr>
+<h2 class="sec" id="s-thread-join">Thread join</h2>
+<ul><li><code>join()</code> makes one thread wait for another thread to finish</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class JoinExample {
+
+    public static void main(String[] args) {
+
+        Thread t1 = new Thread(() -&gt; {
+            System.out.println(&quot;T1 started&quot;);
+            try { Thread.sleep(1000); } catch (Exception e) {}
+            System.out.println(&quot;T1 finished&quot;);
+        });
+
+        Thread t2 = new Thread(() -&gt; {
+            System.out.println(&quot;T2 waiting for T1...&quot;);
+            try {
+                t1.join(); // T2 waits for T1
+            } catch (InterruptedException e) {}
+            System.out.println(&quot;T2 resumes after T1&quot;);
+        });
+
+        t1.start();
+        t2.start();
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">T1 started
+T2 waiting for T1...
+T1 finished
+T2 resumes after T1</code></pre></div>
+<h2 class="sec" id="s-thread-priority">Thread Priority</h2>
+<ul><li>It’s a hint to the scheduler about which thread should get CPU first</li><li>Priority Levels</li></ul>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Thread.MIN_PRIORITY = 1
+Thread.NORM_PRIORITY = 5 (default)
+Thread.MAX_PRIORITY = 10</code></pre></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class PriorityDemo {
+    public static void main(String[] args) {
+
+        Thread t1 = new Thread(() -&gt; System.out.println(&quot;Low Priority&quot;));
+        Thread t2 = new Thread(() -&gt; System.out.println(&quot;High Priority&quot;));
+
+        t1.setPriority(Thread.MIN_PRIORITY); // 1
+        t2.setPriority(Thread.MAX_PRIORITY); // 10
+
+        t1.start();
+        t2.start();
+    }
+}</code></pre></div>
+<ul><li>Priority is NOT guaranteed</li><li>OS scheduler decides execution</li><li>High priority thread <strong>may NOT always run first</strong></li><li>We can set custom priority using <code>setPriority(int priority)</code> method.</li></ul>
+<h2 class="sec" id="s-daemon-thread">Daemon thread –</h2>
+<ul><li>In Java, a daemon thread is a special type of thread that runs in the background and is primarily used for tasks that support the application but don&#x27;t need to be completed before the application terminates. A daemon thread does not prevent the <strong>JVM from exiting</strong>. The JVM will terminate as soon as all the non-daemon threads (user threads) have completed their execution, even if the daemon threads are still running. Their key feature is that they don&#x27;t keep the application alive once all user threads have finished executing.  </li><li>Use Cases: Common use cases for daemon threads include:  </li><li>Garbage collection, AutoSave</li><li>Background tasks that periodically check conditions</li><li>Logging or monitoring tasks that run indefinitely</li><li>They perform background work only while your application is alive.</li><li>In Java, you can create a daemon thread by setting the thread as a daemon before starting it. This is done using the <code>setDaemon(true)</code> method.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        Thread t = new Thread(() -&gt; {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+
+        System.out.println(&quot;Main thread finishes&quot;);
+    }
+
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Main thread finishes
+
+Process finished with exit code 0</code></pre></div>
+<p>Note: If thread is not daemon, then line -&gt; &quot;Process finished with exit code 0&quot; in output gets printed after all threads completed their work. (after 10 seconds in this case). But if thread is daemon then process will get exited as soon as there is no non-daemon thread.</p>
+<hr>
+<h2 class="sec" id="s-custom-locks-and-their-types">Custom locks and their types</h2>
+<h3 class="sub">Reentrant lock:</h3>
+<ul><li>The lock is not dependent on object.</li><li>Even if different object is created and trying to access a particular method then also it cannot be accessed until lock is released.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        ReentrantLock lock =  new ReentrantLock();
+
+        SharedResource sharedResource1 = new SharedResource();
+        Thread t1 = new Thread(()-&gt; {
+           sharedResource1.produce(lock);
+        });
+
+        SharedResource sharedResource2 = new SharedResource();
+        Thread t2 = new Thread(()-&gt; {
+            sharedResource2.produce(lock);
+        });
+
+        t1.start();
+        t2.start();
+    }
+
+}
+
+
+class SharedResource {
+    boolean isAvailable = false;
+
+    public void produce(ReentrantLock reentrantLock){
+        try{
+            reentrantLock.lock();
+            System.out.println(&quot;Lock acquired by: &quot; + Thread.currentThread().getName());
+            isAvailable = true;
+            Thread.sleep(5000);
+        } catch (Exception e){
+
+        } finally {
+            reentrantLock.unlock();
+            System.out.println(&quot;Lock released by: &quot; + Thread.currentThread().getName());
+        }
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Lock acquired by: Thread-0
+(wait 5 seconds)
+Lock released by: Thread-0
+Lock acquired by: Thread-1
+(wait 5 seconds)
+Lock released by: Thread-1</code></pre></div>
+<p>In the above example, both thread calling produce method using different objects but still t2 is not able to progress because lock is in place. After 4 seconds when lock is released by t1 then t2 can progress. So, locking happened on the basis of lock object and not on the basis of resource object.</p>
+<p><strong>What if you used synchronized instead?</strong></p>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public synchronized void produce() {
+    ...
+}</code></pre></div>
+<ul class="checklist">
+<li class="arw">Then: Lock is on object (<code>this</code>)</li>
+</ul>
+<p>❗ Result:<br><code>t1</code> locks <code>sharedResource1</code><br><code>t2</code> locks <code>sharedResource2</code></p>
+<ul class="checklist">
+<li class="arw">Both run in parallel ✅</li>
+</ul>
+<hr>
+<h3 class="sub">Read write lock:</h3>
+<ul><li>Read-Write Lock is a synchronization mechanism that allows multiple threads to read data concurrently while ensuring exclusive access to write operations. The idea is that reading does not modify the shared resource, so multiple threads can safely read it at the same time. However, if a thread needs to write to the resource, it must acquire exclusive access, meaning no other threads can read or write at the same time.</li><li>Read Lock (Shared Lock):  </li><li>Multiple threads can acquire the read lock simultaneously, as long as no thread holds the write lock.</li><li>It is suitable when threads need to read shared data without modifying it.</li><li>Write Lock (Exclusive Lock):</li><li>Only one thread can acquire the write lock at a time, and no other threads (neither readers nor writers) can access the shared resource when a thread holds the write lock.</li><li>This is suitable when a thread needs to modify the shared data.</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
+Thread t1 = new Thread(() -&gt; {
+    lock.readLock().lock();
+    System.out.println(&quot;T1 reading...&quot;);
+    try { Thread.sleep(5000); } catch (Exception e) {}
+    lock.readLock().unlock();
+});
+
+Thread t2 = new Thread(() -&gt; {
+    System.out.println(&quot;T2 trying to write...&quot;);
+    lock.writeLock().lock();
+    System.out.println(&quot;T2 writing...&quot;);
+    lock.writeLock().unlock();
+});
+
+t1.start();
+t2.start();</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">T1 reading...
+T2 trying to write...
+(wait...)
+T2 writing...</code></pre></div>
+<p>Explanation:</p>
+<ul><li>Thread-1 acquires read lock</li><li>Thread-2 tries to acquire write lock  </li></ul>
+<ul class="checklist">
+<li class="arw">Result:</li>
+<li class="no">Thread-2 will BLOCK</li>
+<li class="arw">Until ALL read locks are released</li>
+</ul>
+<ul><li>write operation needs:</li><li>exclusive access</li><li>No readers (to avoid inconsistent data)</li><li>If write lock is acquired:  </li></ul>
+<div class="code ascii"><pre><code class="language-plaintext">    👉 ❌ No read lock allowed  
+    👉 ❌ No other write lock allowed  </code></pre></div>
+<p>Write lock is exclusive and must wait until all read locks are released, while multiple read locks can coexist.</p>
+<hr>
+<h3 class="sub">StampedLock (Optimistic lock):</h3>
+<ul><li>It did not put an actual lock on any object. It first put read lock which will return the current state. When we are writing/updating then we need to pass the state (which was returned by read lock). If the state is still same then only we can update the value otherwise it will rollback and we need to read the value again before attempting to update the value.</li><li>Instead of returning a lock object, it returns a stamp (long value): <code>long stamp = lock.readLock();</code></li><li>Types of Locks in StampedLock</li><li>Write Lock (Exclusive) =&gt; <code>long stamp = lock.writeLock();</code></li><li>Read Lock (Shared) =&gt; <code>long stamp = lock.readLock();</code></li><li>Optimistic Read =&gt; <code>long stamp = lock.tryOptimisticRead();</code>  </li></ul>
+<div class="code ascii"><pre><code class="language-plaintext">        👉 Does NOT acquire a lock  
+        👉 No blocking  
+        👉 Just assumes no write will happen  </code></pre></div>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Point {
+    private int x, y;
+    private StampedLock lock = new StampedLock();
+
+    int distance() {
+        long stamp = lock.tryOptimisticRead();
+        int currentX = x, currentY = y;
+
+        if (!lock.validate(stamp)) {   // validate stamp before acquiring read lock.
+            stamp = lock.readLock();
+            try {
+                currentX = x;
+                currentY = y;
+            } finally {
+                lock.unlockRead(stamp);
+            }
+        }
+        return currentX * currentX + currentY * currentY;
+    }
+}</code></pre></div>
+<hr>
+<h3 class="sub">Semaphore lock:</h3>
+<ul><li>It is same as Reentrant lock with the additional control over several threads which can access a piece of code. While creating object of Semaphore lock, we can pass a number which is nothing but a number of threads which can simultaneously access the code.</li><li>Think of Semaphore as a gate with limited passes (permits)</li><li>If permits available → thread enters</li><li>If no permits → thread waits</li><li>Important Methods:</li><li>acquire() → Take permit =&gt; <code>semaphore.acquire();</code></li><li>release() → Return permit =&gt; <code>semaphore.release();</code></li><li>tryAcquire() → Non-blocking =&gt; <code>semaphore.tryAcquire()</code></li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        Semaphore semaphore = new Semaphore(2);
+        for (int i = 0; i &lt; 5; i++) {
+            new Worker(semaphore).start();
+        }
+    }
+}
+
+
+class Worker extends Thread {
+    Semaphore semaphore;
+
+    Worker(Semaphore semaphore) {
+        this.semaphore = semaphore;
+    }
+
+    public void run() {
+        try {
+            semaphore.acquire();
+            System.out.println(Thread.currentThread().getName() + &quot; acquired permit&quot;);
+
+            Thread.sleep(2000);
+
+            System.out.println(Thread.currentThread().getName() + &quot; releasing permit&quot;);
+            semaphore.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Thread-0 acquired permit
+Thread-1 acquired permit
+Thread-0 releasing permit
+Thread-1 releasing permit
+Thread-4 acquired permit
+Thread-2 acquired permit
+Thread-2 releasing permit
+Thread-3 acquired permit
+Thread-4 releasing permit
+Thread-3 releasing permit</code></pre></div>
+<ul><li>Only 2 threads run at a time</li><li>Others wait</li></ul>
+<h3 class="sub">Lock Condition</h3>
+<ul><li>A Lock Condition is a mechanism that allows threads to wait and be notified based on specific conditions, giving you much finer control than traditional wait()/notify().</li><li>A Condition is like a waiting room for threads tied to a lock.</li><li>Threads can wait → await()</li><li>Other threads can notify → signal() / signalAll()</li><li>Each Condition represents a specific condition/state of your program.</li><li>Example:</li></ul>
+<div class="code"><span class="code-tag">Java</span><pre><code class="language-java">public class Practice {
+    public static void main(String[] args) {
+        Buffer buffer = new Buffer();
+        Thread t1 = new Thread(() -&gt; {
+            try {
+                for(int i =0;i&lt;5;i++){
+                    buffer.produce();
+                }
+
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        Thread t2 = new Thread(() -&gt; {
+            try {
+                for(int i =0;i&lt;4;i++){
+                    buffer.consume();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        t1.start();
+        t2.start();
+    }
+}
+
+
+class Buffer {
+    private int count = 0;
+    private final int capacity = 5;
+
+    private final Lock lock = new ReentrantLock();
+    private final Condition notFull = lock.newCondition();
+    private final Condition notEmpty = lock.newCondition();
+
+    public void produce() throws InterruptedException {
+        lock.lock();
+        try {
+            while (count == capacity) {
+                notFull.await(); // wait until space available
+            }
+            count++;
+            System.out.println(&quot;Produced, count = &quot; + count);
+
+            notEmpty.signal(); // notify consumers
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void consume() throws InterruptedException {
+        lock.lock();
+        try {
+            while (count == 0) {
+                notEmpty.await(); // wait until item available
+            }
+            count--;
+            System.out.println(&quot;Consumed, count = &quot; + count);
+
+            notFull.signal(); // notify producers
+        } finally {
+            lock.unlock();
+        }
+    }
+}</code></pre></div>
+<p>Output:</p>
+<div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">Produced, count = 1
+Produced, count = 2
+Produced, count = 3
+Produced, count = 4
+Produced, count = 5
+Consumed, count = 4
+Consumed, count = 3
+Consumed, count = 2
+Consumed, count = 1</code></pre></div>
+<h3 class="sub">Volatile:</h3>
+<ul><li>It is a modifier that ensures the most up-to-date value of a variable is always visible across all threads.</li><li>Every read of the volatile variable will fetch the most recent value from the main memory (not from the thread’s local cache).</li><li>Every write to a volatile variable will be written directly to the main memory, making it immediately visible to other threads.</li><li>This is different from non-volatile variables, where each thread may maintain a cached copy of the variable (in the thread&#x27;s local memory or cache), leading to potential inconsistencies.</li></ul></main></div>
+<p class="pagefoot">Core Java · interview notes · built as I go</p>
+<script>
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.innerHTML=x;return e;}
+function cap(t){var c=el('div','viz-cap');c.appendChild(el('span','pulse'));c.appendChild(document.createTextNode(t));return c;}
+function buildViz(){var h=document.getElementById('heroViz');if(!h)return;var k=h.getAttribute('data-viz');
+  ({life:vizLife,cas:vizCas,pool:vizPool,cf:vizCf,vt:vizVt}[k]||function(){})(h);}
+
+/* thread lifecycle state machine */
+function vizLife(host){
+  host.innerHTML=''; host.appendChild(cap('Thread lifecycle · states a thread moves through'));
+  var names=['New','Runnable','Running','Waiting','Runnable','Running','Terminated'];
+  var labels=['start()','scheduler picks it','wait() / IO','notify() / ready','scheduler picks it','run() finishes',''];
+  var uniq=['New','Runnable','Running','Waiting','Terminated'];
+  var row=el('div','states'); var map={};
+  uniq.forEach(function(u,i){var s=el('div','state',u);map[u]=s;row.appendChild(s);if(i<uniq.length-1)row.appendChild(el('span','sarrow','→'));});
+  host.appendChild(row); var read=el('div','readout'); host.appendChild(read);
+  var k=0;
+  function frame(){
+    uniq.forEach(function(u){map[u].classList.remove('on','done');});
+    var cur=names[k]; map[cur].classList.add(cur==='Terminated'?'done':'on');
+    read.innerHTML = cur==='Terminated' ? '<span class="hit">Terminated</span> — run() finished, thread is dead'
+      : '<b>'+cur+'</b>'+(labels[k]?' &nbsp;<span class="sarrow">next: '+labels[k]+'</span>':'');
+    k++; if(k>=names.length){setTimeout(function(){k=0;frame();},1900);}else setTimeout(frame,1300);
+  } frame();
+}
+
+/* CAS compare-and-swap with retry */
+function vizCas(host){
+  host.innerHTML=''; host.appendChild(cap('Compare-And-Swap · update only if value is unchanged, else retry'));
+  var box=el('div','casbox');
+  var mem=el('div','memcell','<div class="lbl">shared value</div><span id="memv">100</span>');
+  var col=el('div','threadcol');
+  var t1=el('div','tcard','T1: read 100, want 101');
+  var t2=el('div','tcard','T2: read 100, want 101');
+  col.appendChild(t1);col.appendChild(t2);
+  box.appendChild(mem);box.appendChild(col); host.appendChild(box);
+  var read=el('div','readout'); host.appendChild(read);
+  var memv=function(){return document.getElementById('memv');};
+  var st=0;
+  function frame(){
+    [t1,t2].forEach(function(t){t.className='tcard';});
+    if(st===0){memv().textContent='100';read.textContent='Both threads read the same value: 100';}
+    else if(st===1){t2.classList.add('okc');memv().textContent='101';read.innerHTML='T2 CAS(100→101): value was 100 → <span class="hit">success</span>, now 101';}
+    else if(st===2){t1.classList.add('failc');read.innerHTML='T1 CAS(100→101): value is 101, not 100 → <span class="warn">fail</span>';}
+    else{t1.classList.add('okc');memv().textContent='102';read.innerHTML='T1 <span class="hit">retries</span>: read 101, CAS(101→102) → success';}
+    st++; if(st>3){setTimeout(function(){st=0;frame();},2000);}else setTimeout(frame,1500);
+  } frame();
+}
+
+/* thread pool task admission: core -> queue -> max -> reject */
+function vizPool(host){
+  host.innerHTML=''; host.appendChild(cap('ThreadPoolExecutor · core → queue → max threads → reject'));
+  var w=el('div','poolwrap');
+  function lane(name,n,cls){var r=el('div','poolrow');r.appendChild(el('div','poollane',name));var slots=[];
+    for(var i=0;i<n;i++){var s=el('div','slot'+(cls==='core'?' core':''));slots.push(s);r.appendChild(s);}w.appendChild(r);return slots;}
+  var core=lane('core',2,'core'); var queue=lane('queue',3,'q'); var mx=lane('max +',2,'core');
+  host.appendChild(w); var read=el('div','readout'); host.appendChild(read);
+  // admission sequence: fill core(2), queue(3), extra max(2), then reject
+  var plan=[]; for(var i=0;i<2;i++)plan.push(['core',i]); for(i=0;i<3;i++)plan.push(['q',i]); for(i=0;i<2;i++)plan.push(['mx',i]); plan.push(['rej',0]);
+  var k=0;
+  function clearAll(){core.concat(queue,mx).forEach(function(s){s.className='slot'+(core.indexOf(s)>=0||mx.indexOf(s)>=0?' core':'');});}
+  function frame(){
+    if(k===0)clearAll();
+    var p=plan[k], t='T'+(k+1);
+    if(p[0]==='core'){core[p[1]].className='slot core fill';core[p[1]].textContent=t;read.innerHTML='task '+t+' → free <span class="hit">core thread</span> runs it';}
+    else if(p[0]==='q'){queue[p[1]].className='slot qfill';queue[p[1]].textContent=t;read.innerHTML='core busy → task '+t+' <span style="color:var(--violet)">waits in queue</span>';}
+    else if(p[0]==='mx'){mx[p[1]].className='slot core fill';mx[p[1]].textContent=t;read.innerHTML='queue full → spawn <span class="hit">extra thread</span> (up to max) for '+t;}
+    else{read.innerHTML='max reached & queue full → '+('T9')+' <span class="warn">rejected</span> (AbortPolicy)';}
+    k++; if(k>=plan.length){setTimeout(function(){k=0;frame();},2100);}else setTimeout(frame,900);
+  } frame();
+}
+
+/* CompletableFuture non-blocking chain */
+function vizCf(host){
+  host.innerHTML=''; host.appendChild(cap('CompletableFuture · non-blocking chain, value flows through stages'));
+  var chain=el('div','cfchain');
+  var s1=el('div','cfstage','supplyAsync<small>produce</small>');
+  var s2=el('div','cfstage','thenApply<small>transform</small>');
+  var s3=el('div','cfstage','thenAccept<small>consume</small>');
+  chain.appendChild(s1);chain.appendChild(el('span','sarrow','▸'));chain.appendChild(s2);chain.appendChild(el('span','sarrow','▸'));chain.appendChild(s3);
+  host.appendChild(chain); var read=el('div','readout'); host.appendChild(read);
+  var steps=[[s1,'produces <span class="cfval">"Hello"</span>'],[s2,'transforms → <span class="cfval">"Hello world!"</span>'],[s3,'prints it — chain done, main never blocked']];
+  var k=0;
+  function frame(){
+    [s1,s2,s3].forEach(function(s){s.classList.remove('on');});
+    for(var j=0;j<=k;j++)steps[j][0].classList.add('on');
+    read.innerHTML=steps[k][1];
+    k++; if(k>=steps.length){setTimeout(function(){k=0;frame();},2000);}else setTimeout(frame,1350);
+  } frame();
+}
+
+/* virtual threads mount on few carrier threads */
+function vizVt(host){
+  host.innerHTML=''; host.appendChild(cap('Virtual threads · many VTs share a few OS carrier threads'));
+  var wrap=el('div','vtwrap');
+  var pool=el('div','vtpool'); var vts=[];
+  for(var i=0;i<8;i++){var v=el('div','vt','VT'+(i+1));vts.push(v);pool.appendChild(v);}
+  var carriers=el('div','carriers');
+  var c1=el('div','carrier','Carrier-1<div class="cw" id="cw1">idle</div>');
+  var c2=el('div','carrier','Carrier-2<div class="cw" id="cw2">idle</div>');
+  carriers.appendChild(c1);carriers.appendChild(c2);
+  wrap.appendChild(pool);wrap.appendChild(carriers); host.appendChild(wrap);
+  var read=el('div','readout'); host.appendChild(read);
+  var frames=[
+    [[0,1],[],'VT1 & VT2 mount on the 2 carriers and run'],
+    [[2,3],[0,1],'VT1,VT2 hit I/O → unmount → VT3,VT4 mount (carriers reused)'],
+    [[4,5],[2,3],'Same 2 carriers now run VT5,VT6 — thousands can rotate through'],
+  ]; var k=0;
+  function frame(){
+    var f=frames[k];
+    vts.forEach(function(v){v.className='vt';});
+    f[1].forEach(function(i){vts[i].classList.add('io');});
+    f[0].forEach(function(i){vts[i].classList.add('mounted');});
+    document.getElementById('cw1').textContent='running '+ 'VT'+(f[0][0]+1);
+    document.getElementById('cw2').textContent='running '+ 'VT'+(f[0][1]+1);
+    read.innerHTML=(k===2?'<span class="hit">':'')+f[2]+(k===2?'</span>':'');
+    k++; if(k>=frames.length){setTimeout(function(){k=0;frame();},2100);}else setTimeout(frame,1800);
+  } frame();
+}
+window.addEventListener('DOMContentLoaded',buildViz);
+</script></body></html>
