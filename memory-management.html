@@ -114,7 +114,7 @@ tbody tr:nth-child(even){background:#FBFAF8}
 
 </head><body>
 <div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">Memory Management &amp; GC</span></div>
-<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-stack">Stack</a><a href="#s-heap">Heap</a><a href="#s-type-of-references">Type Of References :</a><a href="#s-mark-and-sweep-algorithm">Mark and Sweep algorithm :</a><a href="#s-types-of-garbage-collectors-gc-in-java">Types of Garbage Collectors (GC) in Java</a><a href="#s-what-is--xmx-and--xms-in-java">What is -Xmx and -Xms in Java?</a><a href="#s-example-command">🚀 Example Command</a></nav><main class="content"><h1 class="doc-title">Memory Management &amp; GC</h1>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-stack">Stack</a><a href="#s-heap">Heap</a><a href="#s-type-of-references">Type Of References :</a><a href="#s-mark-and-sweep-algorithm">Mark and Sweep algorithm :</a><a href="#s-types-of-garbage-collectors-gc-in-java">Types of Garbage Collectors (GC) in Java</a><a href="#s-what-is--xmx-and--xms-in-java">What is -Xmx and -Xms in Java?</a></nav><main class="content"><h1 class="doc-title">Memory Management &amp; GC</h1>
 <div class="hero-viz" id="heroViz" data-viz="gc"></div>
 <hr>
 <p>Java memory management is handled automatically by the JVM (Java Virtual Machine).<br>There are 2 types of memory which Java creates. JVM manages these both:<br>1) Stack<br>2) Heap</p>
@@ -225,7 +225,7 @@ obj1 = obj2;</code></pre></div>
 <li class="ok">Can grow dynamically up to 2 GB</li>
 </ul>
 <p>If heap usage exceeds the limit →<br>🚨 <strong>OutOfMemoryError: Java heap space</strong></p>
-<h2 class="sec" id="s-example-command">🚀 Example Command</h2>
+<h3 class="sub">Example Command</h3>
 <div class="code"><span class="code-tag">diagram</span><pre><code class="language-plaintext">java -Xms1g -Xmx4g -jar myapp.jar</code></pre></div></main></div>
 <p class="pagefoot">Core Java · interview notes · built as I go</p>
 <script>

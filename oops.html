@@ -94,7 +94,7 @@ tbody tr:nth-child(even){background:#FBFAF8}
 
 </head><body>
 <div class="top"><a class="home" href="index.html">&larr; All topics</a><span class="crumb">OOP Concepts</span></div>
-<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-procedural-vs-oops">Procedural vs OOPS</a><a href="#s-objects-and-classes">Objects and classes</a><a href="#s-data-hiding">Data hiding</a><a href="#s-abstraction">Abstraction</a><a href="#s-encapsulation">Encapsulation</a><a href="#s-tightly-encapsulated-class">Tightly encapsulated class</a><a href="#s-is-a-relationshipinheritance">IS-A Relationship(inheritance) :</a><a href="#s-multiple-inheritance">Multiple inheritance</a><a href="#s-has-a-relationship">HAS-A relationship</a><a href="#s-method-signature">Method signature:</a><a href="#s-polymorphism">Polymorphism:</a><a href="#s-2-runtime-polymorphism-overriding">2️⃣ Runtime Polymorphism (Overriding)</a></nav><main class="content"><h1 class="doc-title">OOP Concepts</h1>
+<div class="shell"><nav class="toc"><h4>On this page</h4><a href="#s-procedural-vs-oops">Procedural vs OOPS</a><a href="#s-objects-and-classes">Objects and classes</a><a href="#s-data-hiding">Data hiding</a><a href="#s-abstraction">Abstraction</a><a href="#s-encapsulation">Encapsulation</a><a href="#s-tightly-encapsulated-class">Tightly encapsulated class</a><a href="#s-is-a-relationshipinheritance">IS-A Relationship(inheritance) :</a><a href="#s-multiple-inheritance">Multiple inheritance</a><a href="#s-has-a-relationship">HAS-A relationship</a><a href="#s-method-signature">Method signature:</a><a href="#s-polymorphism">Polymorphism:</a></nav><main class="content"><h1 class="doc-title">OOP Concepts</h1>
 <div class="hero-viz" id="heroViz" data-viz="oop"></div>
 <hr>
 <h2 class="sec" id="s-procedural-vs-oops">Procedural vs OOPS</h2>
@@ -328,7 +328,7 @@ double sum(int a, int b) { } // ❌ compile-time error</code></pre></div>
 <h2 class="sec" id="s-polymorphism">Polymorphism:</h2>
 <p>One interface / method behaves differently based on object type</p>
 <figure class="fig"><img src="images/polymorphism_in_java.png" alt="alt text" loading="lazy"></figure>
-<h3 class="sub">1️⃣ Compile-time Polymorphism (Overloading)</h3>
+<h3 class="sub">Compile-time Polymorphism (Overloading)</h3>
 <ul><li>Same method name, different parameters</li><li>Resolved at compile time based on method signature.</li></ul>
 <div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Test {
     public void methodOne() {
@@ -414,7 +414,7 @@ class Test {
     }
 }</code></pre></div>
 <hr>
-<h2 class="sec" id="s-2-runtime-polymorphism-overriding">2️⃣ Runtime Polymorphism (Overriding)</h2>
+<h3 class="sub">Runtime Polymorphism (Overriding)</h3>
 <ol><li>Whatever the Parent has by default available to the Child through inheritance, if the Child is not satisfied with Parent class method implementation, then Child is allow to redefine that Parent class method in Child class in its own way. This process is called overriding.</li><li>The Parent class method which is overridden is called overridden method.</li><li>The Child class method which is overriding is called overriding method.</li></ol>
 <div class="code"><span class="code-tag">Java</span><pre><code class="language-java">class Parent {
     public void property() {
